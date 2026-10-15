@@ -1,0 +1,36 @@
+MIT License
+
+Copyright (c) 2026 GlucoTwin Contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+### Third-Party Data and Licensing Boundaries
+
+1. **Separation of Code and Data**: This MIT License applies solely to independently authored source code, test suites, execution scripts, and configurations contained within this repository. It does not relicense, modify, or extend rights to any underlying continuous glucose monitoring or clinical dataset.
+
+2. **Source Dataset Attribution**: This research investigates the public Continuous Glucose Monitoring and Macronutrient Composition (CGMacros) dataset:
+   - Primary Citation: Gutierrez-Osuna, Kerr, Mortazavi & Das, CGMacros PhysioNet v1.0.0 (2025), DOI: 10.13026/3z8q-x658.
+   - Accompanying Publication: Das et al., "CGMacros: A multimodal dataset of continuous glucose monitoring and dietary macronutrients in type 2 diabetes," *Scientific Data* 12:1557 (2025), DOI: 10.1038/s41597-025-05851-7.
+
+3. **Governing Data Licenses**:
+   - The PhysioNet distribution of CGMacros is licensed under the Open Data Commons Attribution License (ODC-BY 1.0) and the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License (CC BY-NC-SA 4.0).
+   - A cross-deposit on Figshare is labeled Creative Commons Attribution 4.0 International (CC BY 4.0).
+   - This repository does not distribute raw participant data, prepared feature tables, individual participant traces, per-origin predictions, or trained model weights. Users reproducing these experiments must obtain the data directly from PhysioNet under its governing terms. Public repository access does not establish unrestricted or commercial reuse of health data.

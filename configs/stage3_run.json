@@ -1,0 +1,171 @@
+{
+  "checkpoint_references": {
+    "original_linux_stage2_checkpoint_sha256": "b871a7de0af394410c2a4484710f809c77e1be24c60291395de28f5fd7c1d8ce",
+    "windows_stage2_checkpoint_sha256": "029b530f7616c50fe634f1c695e25753b4041410ae611cfe7fd6019bc6c0147c",
+    "stage2_protocol_path": "configs/stage2_protocol.json",
+    "stage2_protocol_sha256": "2cb9be37042bbb6ea4b2a5d233c3d8f9f8bd89a0f11414bbf12b3ee200cd5abf",
+    "split_manifest_path": "reports/stage2/split_manifest.json",
+    "split_manifest_sha256": "6fbc950407acf1f1a21f17f70ec4c497ac3a55c04805127e68e65a6c713321cd",
+    "stage1_provenance_sha256": "b9006433b4386b2524e0c2d5b97bb6e1c6eb821013eacf63823145ad68c2da73"
+  },
+  "environment": {
+    "os": "Windows",
+    "python": "3.12.3",
+    "numpy": "2.3.5",
+    "pandas": "2.2.3",
+    "scikit-learn": "1.9.1",
+    "scipy": "1.18.1",
+    "matplotlib": "3.10.8",
+    "joblib": "1.6.0",
+    "threadpoolctl": "3.7.0"
+  },
+  "execution_parameters": {
+    "thread_limits": {
+      "inner_fit_threads": 1,
+      "max_workers": 1
+    },
+    "budget": {
+      "outer_folds": 14,
+      "inner_folds_per_outer": 3,
+      "learned_families": 2,
+      "feature_variants": 2,
+      "candidates_per_variant": 4,
+      "inner_estimator_fits": 672,
+      "outer_estimator_refits": 56,
+      "total_learned_fits": 728
+    },
+    "population": {
+      "training": "T2D-only",
+      "participant_count": 14,
+      "participant_ids": [3, 5, 12, 14, 28, 30, 35, 36, 38, 39, 42, 46, 47, 49]
+    },
+    "sensor": "Dexcom GL",
+    "horizon_minutes": 30,
+    "history_minutes": 60,
+    "issue_spacing_minutes": 5,
+    "paired_primary_origins": 39496,
+    "feature_sets": {
+      "sensor_only": {
+        "n_features": 21,
+        "columns": [
+          "glucose_lag_0m", "glucose_lag_5m", "glucose_lag_10m", "glucose_lag_15m",
+          "glucose_lag_20m", "glucose_lag_25m", "glucose_lag_30m", "glucose_lag_35m",
+          "glucose_lag_40m", "glucose_lag_45m", "glucose_lag_50m", "glucose_lag_55m",
+          "glucose_lag_60m", "glucose_mean_15m", "glucose_std_15m", "glucose_mean_30m",
+          "glucose_std_30m", "glucose_mean_60m", "glucose_std_60m", "glucose_slope_15m",
+          "glucose_slope_30m"
+        ]
+      },
+      "sensor_plus_baseline": {
+        "n_features": 25,
+        "columns": [
+          "glucose_lag_0m", "glucose_lag_5m", "glucose_lag_10m", "glucose_lag_15m",
+          "glucose_lag_20m", "glucose_lag_25m", "glucose_lag_30m", "glucose_lag_35m",
+          "glucose_lag_40m", "glucose_lag_45m", "glucose_lag_50m", "glucose_lag_55m",
+          "glucose_lag_60m", "glucose_mean_15m", "glucose_std_15m", "glucose_mean_30m",
+          "glucose_std_30m", "glucose_mean_60m", "glucose_std_60m", "glucose_slope_15m",
+          "glucose_slope_30m", "age", "bmi", "hba1c", "fasting_glucose"
+        ]
+      }
+    },
+    "prohibited_columns": [
+      "participant_id", "origin_id", "issue_time", "history_start", "target_time",
+      "target_mg_dl", "source_row"
+    ],
+    "methods": {
+      "persistence": {
+        "formula": "g(t)",
+        "column": "glucose_lag_0m"
+      },
+      "trend": {
+        "formula": "g(t) + 30 * slope_OLS([t-15, t])",
+        "lag_column": "glucose_lag_0m",
+        "slope_column": "glucose_slope_15m",
+        "lookback_minutes": 15
+      },
+      "ridge": {
+        "fit_intercept": true,
+        "scaler": "StandardScaler fit only inner-training rows; refit only outer-training rows",
+        "imputation": "none",
+        "fitting_weights": "uniform per origin",
+        "candidates": [
+          {"candidate_id": 0, "alpha": 0.1},
+          {"candidate_id": 1, "alpha": 1.0},
+          {"candidate_id": 2, "alpha": 10.0},
+          {"candidate_id": 3, "alpha": 100.0}
+        ]
+      },
+      "hist_gradient_boosting": {
+        "scaler": "none",
+        "imputation": "none",
+        "fitting_weights": "uniform per origin",
+        "candidates": [
+          {
+            "candidate_id": 0,
+            "learning_rate": 0.05,
+            "max_iter": 100,
+            "max_leaf_nodes": 7,
+            "min_samples_leaf": 20,
+            "l2_regularization": 1.0,
+            "early_stopping": false,
+            "random_state": 20261015
+          },
+          {
+            "candidate_id": 1,
+            "learning_rate": 0.05,
+            "max_iter": 100,
+            "max_leaf_nodes": 15,
+            "min_samples_leaf": 20,
+            "l2_regularization": 1.0,
+            "early_stopping": false,
+            "random_state": 20261015
+          },
+          {
+            "candidate_id": 2,
+            "learning_rate": 0.1,
+            "max_iter": 100,
+            "max_leaf_nodes": 7,
+            "min_samples_leaf": 20,
+            "l2_regularization": 1.0,
+            "early_stopping": false,
+            "random_state": 20261015
+          },
+          {
+            "candidate_id": 3,
+            "learning_rate": 0.1,
+            "max_iter": 100,
+            "max_leaf_nodes": 15,
+            "min_samples_leaf": 20,
+            "l2_regularization": 1.0,
+            "early_stopping": false,
+            "random_state": 20261015
+          }
+        ]
+      }
+    },
+    "inner_selection": {
+      "metric": "equally weighted mean of validation participant MAEs across outer-training participants",
+      "tie_break": "frozen candidate order (lowest candidate_id wins)"
+    },
+    "outer_evaluation": {
+      "strategy": "leave-one-participant-out",
+      "prediction_bounds": "unbounded, no clipping",
+      "valid_target_range_mg_dl": [40, 400],
+      "track_out_of_range": true,
+      "track_non_finite": true
+    },
+    "uncertainty_estimation": {
+      "type": "paired participant bootstrap of per-person deltas",
+      "unit": "participant (n=14)",
+      "seed": 20261015,
+      "resamples": 2000,
+      "sign_convention": "combined_minus_sensor (negative indicates improvement)",
+      "confidence_level": 0.95
+    },
+    "failure_and_resume_policy": {
+      "atomic_writes": true,
+      "check_manifest_hashes": true,
+      "fail_on_hash_mismatch": true
+    }
+  }
+}

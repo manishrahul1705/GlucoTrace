@@ -1,0 +1,12 @@
+# Separate known-patient adaptation protocol — coverage only
+RECOMMENDATION: this is separate from unseen-patient LOPO and was not fitted or calibrated. Anchor each participant at the first valid Dexcom timestamp, then use the next 48 elapsed hours [start,start+48h). Missing periods remain elapsed time; they are not compressed into usable hours. Expected coverage denominator is 2880 minute cells, including absent/invalid cells.
+
+Regression calibration origins require full history_start>=start and target_time strictly before the boundary. Later evaluation origins require history_start>=boundary; their exact valid targets and paired baseline eligibility are inherited from primary preparation. Origins whose [history_start,target_time] straddles the boundary are purged. Complete calibration and later evaluation input/target intervals do not overlap. Per-origin intervals and partition assignment remain local, with aggregate coverage in personalization_coverage.csv.
+
+For sustained-event work, a calibration origin's maximum label-information end t+44 must be before the boundary. event_calibration_interval_safe is stored locally; it does not substitute a 30-minute target cutoff for the full confirmation interval. No event model is proposed or trained here.
+
+Predeclared adequacy gates: >=80% valid calibration coverage, >=100 paired five-minute calibration origins and >=100 later origins. These are research preparation decisions, not clinical thresholds. The summary identifies anyone failing either gate. No search over boundary lengths or usable-hour compression was performed.
+
+Later adapter specification: obtain predictions from an otherwise frozen base model trained without this person's records, then estimate one median residual offset using only their permitted calibration labels. Compare unchanged base model with offset correction on the later untouched interval. Do not fit the global base model with that person's later records; do not tune the adapter on later evaluation. No offset, calibration fit or real-data predictions were computed in Stage 2.
+
+This can evaluate retrospective within-person adaptation on this processed release. It cannot establish real-time personalization, unseen-patient generalization, biological simulation or treatment utility. A complete observed-data purge does not repair unknown upstream interpolation/filter support; neither a 90-minute nor 180-minute embargo is claimed to establish causality.

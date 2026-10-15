@@ -1,0 +1,15 @@
+participant_id,cohort_group,raw_rows,minute_grid_positions,baseline_valid,sensor_eligible_1min,paired_eligible_1min,stage1_eligible_1min,stage1_delta,candidate_primary_5min,paired_primary_5min,sensor_eligible_primary_5min,baseline_only_attrition_1min,baseline_only_attrition_5min,selected_for_lopo,causal_certification
+3,T2D,14565,14580,True,14081,14081,14081,0,2916,2817,2817,0,0,True,False
+5,T2D,14460,14460,True,14185,14185,14185,0,2892,2837,2837,0,0,True,False
+12,T2D,14655,14670,True,14111,14111,14111,0,2934,2822,2822,0,0,True,False
+14,T2D,17250,17250,True,14185,14185,14185,0,3450,2837,2837,0,0,True,False
+28,T2D,18735,18735,True,14049,14049,14049,0,3747,2809,2809,0,0,True,False
+30,T2D,15465,15465,True,14028,14028,14028,0,3093,2806,2806,0,0,True,False
+35,T2D,14400,14400,True,14111,14111,14111,0,2880,2822,2822,0,0,True,False
+36,T2D,17115,17115,True,14185,14185,14185,0,3423,2837,2837,0,0,True,False
+38,T2D,14505,14505,True,14111,14111,14111,0,2901,2822,2822,0,0,True,False
+39,T2D,17205,17205,True,14185,14185,14185,0,3441,2837,2837,0,0,True,False
+42,T2D,14520,14520,True,14185,14185,14185,0,2904,2837,2837,0,0,True,False
+46,T2D,14655,14685,True,13977,13977,13977,0,2937,2797,2797,0,0,True,False
+47,T2D,15690,15690,True,13897,13897,13897,0,3138,2779,2779,0,0,True,False
+49,T2D,15315,15315,True,14185,14185,14185,0,3063,2837,2837,0,0,True,False

@@ -1,0 +1,529 @@
+{
+  "version": "1.0.0",
+  "accessed_at": "2026-10-15T07:44:16.899068+00:00",
+  "archive_url": "https://physionet.org/files/cgmacros/1.0.0/CGMacros_dateshifted365.zip",
+  "archive_size_bytes": 657187340,
+  "archive_sha256_published": "05c8b0e6f1a2757050aced55ce4bf6ab2ac9b30f2fd8ca193056812d9c621d4d",
+  "archive_sha256_verified": false,
+  "verification_note": "Full archive not downloaded; selected members CRC32 verified and locally SHA256 hashed. Dictionary hashes match publisher.",
+  "extracted": [
+    {
+      "path": "data/raw/tables/CGMacros/CGMacros-039/CGMacros-039.csv",
+      "archive_member": "CGMacros/CGMacros-039/CGMacros-039.csv",
+      "bytes": 1193051,
+      "compressed_bytes": 157488,
+      "sha256": "acd3d25dceb167e6741280c9385a45375b67f40c2932e3b585b27f2695a8a43a",
+      "crc32_verified": true,
+      "url": "https://physionet.org/files/cgmacros/1.0.0/CGMacros_dateshifted365.zip",
+      "transformation": "Lossless range extraction; existing member reverified; images not extracted"
+    },
+    {
+      "path": "data/raw/tables/CGMacros/CGMacros-012/CGMacros-012.csv",
+      "archive_member": "CGMacros/CGMacros-012/CGMacros-012.csv",
+      "bytes": 951411,
+      "compressed_bytes": 137031,
+      "sha256": "9426dd6f42fcd2028247ec086695304b79cef7b673d70a9d7d290399e02672d5",
+      "crc32_verified": true,
+      "url": "https://physionet.org/files/cgmacros/1.0.0/CGMacros_dateshifted365.zip",
+      "transformation": "Lossless range extraction; existing member reverified; images not extracted"
+    },
+    {
+      "path": "data/raw/tables/CGMacros/CGMacros-004/CGMacros-004.csv",
+      "archive_member": "CGMacros/CGMacros-004/CGMacros-004.csv",
+      "bytes": 998084,
+      "compressed_bytes": 167591,
+      "sha256": "ebfc6d494e92c13c61743ba18f237be7407d119ffe8a9a10c9d7d8872a0043da",
+      "crc32_verified": true,
+      "url": "https://physionet.org/files/cgmacros/1.0.0/CGMacros_dateshifted365.zip",
+      "transformation": "Lossless range extraction; existing member reverified; images not extracted"
+    },
+    {
+      "path": "data/raw/tables/CGMacros/CGMacros-033/CGMacros-033.csv",
+      "archive_member": "CGMacros/CGMacros-033/CGMacros-033.csv",
+      "bytes": 1055428,
+      "compressed_bytes": 182365,
+      "sha256": "f0c30c52375bc0a45bbf9ac709e99635395c5e979614d99631c351498e56f214",
+      "crc32_verified": true,
+      "url": "https://physionet.org/files/cgmacros/1.0.0/CGMacros_dateshifted365.zip",
+      "transformation": "Lossless range extraction; existing member reverified; images not extracted"
+    },
+    {
+      "path": "data/raw/tables/CGMacros/CGMacros-048/CGMacros-048.csv",
+      "archive_member": "CGMacros/CGMacros-048/CGMacros-048.csv",
+      "bytes": 1186210,
+      "compressed_bytes": 151872,
+      "sha256": "f1544bcc1d2323f471ff7b7fc2b89b001ad1094ed4c8dd2678e5ab1bbbe4e9f5",
+      "crc32_verified": true,
+      "url": "https://physionet.org/files/cgmacros/1.0.0/CGMacros_dateshifted365.zip",
+      "transformation": "Lossless range extraction; existing member reverified; images not extracted"
+    },
+    {
+      "path": "data/raw/tables/CGMacros/CGMacros-019/CGMacros-019.csv",
+      "archive_member": "CGMacros/CGMacros-019/CGMacros-019.csv",
+      "bytes": 941347,
+      "compressed_bytes": 132721,
+      "sha256": "91448add8e2d85662069d7e7101c1f63130fd5c9a95b42173d43bf8070798822",
+      "crc32_verified": true,
+      "url": "https://physionet.org/files/cgmacros/1.0.0/CGMacros_dateshifted365.zip",
+      "transformation": "Lossless range extraction; existing member reverified; images not extracted"
+    },
+    {
+      "path": "data/raw/tables/CGMacros/CGMacros-021/CGMacros-021.csv",
+      "archive_member": "CGMacros/CGMacros-021/CGMacros-021.csv",
+      "bytes": 1056435,
+      "compressed_bytes": 147497,
+      "sha256": "316e1886d2e924886c328f737e1dcb0527719571df3f9863ba66eecd93d64188",
+      "crc32_verified": true,
+      "url": "https://physionet.org/files/cgmacros/1.0.0/CGMacros_dateshifted365.zip",
+      "transformation": "Lossless range extraction; existing member reverified; images not extracted"
+    },
+    {
+      "path": "data/raw/tables/CGMacros/CGMacros-001/CGMacros-001.csv",
+      "archive_member": "CGMacros/CGMacros-001/CGMacros-001.csv",
+      "bytes": 1133908,
+      "compressed_bytes": 177030,
+      "sha256": "64cde6f844a1ac43ac7802ff2a1b793df88abced4db55dcb016ff74a952b4f8f",
+      "crc32_verified": true,
+      "url": "https://physionet.org/files/cgmacros/1.0.0/CGMacros_dateshifted365.zip",
+      "transformation": "Lossless range extraction; existing member reverified; images not extracted"
+    },
+    {
+      "path": "data/raw/tables/CGMacros/CGMacros-014/CGMacros-014.csv",
+      "archive_member": "CGMacros/CGMacros-014/CGMacros-014.csv",
+      "bytes": 1113831,
+      "compressed_bytes": 156122,
+      "sha256": "179c0e52b651a4c4d3210aa19a330643e8644afab70ef7fc016fc1b2a77d97c3",
+      "crc32_verified": true,
+      "url": "https://physionet.org/files/cgmacros/1.0.0/CGMacros_dateshifted365.zip",
+      "transformation": "Lossless range extraction; existing member reverified; images not extracted"
+    },
+    {
+      "path": "data/raw/tables/CGMacros/CGMacros-046/CGMacros-046.csv",
+      "archive_member": "CGMacros/CGMacros-046/CGMacros-046.csv",
+      "bytes": 1018988,
+      "compressed_bytes": 137687,
+      "sha256": "f4a09f231e327e065481d67ca7aa0812122547bc6f1e5123cb22d426151e8c4a",
+      "crc32_verified": true,
+      "url": "https://physionet.org/files/cgmacros/1.0.0/CGMacros_dateshifted365.zip",
+      "transformation": "Lossless range extraction; existing member reverified; images not extracted"
+    },
+    {
+      "path": "data/raw/tables/CGMacros/CGMacros-015/CGMacros-015.csv",
+      "archive_member": "CGMacros/CGMacros-015/CGMacros-015.csv",
+      "bytes": 1037188,
+      "compressed_bytes": 129407,
+      "sha256": "73ba7b946be75856e19e4b6a70e82a87c68af1be1aeb077b60933b708e1899b1",
+      "crc32_verified": true,
+      "url": "https://physionet.org/files/cgmacros/1.0.0/CGMacros_dateshifted365.zip",
+      "transformation": "Lossless range extraction; existing member reverified; images not extracted"
+    },
+    {
+      "path": "data/raw/tables/CGMacros/CGMacros-018/CGMacros-018.csv",
+      "archive_member": "CGMacros/CGMacros-018/CGMacros-018.csv",
+      "bytes": 947695,
+      "compressed_bytes": 133732,
+      "sha256": "30ae855abfda3e60e25317e2f64c952de8f6dc69e3dbb77d1d3d88f1ea592bdc",
+      "crc32_verified": true,
+      "url": "https://physionet.org/files/cgmacros/1.0.0/CGMacros_dateshifted365.zip",
+      "transformation": "Lossless range extraction; existing member reverified; images not extracted"
+    },
+    {
+      "path": "data/raw/tables/CGMacros/CGMacros-007/CGMacros-007.csv",
+      "archive_member": "CGMacros/CGMacros-007/CGMacros-007.csv",
+      "bytes": 306547,
+      "compressed_bytes": 47961,
+      "sha256": "51da8ae0c4ca4c3bbd73c418458ab16ae68ee0e9c13aaa5339615be5de49fa54",
+      "crc32_verified": true,
+      "url": "https://physionet.org/files/cgmacros/1.0.0/CGMacros_dateshifted365.zip",
+      "transformation": "Lossless range extraction; existing member reverified; images not extracted"
+    },
+    {
+      "path": "data/raw/tables/CGMacros/CGMacros-042/CGMacros-042.csv",
+      "archive_member": "CGMacros/CGMacros-042/CGMacros-042.csv",
+      "bytes": 1012410,
+      "compressed_bytes": 140743,
+      "sha256": "a96fd530ce69b94896451b8c3af881ffbf035f2bc14e2e78bf023d9b6daef236",
+      "crc32_verified": true,
+      "url": "https://physionet.org/files/cgmacros/1.0.0/CGMacros_dateshifted365.zip",
+      "transformation": "Lossless range extraction; existing member reverified; images not extracted"
+    },
+    {
+      "path": "data/raw/tables/CGMacros/CGMacros-002/CGMacros-002.csv",
+      "archive_member": "CGMacros/CGMacros-002/CGMacros-002.csv",
+      "bytes": 1173101,
+      "compressed_bytes": 184082,
+      "sha256": "4ac368784dfc9e23c1dcec9f72a4c563ff2f31688ea1183868f825f418170782",
+      "crc32_verified": true,
+      "url": "https://physionet.org/files/cgmacros/1.0.0/CGMacros_dateshifted365.zip",
+      "transformation": "Lossless range extraction; existing member reverified; images not extracted"
+    },
+    {
+      "path": "data/raw/tables/CGMacros/CGMacros-030/CGMacros-030.csv",
+      "archive_member": "CGMacros/CGMacros-030/CGMacros-030.csv",
+      "bytes": 1075596,
+      "compressed_bytes": 146127,
+      "sha256": "ee8cfe35580461ae1e09eb34350fb3cab7a5ccad3adf64ec64d85af4244f6cfc",
+      "crc32_verified": true,
+      "url": "https://physionet.org/files/cgmacros/1.0.0/CGMacros_dateshifted365.zip",
+      "transformation": "Lossless range extraction; existing member reverified; images not extracted"
+    },
+    {
+      "path": "data/raw/tables/CGMacros/CGMacros-029/CGMacros-029.csv",
+      "archive_member": "CGMacros/CGMacros-029/CGMacros-029.csv",
+      "bytes": 1193038,
+      "compressed_bytes": 156662,
+      "sha256": "bc0c39befffc1d574c8ac955ed5411e5b3456fc209726816e033c71d82286d1b",
+      "crc32_verified": true,
+      "url": "https://physionet.org/files/cgmacros/1.0.0/CGMacros_dateshifted365.zip",
+      "transformation": "Lossless range extraction; existing member reverified; images not extracted"
+    },
+    {
+      "path": "data/raw/tables/CGMacros/CGMacros-027/CGMacros-027.csv",
+      "archive_member": "CGMacros/CGMacros-027/CGMacros-027.csv",
+      "bytes": 933803,
+      "compressed_bytes": 132902,
+      "sha256": "590f76188646cd9cb9641bafbc4f24c663857589bd78549d17697037b1b48027",
+      "crc32_verified": true,
+      "url": "https://physionet.org/files/cgmacros/1.0.0/CGMacros_dateshifted365.zip",
+      "transformation": "Lossless range extraction; existing member reverified; images not extracted"
+    },
+    {
+      "path": "data/raw/tables/CGMacros/CGMacros-031/CGMacros-031.csv",
+      "archive_member": "CGMacros/CGMacros-031/CGMacros-031.csv",
+      "bytes": 946684,
+      "compressed_bytes": 124607,
+      "sha256": "785bc3d1a5ab5061841b1837386ec45ef3e3d3a82416c0ecc4716d981e83cd81",
+      "crc32_verified": true,
+      "url": "https://physionet.org/files/cgmacros/1.0.0/CGMacros_dateshifted365.zip",
+      "transformation": "Lossless range extraction; existing member reverified; images not extracted"
+    },
+    {
+      "path": "data/raw/tables/CGMacros/CGMacros-011/CGMacros-011.csv",
+      "archive_member": "CGMacros/CGMacros-011/CGMacros-011.csv",
+      "bytes": 959195,
+      "compressed_bytes": 140257,
+      "sha256": "a3ab6608159cb64f1a84557605f5038a91750bc87106e4e3d8ae338c9d885bed",
+      "crc32_verified": true,
+      "url": "https://physionet.org/files/cgmacros/1.0.0/CGMacros_dateshifted365.zip",
+      "transformation": "Lossless range extraction; existing member reverified; images not extracted"
+    },
+    {
+      "path": "data/raw/tables/CGMacros/gut_health_test.csv",
+      "archive_member": "CGMacros/gut_health_test.csv",
+      "bytes": 2722,
+      "compressed_bytes": 745,
+      "sha256": "a3580018a38c0850ead0a94e610fc004c667d3dc1fc5adde2ce0d5b61a1aa8b5",
+      "crc32_verified": true,
+      "url": "https://physionet.org/files/cgmacros/1.0.0/CGMacros_dateshifted365.zip",
+      "transformation": "Lossless range extraction; existing member reverified; images not extracted"
+    },
+    {
+      "path": "data/raw/tables/CGMacros/CGMacros-022/CGMacros-022.csv",
+      "archive_member": "CGMacros/CGMacros-022/CGMacros-022.csv",
+      "bytes": 1126852,
+      "compressed_bytes": 150564,
+      "sha256": "da045e6cc6d011a07a625b57751689106e96ee835e94a90d6a48159f2a86dbab",
+      "crc32_verified": true,
+      "url": "https://physionet.org/files/cgmacros/1.0.0/CGMacros_dateshifted365.zip",
+      "transformation": "Lossless range extraction; existing member reverified; images not extracted"
+    },
+    {
+      "path": "data/raw/tables/CGMacros/CGMacros-020/CGMacros-020.csv",
+      "archive_member": "CGMacros/CGMacros-020/CGMacros-020.csv",
+      "bytes": 1083971,
+      "compressed_bytes": 151321,
+      "sha256": "da8315b4b582769e70cad4fb93a98fbc184d3ec5e11012a70d4e503454e4f2eb",
+      "crc32_verified": true,
+      "url": "https://physionet.org/files/cgmacros/1.0.0/CGMacros_dateshifted365.zip",
+      "transformation": "Lossless range extraction; existing member reverified; images not extracted"
+    },
+    {
+      "path": "data/raw/tables/CGMacros/CGMacros-036/CGMacros-036.csv",
+      "archive_member": "CGMacros/CGMacros-036/CGMacros-036.csv",
+      "bytes": 1267663,
+      "compressed_bytes": 196833,
+      "sha256": "08ac01b1fade15040d1bca12cef49ddbc974befb7243862fc7db252f8df0d9b8",
+      "crc32_verified": true,
+      "url": "https://physionet.org/files/cgmacros/1.0.0/CGMacros_dateshifted365.zip",
+      "transformation": "Lossless range extraction; existing member reverified; images not extracted"
+    },
+    {
+      "path": "data/raw/tables/CGMacros/CGMacros-017/CGMacros-017.csv",
+      "archive_member": "CGMacros/CGMacros-017/CGMacros-017.csv",
+      "bytes": 1052760,
+      "compressed_bytes": 139186,
+      "sha256": "dbee217bde6eacf6a0d45ef7660d83e961a7be9360c9dad831fdd28f65b14ecb",
+      "crc32_verified": true,
+      "url": "https://physionet.org/files/cgmacros/1.0.0/CGMacros_dateshifted365.zip",
+      "transformation": "Lossless range extraction; existing member reverified; images not extracted"
+    },
+    {
+      "path": "data/raw/tables/CGMacros/CGMacros-013/CGMacros-013.csv",
+      "archive_member": "CGMacros/CGMacros-013/CGMacros-013.csv",
+      "bytes": 1070927,
+      "compressed_bytes": 141770,
+      "sha256": "9511d2cd59df3dbb2c035fb2a664c289ee2eec7e3642b5ed6007eb0a446d7fa4",
+      "crc32_verified": true,
+      "url": "https://physionet.org/files/cgmacros/1.0.0/CGMacros_dateshifted365.zip",
+      "transformation": "Lossless range extraction; existing member reverified; images not extracted"
+    },
+    {
+      "path": "data/raw/tables/CGMacros/CGMacros-009/CGMacros-009.csv",
+      "archive_member": "CGMacros/CGMacros-009/CGMacros-009.csv",
+      "bytes": 940147,
+      "compressed_bytes": 133252,
+      "sha256": "63f6e1b39dfe8dd575726e08362bf130542ca73f4bb50749c1a6b09d4e31071a",
+      "crc32_verified": true,
+      "url": "https://physionet.org/files/cgmacros/1.0.0/CGMacros_dateshifted365.zip",
+      "transformation": "Lossless range extraction; existing member reverified; images not extracted"
+    },
+    {
+      "path": "data/raw/tables/CGMacros/CGMacros-003/CGMacros-003.csv",
+      "archive_member": "CGMacros/CGMacros-003/CGMacros-003.csv",
+      "bytes": 994173,
+      "compressed_bytes": 165768,
+      "sha256": "68ef5d5e8fc882cc103d3603167cb11e727e15a00fc6f2259ec308eb8cf8f6e5",
+      "crc32_verified": true,
+      "url": "https://physionet.org/files/cgmacros/1.0.0/CGMacros_dateshifted365.zip",
+      "transformation": "Lossless range extraction; existing member reverified; images not extracted"
+    },
+    {
+      "path": "data/raw/tables/CGMacros/CGMacros-041/CGMacros-041.csv",
+      "archive_member": "CGMacros/CGMacros-041/CGMacros-041.csv",
+      "bytes": 995341,
+      "compressed_bytes": 129202,
+      "sha256": "5521f85cae1d09a588cf7317cdbb6a766cdb5e8f725d58b46c09099000dd0cb4",
+      "crc32_verified": true,
+      "url": "https://physionet.org/files/cgmacros/1.0.0/CGMacros_dateshifted365.zip",
+      "transformation": "Lossless range extraction; existing member reverified; images not extracted"
+    },
+    {
+      "path": "data/raw/tables/CGMacros/CGMacros-047/CGMacros-047.csv",
+      "archive_member": "CGMacros/CGMacros-047/CGMacros-047.csv",
+      "bytes": 1100421,
+      "compressed_bytes": 148208,
+      "sha256": "5151b1cf7890611cbe2c64187c946baaea717e3fbfe41469517d59ad54b4e806",
+      "crc32_verified": true,
+      "url": "https://physionet.org/files/cgmacros/1.0.0/CGMacros_dateshifted365.zip",
+      "transformation": "Lossless range extraction; existing member reverified; images not extracted"
+    },
+    {
+      "path": "data/raw/tables/CGMacros/CGMacros-049/CGMacros-049.csv",
+      "archive_member": "CGMacros/CGMacros-049/CGMacros-049.csv",
+      "bytes": 1184719,
+      "compressed_bytes": 189220,
+      "sha256": "2526a253a0775bcdc2db8934960b55981a5430fe1925c7c32701a3b802d062c7",
+      "crc32_verified": true,
+      "url": "https://physionet.org/files/cgmacros/1.0.0/CGMacros_dateshifted365.zip",
+      "transformation": "Lossless range extraction; existing member reverified; images not extracted"
+    },
+    {
+      "path": "data/raw/tables/CGMacros/CGMacros-008/CGMacros-008.csv",
+      "archive_member": "CGMacros/CGMacros-008/CGMacros-008.csv",
+      "bytes": 981234,
+      "compressed_bytes": 133598,
+      "sha256": "228568d779ef41d6d6dd2cf179131a0ec6b973d080d5737c687ea8ca48f28e77",
+      "crc32_verified": true,
+      "url": "https://physionet.org/files/cgmacros/1.0.0/CGMacros_dateshifted365.zip",
+      "transformation": "Lossless range extraction; existing member reverified; images not extracted"
+    },
+    {
+      "path": "data/raw/tables/CGMacros/CGMacros-010/CGMacros-010.csv",
+      "archive_member": "CGMacros/CGMacros-010/CGMacros-010.csv",
+      "bytes": 1062642,
+      "compressed_bytes": 144919,
+      "sha256": "8f6de4da4896dc3c1c99a04a6085cef220c0006a7e964f3801036f69ff1bce10",
+      "crc32_verified": true,
+      "url": "https://physionet.org/files/cgmacros/1.0.0/CGMacros_dateshifted365.zip",
+      "transformation": "Lossless range extraction; existing member reverified; images not extracted"
+    },
+    {
+      "path": "data/raw/tables/CGMacros/CGMacros-035/CGMacros-035.csv",
+      "archive_member": "CGMacros/CGMacros-035/CGMacros-035.csv",
+      "bytes": 999219,
+      "compressed_bytes": 140733,
+      "sha256": "b00be8afb37e72fbdf0c4675b6798bccc4a653f0af6fa030c684bafbaa10b820",
+      "crc32_verified": true,
+      "url": "https://physionet.org/files/cgmacros/1.0.0/CGMacros_dateshifted365.zip",
+      "transformation": "Lossless range extraction; existing member reverified; images not extracted"
+    },
+    {
+      "path": "data/raw/tables/CGMacros/CGMacros-005/CGMacros-005.csv",
+      "archive_member": "CGMacros/CGMacros-005/CGMacros-005.csv",
+      "bytes": 1127896,
+      "compressed_bytes": 176025,
+      "sha256": "89435504eb7f0ee014f45813be71680808d8051a6df9d267dd98659be5742dd5",
+      "crc32_verified": true,
+      "url": "https://physionet.org/files/cgmacros/1.0.0/CGMacros_dateshifted365.zip",
+      "transformation": "Lossless range extraction; existing member reverified; images not extracted"
+    },
+    {
+      "path": "data/raw/tables/CGMacros/CGMacros-034/CGMacros-034.csv",
+      "archive_member": "CGMacros/CGMacros-034/CGMacros-034.csv",
+      "bytes": 986492,
+      "compressed_bytes": 130691,
+      "sha256": "dbe83d3cb77a1d031b2ff779758b8208dae2c25449921a4378914b0209f4c738",
+      "crc32_verified": true,
+      "url": "https://physionet.org/files/cgmacros/1.0.0/CGMacros_dateshifted365.zip",
+      "transformation": "Lossless range extraction; existing member reverified; images not extracted"
+    },
+    {
+      "path": "data/raw/tables/CGMacros/CGMacros-023/CGMacros-023.csv",
+      "archive_member": "CGMacros/CGMacros-023/CGMacros-023.csv",
+      "bytes": 1068521,
+      "compressed_bytes": 151857,
+      "sha256": "83d082776e49d372caa9ead7e0720f366d6db501eb2809c608eb8607eb14c781",
+      "crc32_verified": true,
+      "url": "https://physionet.org/files/cgmacros/1.0.0/CGMacros_dateshifted365.zip",
+      "transformation": "Lossless range extraction; existing member reverified; images not extracted"
+    },
+    {
+      "path": "data/raw/tables/CGMacros/CGMacros-044/CGMacros-044.csv",
+      "archive_member": "CGMacros/CGMacros-044/CGMacros-044.csv",
+      "bytes": 1018716,
+      "compressed_bytes": 137719,
+      "sha256": "2b724a2d55b3dabce829eeb1450644a90694cd33aa2c0282d9f46f0437d3976f",
+      "crc32_verified": true,
+      "url": "https://physionet.org/files/cgmacros/1.0.0/CGMacros_dateshifted365.zip",
+      "transformation": "Lossless range extraction; existing member reverified; images not extracted"
+    },
+    {
+      "path": "data/raw/tables/CGMacros/CGMacros-006/CGMacros-006.csv",
+      "archive_member": "CGMacros/CGMacros-006/CGMacros-006.csv",
+      "bytes": 1116160,
+      "compressed_bytes": 167645,
+      "sha256": "168487450f5537e5667e476b0f3d2f68f2a1711890d338f38643ae0c00a4c9d7",
+      "crc32_verified": true,
+      "url": "https://physionet.org/files/cgmacros/1.0.0/CGMacros_dateshifted365.zip",
+      "transformation": "Lossless range extraction; existing member reverified; images not extracted"
+    },
+    {
+      "path": "data/raw/tables/CGMacros/CGMacros-026/CGMacros-026.csv",
+      "archive_member": "CGMacros/CGMacros-026/CGMacros-026.csv",
+      "bytes": 1052867,
+      "compressed_bytes": 148233,
+      "sha256": "ecdeb0a46e55eb142452c259d8fc513e5231a7b18eff8b3f46d0a46d09141506",
+      "crc32_verified": true,
+      "url": "https://physionet.org/files/cgmacros/1.0.0/CGMacros_dateshifted365.zip",
+      "transformation": "Lossless range extraction; existing member reverified; images not extracted"
+    },
+    {
+      "path": "data/raw/tables/CGMacros/microbes.csv",
+      "archive_member": "CGMacros/microbes.csv",
+      "bytes": 236582,
+      "compressed_bytes": 26612,
+      "sha256": "a85d5728329420c97631ae9334f6d4fd195adb9361e00be3aba54fb8aee491a1",
+      "crc32_verified": true,
+      "url": "https://physionet.org/files/cgmacros/1.0.0/CGMacros_dateshifted365.zip",
+      "transformation": "Lossless range extraction; existing member reverified; images not extracted"
+    },
+    {
+      "path": "data/raw/tables/CGMacros/CGMacros-045/CGMacros-045.csv",
+      "archive_member": "CGMacros/CGMacros-045/CGMacros-045.csv",
+      "bytes": 1099484,
+      "compressed_bytes": 149000,
+      "sha256": "e20bced28247d522aa74d5dc055590bc9a88c761d56a5e72c0b8d7c5c28b5ecd",
+      "crc32_verified": true,
+      "url": "https://physionet.org/files/cgmacros/1.0.0/CGMacros_dateshifted365.zip",
+      "transformation": "Lossless range extraction; existing member reverified; images not extracted"
+    },
+    {
+      "path": "data/raw/tables/CGMacros/bio.csv",
+      "archive_member": "CGMacros/bio.csv",
+      "bytes": 5684,
+      "compressed_bytes": 2510,
+      "sha256": "801abf305ebfa6e52cf0da8fc1c52f7689b8cb05f973888fb8bc4ba362802bab",
+      "crc32_verified": true,
+      "url": "https://physionet.org/files/cgmacros/1.0.0/CGMacros_dateshifted365.zip",
+      "transformation": "Lossless range extraction; existing member reverified; images not extracted"
+    },
+    {
+      "path": "data/raw/tables/CGMacros/CGMacros-038/CGMacros-038.csv",
+      "archive_member": "CGMacros/CGMacros-038/CGMacros-038.csv",
+      "bytes": 1011131,
+      "compressed_bytes": 140346,
+      "sha256": "1fc8c0af8bb4854b0e669355bbb821b7c0810a93a62872cd89d7fae86baf4f24",
+      "crc32_verified": true,
+      "url": "https://physionet.org/files/cgmacros/1.0.0/CGMacros_dateshifted365.zip",
+      "transformation": "Lossless range extraction; existing member reverified; images not extracted"
+    },
+    {
+      "path": "data/raw/tables/CGMacros/CGMacros-016/CGMacros-016.csv",
+      "archive_member": "CGMacros/CGMacros-016/CGMacros-016.csv",
+      "bytes": 1059094,
+      "compressed_bytes": 145616,
+      "sha256": "c938b8f51b3e4c254aa1a3bf2c99db3cabf607f93c0e9e2c5fb3f35fb3f2a276",
+      "crc32_verified": true,
+      "url": "https://physionet.org/files/cgmacros/1.0.0/CGMacros_dateshifted365.zip",
+      "transformation": "Lossless range extraction; existing member reverified; images not extracted"
+    },
+    {
+      "path": "data/raw/tables/CGMacros/CGMacros-032/CGMacros-032.csv",
+      "archive_member": "CGMacros/CGMacros-032/CGMacros-032.csv",
+      "bytes": 925322,
+      "compressed_bytes": 113987,
+      "sha256": "f43419bd406fe6e5d73956787c058e97cba702f4fb5136fe4e165b89a4607832",
+      "crc32_verified": true,
+      "url": "https://physionet.org/files/cgmacros/1.0.0/CGMacros_dateshifted365.zip",
+      "transformation": "Lossless range extraction; existing member reverified; images not extracted"
+    },
+    {
+      "path": "data/raw/tables/CGMacros/CGMacros-028/CGMacros-028.csv",
+      "archive_member": "CGMacros/CGMacros-028/CGMacros-028.csv",
+      "bytes": 1159016,
+      "compressed_bytes": 156951,
+      "sha256": "2b7d5c9e11f51b7f6630f585c1855bb063446fcc01d75bdccf0139799272d1f6",
+      "crc32_verified": true,
+      "url": "https://physionet.org/files/cgmacros/1.0.0/CGMacros_dateshifted365.zip",
+      "transformation": "Lossless range extraction; existing member reverified; images not extracted"
+    },
+    {
+      "path": "data/raw/tables/CGMacros/CGMacros-043/CGMacros-043.csv",
+      "archive_member": "CGMacros/CGMacros-043/CGMacros-043.csv",
+      "bytes": 1017314,
+      "compressed_bytes": 140485,
+      "sha256": "0f5879b4579d9663467ca66dc8a082b0c99c6086c3d79470788a50f9cfaaa4e5",
+      "crc32_verified": true,
+      "url": "https://physionet.org/files/cgmacros/1.0.0/CGMacros_dateshifted365.zip",
+      "transformation": "Lossless range extraction; existing member reverified; images not extracted"
+    }
+  ],
+  "downloads": [
+    {
+      "path": "data/raw/DataDictionary_Bio.csv",
+      "url": "https://physionet.org/files/cgmacros/1.0.0/DataDictionary_Bio.csv",
+      "bytes": 2079,
+      "sha256": "2d5b4c27873284ddbf218df51172b69ffa9caf6e97a3a122977b7a2761da4c61"
+    },
+    {
+      "path": "data/raw/DataDictionary_CGMacros-00X.csv",
+      "url": "https://physionet.org/files/cgmacros/1.0.0/DataDictionary_CGMacros-00X.csv",
+      "bytes": 1604,
+      "sha256": "db7bf114d61b90fc5de43fed5e5cd6ba33af37e900a706e1b5747d7b0ffac3f8"
+    },
+    {
+      "path": "data/raw/DataDictionary_Gut_Health_Test.csv",
+      "url": "https://physionet.org/files/cgmacros/1.0.0/DataDictionary_Gut_Health_Test.csv",
+      "bytes": 4427,
+      "sha256": "fbc7555aacb93b2fb107b65db8d4a3d88d3546e7818fe5378fd2840cdceeb1b0"
+    },
+    {
+      "path": "data/raw/DataDictionary_Microbes.csv",
+      "url": "https://physionet.org/files/cgmacros/1.0.0/DataDictionary_Microbes.csv",
+      "bytes": 240387,
+      "sha256": "eb75be859489f59f6b81c3f8d29c307f078498655b4ae0878e1aa49a57d61f76"
+    },
+    {
+      "path": "data/raw/SHA256SUMS.txt",
+      "url": "https://physionet.org/files/cgmacros/1.0.0/SHA256SUMS.txt",
+      "bytes": 632,
+      "sha256": "c84420e6336997d3b1892cf5bebcb6223f41d1fd0528ff6eb1c360a8e167ffb7"
+    },
+    {
+      "path": "data/raw/LICENSE.txt",
+      "url": "https://physionet.org/files/cgmacros/1.0.0/LICENSE.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ]
+}

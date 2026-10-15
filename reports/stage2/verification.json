@@ -1,0 +1,23 @@
+{
+  "all_checks_passed": true,
+  "causal_live_equivalent": "NOT ESTABLISHED",
+  "checks": [
+    "Stage 1 preserved and all frozen-file hashes match",
+    "33 synthetic contract/feature/label/split/privacy tests passed",
+    "Both variants have identical paired origins, metadata, targets and sensor features; finite values",
+    "Every participant outer-test exactly once; all outer/inner participant and origin partitions disjoint",
+    "Per-participant Stage1 reconciliation agrees with current 1-minute counts; five-minute totals reconcile",
+    "Actual availability/native status remain unknown; causal mode fails closed on all 14 real participants",
+    "All 437190 event-origin labels retain states, unknown censoring and full information intervals",
+    "48 elapsed-hour calibration coverage and full-history/target boundary purge verified for every participant",
+    "Two real-data preparation runs produced identical config/data/split/checkpoint hashes"
+  ],
+  "freeze_sha256": "029b530f7616c50fe634f1c695e25753b4041410ae611cfe7fd6019bc6c0147c",
+  "models_trained": false,
+  "predictive_test_performance_computed": false,
+  "public_competition_release": "UNRESOLVED",
+  "reproducibility_verified": true,
+  "review_package_verified": false,
+  "synthetic_tests_passed": 33,
+  "technical_preparation": "PASS"
+}

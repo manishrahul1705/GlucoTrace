@@ -1,0 +1,5 @@
+family,metric,mean_sensor_mg_dl,mean_combined_mg_dl,mean_paired_difference_mg_dl,ci_95_lower_mg_dl,ci_95_upper_mg_dl,participants_improved,participants_worsened,participants_tied,sign_convention
+ridge,MAE,13.49632593502922,13.552781637705166,0.056455702675947225,-0.332696203041015,0.3881649670575323,8,6,0,combined_minus_sensor (negative = improvement)
+ridge,RMSE,19.871621539668247,19.72271401775143,-0.14890752191681958,-0.4392141757573955,0.15146533189888542,10,4,0,combined_minus_sensor (negative = improvement)
+hist_gradient_boosting,MAE,14.112092785800128,14.48648896197645,0.37439617617632476,-0.024352755655999363,0.7830899103670229,5,9,0,combined_minus_sensor (negative = improvement)
+hist_gradient_boosting,RMSE,20.74468541234042,20.945179071518073,0.2004936591776578,-0.21792336319093958,0.6675532015978051,9,5,0,combined_minus_sensor (negative = improvement)

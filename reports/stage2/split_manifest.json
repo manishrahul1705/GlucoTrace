@@ -1,0 +1,1638 @@
+{
+  "eligible_participants": [
+    3,
+    5,
+    12,
+    14,
+    28,
+    30,
+    35,
+    36,
+    38,
+    39,
+    42,
+    46,
+    47,
+    49
+  ],
+  "feature_variants": [
+    "sensor_only",
+    "sensor_plus_baseline"
+  ],
+  "folds": [
+    {
+      "inner_folds": [
+        {
+          "fold": 0,
+          "train": {
+            "n_origins": 22522,
+            "origin_ids_sha256": "3924038bd7a9325964129e3925cf08bafe80afa3497cbc121183a7a82b1ebee3",
+            "participants": [
+              12,
+              14,
+              30,
+              35,
+              38,
+              39,
+              46,
+              47
+            ]
+          },
+          "validation": {
+            "n_origins": 14157,
+            "origin_ids_sha256": "1d51d05867b93ad93691d9b4a61ba8fc4d81d6974408278cb554232d3c2b3289",
+            "participants": [
+              5,
+              28,
+              36,
+              42,
+              49
+            ]
+          }
+        },
+        {
+          "fold": 1,
+          "train": {
+            "n_origins": 25432,
+            "origin_ids_sha256": "d155f76a79460bbb3b08ae57461d7dfce0e29de1af81ab5cae5eca34701803ac",
+            "participants": [
+              5,
+              14,
+              28,
+              35,
+              36,
+              39,
+              42,
+              47,
+              49
+            ]
+          },
+          "validation": {
+            "n_origins": 11247,
+            "origin_ids_sha256": "ee947fa92f867e423272afb20d523bc70675a2095ec8525e12e96db57fd01235",
+            "participants": [
+              12,
+              30,
+              38,
+              46
+            ]
+          }
+        },
+        {
+          "fold": 2,
+          "train": {
+            "n_origins": 25404,
+            "origin_ids_sha256": "3b073a273ad26d44fa3c8623a010779bd5285cd97dd9cd14ea1e4d270577ecf5",
+            "participants": [
+              5,
+              12,
+              28,
+              30,
+              36,
+              38,
+              42,
+              46,
+              49
+            ]
+          },
+          "validation": {
+            "n_origins": 11275,
+            "origin_ids_sha256": "faa0ef084461d3f95b12bb9a98ffdb1707c991fdf9465cc8a61c8687ba0c3920",
+            "participants": [
+              14,
+              35,
+              39,
+              47
+            ]
+          }
+        }
+      ],
+      "outer_fold": "holdout_003",
+      "test": {
+        "n_origins": 2817,
+        "origin_ids_sha256": "55af2db77209531c7322c360a060055601bbaa7fa9638cae32c5b61e2fa4ca40",
+        "participants": [
+          3
+        ]
+      },
+      "train": {
+        "n_origins": 36679,
+        "origin_ids_sha256": "f600293830dc994a1c1f114e964c05eabe3aad716fcfe01a9387d11fab3aafb8",
+        "participants": [
+          5,
+          12,
+          14,
+          28,
+          30,
+          35,
+          36,
+          38,
+          39,
+          42,
+          46,
+          47,
+          49
+        ]
+      }
+    },
+    {
+      "inner_folds": [
+        {
+          "fold": 0,
+          "train": {
+            "n_origins": 22522,
+            "origin_ids_sha256": "3924038bd7a9325964129e3925cf08bafe80afa3497cbc121183a7a82b1ebee3",
+            "participants": [
+              12,
+              14,
+              30,
+              35,
+              38,
+              39,
+              46,
+              47
+            ]
+          },
+          "validation": {
+            "n_origins": 14137,
+            "origin_ids_sha256": "7b9ab7d485fbb9fd20bc7d57f4a3781dfb5381b8e51a956bb47606a11f7c8472",
+            "participants": [
+              3,
+              28,
+              36,
+              42,
+              49
+            ]
+          }
+        },
+        {
+          "fold": 1,
+          "train": {
+            "n_origins": 25412,
+            "origin_ids_sha256": "9e1b2a7894b1cabf5f245c8bc031187d5977542dc4e24bd54edaddeef369adae",
+            "participants": [
+              3,
+              14,
+              28,
+              35,
+              36,
+              39,
+              42,
+              47,
+              49
+            ]
+          },
+          "validation": {
+            "n_origins": 11247,
+            "origin_ids_sha256": "ee947fa92f867e423272afb20d523bc70675a2095ec8525e12e96db57fd01235",
+            "participants": [
+              12,
+              30,
+              38,
+              46
+            ]
+          }
+        },
+        {
+          "fold": 2,
+          "train": {
+            "n_origins": 25384,
+            "origin_ids_sha256": "ee65aea5302100854d131fcf86c5c115569be54524a6482b11f5858fa50295f0",
+            "participants": [
+              3,
+              12,
+              28,
+              30,
+              36,
+              38,
+              42,
+              46,
+              49
+            ]
+          },
+          "validation": {
+            "n_origins": 11275,
+            "origin_ids_sha256": "faa0ef084461d3f95b12bb9a98ffdb1707c991fdf9465cc8a61c8687ba0c3920",
+            "participants": [
+              14,
+              35,
+              39,
+              47
+            ]
+          }
+        }
+      ],
+      "outer_fold": "holdout_005",
+      "test": {
+        "n_origins": 2837,
+        "origin_ids_sha256": "836d305064a663dfdcc8d213852728883eaa2dd9f926005357b7406f563f3fb9",
+        "participants": [
+          5
+        ]
+      },
+      "train": {
+        "n_origins": 36659,
+        "origin_ids_sha256": "ca1a02b44fba969f08c3fb5554c43672ec292ada6b0292d5e4eea7b597e51f18",
+        "participants": [
+          3,
+          12,
+          14,
+          28,
+          30,
+          35,
+          36,
+          38,
+          39,
+          42,
+          46,
+          47,
+          49
+        ]
+      }
+    },
+    {
+      "inner_folds": [
+        {
+          "fold": 0,
+          "train": {
+            "n_origins": 22537,
+            "origin_ids_sha256": "f2e763f00e1f3cb5676d9195f98560afd507bf5033d67a9d54094e2b4c128f91",
+            "participants": [
+              5,
+              14,
+              30,
+              35,
+              38,
+              39,
+              46,
+              47
+            ]
+          },
+          "validation": {
+            "n_origins": 14137,
+            "origin_ids_sha256": "7b9ab7d485fbb9fd20bc7d57f4a3781dfb5381b8e51a956bb47606a11f7c8472",
+            "participants": [
+              3,
+              28,
+              36,
+              42,
+              49
+            ]
+          }
+        },
+        {
+          "fold": 1,
+          "train": {
+            "n_origins": 25412,
+            "origin_ids_sha256": "9e1b2a7894b1cabf5f245c8bc031187d5977542dc4e24bd54edaddeef369adae",
+            "participants": [
+              3,
+              14,
+              28,
+              35,
+              36,
+              39,
+              42,
+              47,
+              49
+            ]
+          },
+          "validation": {
+            "n_origins": 11262,
+            "origin_ids_sha256": "71d64254e68eff42835c0e3a3bc354660c1240b5aa95da1ecc05f6b08996bb1a",
+            "participants": [
+              5,
+              30,
+              38,
+              46
+            ]
+          }
+        },
+        {
+          "fold": 2,
+          "train": {
+            "n_origins": 25399,
+            "origin_ids_sha256": "a42540320a63110e9beb121fb0c270a19cc96b104617f0b48245209d561cd37f",
+            "participants": [
+              3,
+              5,
+              28,
+              30,
+              36,
+              38,
+              42,
+              46,
+              49
+            ]
+          },
+          "validation": {
+            "n_origins": 11275,
+            "origin_ids_sha256": "faa0ef084461d3f95b12bb9a98ffdb1707c991fdf9465cc8a61c8687ba0c3920",
+            "participants": [
+              14,
+              35,
+              39,
+              47
+            ]
+          }
+        }
+      ],
+      "outer_fold": "holdout_012",
+      "test": {
+        "n_origins": 2822,
+        "origin_ids_sha256": "bfe2dc0f916d1904f32568099d571ce086f7f931e90a8071ddc94c8199864db8",
+        "participants": [
+          12
+        ]
+      },
+      "train": {
+        "n_origins": 36674,
+        "origin_ids_sha256": "456cfb1b1957f67f62bf431b2c15b3f7291af00180372f83195426eb73faf3ef",
+        "participants": [
+          3,
+          5,
+          14,
+          28,
+          30,
+          35,
+          36,
+          38,
+          39,
+          42,
+          46,
+          47,
+          49
+        ]
+      }
+    },
+    {
+      "inner_folds": [
+        {
+          "fold": 0,
+          "train": {
+            "n_origins": 22522,
+            "origin_ids_sha256": "26e07342fb35f74629afdd9bb07304ee7eac46d58479eef4185c5747f68bb6ea",
+            "participants": [
+              5,
+              12,
+              30,
+              35,
+              38,
+              39,
+              46,
+              47
+            ]
+          },
+          "validation": {
+            "n_origins": 14137,
+            "origin_ids_sha256": "7b9ab7d485fbb9fd20bc7d57f4a3781dfb5381b8e51a956bb47606a11f7c8472",
+            "participants": [
+              3,
+              28,
+              36,
+              42,
+              49
+            ]
+          }
+        },
+        {
+          "fold": 1,
+          "train": {
+            "n_origins": 25397,
+            "origin_ids_sha256": "b8cb425ce29e99fa6509e55b53734e9df6d78f41e5796a7126797aa77f0ac896",
+            "participants": [
+              3,
+              12,
+              28,
+              35,
+              36,
+              39,
+              42,
+              47,
+              49
+            ]
+          },
+          "validation": {
+            "n_origins": 11262,
+            "origin_ids_sha256": "71d64254e68eff42835c0e3a3bc354660c1240b5aa95da1ecc05f6b08996bb1a",
+            "participants": [
+              5,
+              30,
+              38,
+              46
+            ]
+          }
+        },
+        {
+          "fold": 2,
+          "train": {
+            "n_origins": 25399,
+            "origin_ids_sha256": "a42540320a63110e9beb121fb0c270a19cc96b104617f0b48245209d561cd37f",
+            "participants": [
+              3,
+              5,
+              28,
+              30,
+              36,
+              38,
+              42,
+              46,
+              49
+            ]
+          },
+          "validation": {
+            "n_origins": 11260,
+            "origin_ids_sha256": "4e6823467e670b0e4b1c8f4f9720cd58eab04cda992902e45de7398109c4d65d",
+            "participants": [
+              12,
+              35,
+              39,
+              47
+            ]
+          }
+        }
+      ],
+      "outer_fold": "holdout_014",
+      "test": {
+        "n_origins": 2837,
+        "origin_ids_sha256": "777fe05126e1ac81e0c3aa8d01f01778f4d2ea5bb07b92368a7a86d0cfe20fd3",
+        "participants": [
+          14
+        ]
+      },
+      "train": {
+        "n_origins": 36659,
+        "origin_ids_sha256": "15063ab42e119511d77daf6da05384cdab98a1232cfb93f05cb0d5ffbee6e4b2",
+        "participants": [
+          3,
+          5,
+          12,
+          28,
+          30,
+          35,
+          36,
+          38,
+          39,
+          42,
+          46,
+          47,
+          49
+        ]
+      }
+    },
+    {
+      "inner_folds": [
+        {
+          "fold": 0,
+          "train": {
+            "n_origins": 22522,
+            "origin_ids_sha256": "26e07342fb35f74629afdd9bb07304ee7eac46d58479eef4185c5747f68bb6ea",
+            "participants": [
+              5,
+              12,
+              30,
+              35,
+              38,
+              39,
+              46,
+              47
+            ]
+          },
+          "validation": {
+            "n_origins": 14165,
+            "origin_ids_sha256": "a5b11452dad5973963d60a27c89fb01f16597c44479b3b1a7810fb175df2a72c",
+            "participants": [
+              3,
+              14,
+              36,
+              42,
+              49
+            ]
+          }
+        },
+        {
+          "fold": 1,
+          "train": {
+            "n_origins": 25425,
+            "origin_ids_sha256": "e78ceb4cb0db2f64993a33b6a8716793a284c6570701817611425eaea1fa7380",
+            "participants": [
+              3,
+              12,
+              14,
+              35,
+              36,
+              39,
+              42,
+              47,
+              49
+            ]
+          },
+          "validation": {
+            "n_origins": 11262,
+            "origin_ids_sha256": "71d64254e68eff42835c0e3a3bc354660c1240b5aa95da1ecc05f6b08996bb1a",
+            "participants": [
+              5,
+              30,
+              38,
+              46
+            ]
+          }
+        },
+        {
+          "fold": 2,
+          "train": {
+            "n_origins": 25427,
+            "origin_ids_sha256": "3ef94e018ec4a768b43845024361850c06f9aec9284b119146da289987cb76db",
+            "participants": [
+              3,
+              5,
+              14,
+              30,
+              36,
+              38,
+              42,
+              46,
+              49
+            ]
+          },
+          "validation": {
+            "n_origins": 11260,
+            "origin_ids_sha256": "4e6823467e670b0e4b1c8f4f9720cd58eab04cda992902e45de7398109c4d65d",
+            "participants": [
+              12,
+              35,
+              39,
+              47
+            ]
+          }
+        }
+      ],
+      "outer_fold": "holdout_028",
+      "test": {
+        "n_origins": 2809,
+        "origin_ids_sha256": "061e10f6264e0fb0a94e7843aa974781246dff7b7043dba235f345aa287623bc",
+        "participants": [
+          28
+        ]
+      },
+      "train": {
+        "n_origins": 36687,
+        "origin_ids_sha256": "3ea8c2d85fb49642417cf7d52b8792c152281f6a8798a20892ca788d79dc6613",
+        "participants": [
+          3,
+          5,
+          12,
+          14,
+          30,
+          35,
+          36,
+          38,
+          39,
+          42,
+          46,
+          47,
+          49
+        ]
+      }
+    },
+    {
+      "inner_folds": [
+        {
+          "fold": 0,
+          "train": {
+            "n_origins": 22525,
+            "origin_ids_sha256": "095c6513000948c14c04bb0efe1602cb71a1650b3bf47328af19675343a8a281",
+            "participants": [
+              5,
+              12,
+              28,
+              35,
+              38,
+              39,
+              46,
+              47
+            ]
+          },
+          "validation": {
+            "n_origins": 14165,
+            "origin_ids_sha256": "a5b11452dad5973963d60a27c89fb01f16597c44479b3b1a7810fb175df2a72c",
+            "participants": [
+              3,
+              14,
+              36,
+              42,
+              49
+            ]
+          }
+        },
+        {
+          "fold": 1,
+          "train": {
+            "n_origins": 25425,
+            "origin_ids_sha256": "e78ceb4cb0db2f64993a33b6a8716793a284c6570701817611425eaea1fa7380",
+            "participants": [
+              3,
+              12,
+              14,
+              35,
+              36,
+              39,
+              42,
+              47,
+              49
+            ]
+          },
+          "validation": {
+            "n_origins": 11265,
+            "origin_ids_sha256": "3807a75dd514f5fad61c303f1e2b8134a07457e088dcb7b797b84092e0b816a1",
+            "participants": [
+              5,
+              28,
+              38,
+              46
+            ]
+          }
+        },
+        {
+          "fold": 2,
+          "train": {
+            "n_origins": 25430,
+            "origin_ids_sha256": "c3d94360c82126392ce3df4bfa245e5e770cf43ee0dac073256eb736d100603d",
+            "participants": [
+              3,
+              5,
+              14,
+              28,
+              36,
+              38,
+              42,
+              46,
+              49
+            ]
+          },
+          "validation": {
+            "n_origins": 11260,
+            "origin_ids_sha256": "4e6823467e670b0e4b1c8f4f9720cd58eab04cda992902e45de7398109c4d65d",
+            "participants": [
+              12,
+              35,
+              39,
+              47
+            ]
+          }
+        }
+      ],
+      "outer_fold": "holdout_030",
+      "test": {
+        "n_origins": 2806,
+        "origin_ids_sha256": "4a7c188ffeb8e9a3efa36256d5585a99953137c22868aef2a30f1bd1924b875f",
+        "participants": [
+          30
+        ]
+      },
+      "train": {
+        "n_origins": 36690,
+        "origin_ids_sha256": "794af6f667463256edbb15d39636e6054fe2d3c34b2dcec25957ac429edf0540",
+        "participants": [
+          3,
+          5,
+          12,
+          14,
+          28,
+          35,
+          36,
+          38,
+          39,
+          42,
+          46,
+          47,
+          49
+        ]
+      }
+    },
+    {
+      "inner_folds": [
+        {
+          "fold": 0,
+          "train": {
+            "n_origins": 22509,
+            "origin_ids_sha256": "f0afb17002f24e701ef908025ea766c7f3134a9742f18f3f6b43248e9f9c3d61",
+            "participants": [
+              5,
+              12,
+              28,
+              30,
+              38,
+              39,
+              46,
+              47
+            ]
+          },
+          "validation": {
+            "n_origins": 14165,
+            "origin_ids_sha256": "a5b11452dad5973963d60a27c89fb01f16597c44479b3b1a7810fb175df2a72c",
+            "participants": [
+              3,
+              14,
+              36,
+              42,
+              49
+            ]
+          }
+        },
+        {
+          "fold": 1,
+          "train": {
+            "n_origins": 25409,
+            "origin_ids_sha256": "757b617333384a6838ca2eb590567c409a382e1339bdb5ec04d33e402db8cec2",
+            "participants": [
+              3,
+              12,
+              14,
+              30,
+              36,
+              39,
+              42,
+              47,
+              49
+            ]
+          },
+          "validation": {
+            "n_origins": 11265,
+            "origin_ids_sha256": "3807a75dd514f5fad61c303f1e2b8134a07457e088dcb7b797b84092e0b816a1",
+            "participants": [
+              5,
+              28,
+              38,
+              46
+            ]
+          }
+        },
+        {
+          "fold": 2,
+          "train": {
+            "n_origins": 25430,
+            "origin_ids_sha256": "c3d94360c82126392ce3df4bfa245e5e770cf43ee0dac073256eb736d100603d",
+            "participants": [
+              3,
+              5,
+              14,
+              28,
+              36,
+              38,
+              42,
+              46,
+              49
+            ]
+          },
+          "validation": {
+            "n_origins": 11244,
+            "origin_ids_sha256": "31e465448e4b11676ccd3ecc513bb14fbe76bda4bcb06d09a9bdee445bb71eb5",
+            "participants": [
+              12,
+              30,
+              39,
+              47
+            ]
+          }
+        }
+      ],
+      "outer_fold": "holdout_035",
+      "test": {
+        "n_origins": 2822,
+        "origin_ids_sha256": "78b301b6eb9cd7764f1e98d7d11f4309866cf88347d0a990252198cb651c2dcf",
+        "participants": [
+          35
+        ]
+      },
+      "train": {
+        "n_origins": 36674,
+        "origin_ids_sha256": "3e69e544c9ea20741bf3447e3ea10b790b98bbc95e6c77485719d883cf108ae9",
+        "participants": [
+          3,
+          5,
+          12,
+          14,
+          28,
+          30,
+          36,
+          38,
+          39,
+          42,
+          46,
+          47,
+          49
+        ]
+      }
+    },
+    {
+      "inner_folds": [
+        {
+          "fold": 0,
+          "train": {
+            "n_origins": 22509,
+            "origin_ids_sha256": "f0afb17002f24e701ef908025ea766c7f3134a9742f18f3f6b43248e9f9c3d61",
+            "participants": [
+              5,
+              12,
+              28,
+              30,
+              38,
+              39,
+              46,
+              47
+            ]
+          },
+          "validation": {
+            "n_origins": 14150,
+            "origin_ids_sha256": "21a60b6b8d49f3894d5ecbae2e166238a9e4325beab1d6f573f7dc2c6da5d00c",
+            "participants": [
+              3,
+              14,
+              35,
+              42,
+              49
+            ]
+          }
+        },
+        {
+          "fold": 1,
+          "train": {
+            "n_origins": 25394,
+            "origin_ids_sha256": "bc6f4431edc5aa08e640bba5f6ece0a4f287c76804883dc0190e17970800e138",
+            "participants": [
+              3,
+              12,
+              14,
+              30,
+              35,
+              39,
+              42,
+              47,
+              49
+            ]
+          },
+          "validation": {
+            "n_origins": 11265,
+            "origin_ids_sha256": "3807a75dd514f5fad61c303f1e2b8134a07457e088dcb7b797b84092e0b816a1",
+            "participants": [
+              5,
+              28,
+              38,
+              46
+            ]
+          }
+        },
+        {
+          "fold": 2,
+          "train": {
+            "n_origins": 25415,
+            "origin_ids_sha256": "ae643994d77d4462075fc4d950dceb269619e5716460ec35d7451dc0091faa87",
+            "participants": [
+              3,
+              5,
+              14,
+              28,
+              35,
+              38,
+              42,
+              46,
+              49
+            ]
+          },
+          "validation": {
+            "n_origins": 11244,
+            "origin_ids_sha256": "31e465448e4b11676ccd3ecc513bb14fbe76bda4bcb06d09a9bdee445bb71eb5",
+            "participants": [
+              12,
+              30,
+              39,
+              47
+            ]
+          }
+        }
+      ],
+      "outer_fold": "holdout_036",
+      "test": {
+        "n_origins": 2837,
+        "origin_ids_sha256": "f0dac4bf9091d0bef2c37e47994eb884e4582be752663d8168242c92e5024dad",
+        "participants": [
+          36
+        ]
+      },
+      "train": {
+        "n_origins": 36659,
+        "origin_ids_sha256": "2418ee5ece7817caffdee2750c370f99fec60803f99d041dc88f7ec4383f35c3",
+        "participants": [
+          3,
+          5,
+          12,
+          14,
+          28,
+          30,
+          35,
+          38,
+          39,
+          42,
+          46,
+          47,
+          49
+        ]
+      }
+    },
+    {
+      "inner_folds": [
+        {
+          "fold": 0,
+          "train": {
+            "n_origins": 22524,
+            "origin_ids_sha256": "b0e639dcf9479ab35400675e85a6dd82ebeef16d63bc11d18e4f259f310c9d03",
+            "participants": [
+              5,
+              12,
+              28,
+              30,
+              36,
+              39,
+              46,
+              47
+            ]
+          },
+          "validation": {
+            "n_origins": 14150,
+            "origin_ids_sha256": "21a60b6b8d49f3894d5ecbae2e166238a9e4325beab1d6f573f7dc2c6da5d00c",
+            "participants": [
+              3,
+              14,
+              35,
+              42,
+              49
+            ]
+          }
+        },
+        {
+          "fold": 1,
+          "train": {
+            "n_origins": 25394,
+            "origin_ids_sha256": "bc6f4431edc5aa08e640bba5f6ece0a4f287c76804883dc0190e17970800e138",
+            "participants": [
+              3,
+              12,
+              14,
+              30,
+              35,
+              39,
+              42,
+              47,
+              49
+            ]
+          },
+          "validation": {
+            "n_origins": 11280,
+            "origin_ids_sha256": "b4596da3c3a713e8f4f2e2b8acf9770abad6b8b9cc6fb98c04e17be387d66a99",
+            "participants": [
+              5,
+              28,
+              36,
+              46
+            ]
+          }
+        },
+        {
+          "fold": 2,
+          "train": {
+            "n_origins": 25430,
+            "origin_ids_sha256": "d20f060184b1139725f4ce01566aa163334e073c2b13aa22b7de85d0df0a9e95",
+            "participants": [
+              3,
+              5,
+              14,
+              28,
+              35,
+              36,
+              42,
+              46,
+              49
+            ]
+          },
+          "validation": {
+            "n_origins": 11244,
+            "origin_ids_sha256": "31e465448e4b11676ccd3ecc513bb14fbe76bda4bcb06d09a9bdee445bb71eb5",
+            "participants": [
+              12,
+              30,
+              39,
+              47
+            ]
+          }
+        }
+      ],
+      "outer_fold": "holdout_038",
+      "test": {
+        "n_origins": 2822,
+        "origin_ids_sha256": "1124d3f895b07d3f40d600de41a5558f8bf1f66cb6e4a83a24d1c0ad19fc16a6",
+        "participants": [
+          38
+        ]
+      },
+      "train": {
+        "n_origins": 36674,
+        "origin_ids_sha256": "0bf850991d2fb3d058f8ba25fe96f3c0eb96d440544ab8d14c217a029082a437",
+        "participants": [
+          3,
+          5,
+          12,
+          14,
+          28,
+          30,
+          35,
+          36,
+          39,
+          42,
+          46,
+          47,
+          49
+        ]
+      }
+    },
+    {
+      "inner_folds": [
+        {
+          "fold": 0,
+          "train": {
+            "n_origins": 22509,
+            "origin_ids_sha256": "522599403507eaf9fa9c1d66c0182cc421bb3cbebffc212d106a1295635f1824",
+            "participants": [
+              5,
+              12,
+              28,
+              30,
+              36,
+              38,
+              46,
+              47
+            ]
+          },
+          "validation": {
+            "n_origins": 14150,
+            "origin_ids_sha256": "21a60b6b8d49f3894d5ecbae2e166238a9e4325beab1d6f573f7dc2c6da5d00c",
+            "participants": [
+              3,
+              14,
+              35,
+              42,
+              49
+            ]
+          }
+        },
+        {
+          "fold": 1,
+          "train": {
+            "n_origins": 25379,
+            "origin_ids_sha256": "f76acfe57ee8bea025a144e21e1a239411c0c9b91bdb32be107fa9984e810d8b",
+            "participants": [
+              3,
+              12,
+              14,
+              30,
+              35,
+              38,
+              42,
+              47,
+              49
+            ]
+          },
+          "validation": {
+            "n_origins": 11280,
+            "origin_ids_sha256": "b4596da3c3a713e8f4f2e2b8acf9770abad6b8b9cc6fb98c04e17be387d66a99",
+            "participants": [
+              5,
+              28,
+              36,
+              46
+            ]
+          }
+        },
+        {
+          "fold": 2,
+          "train": {
+            "n_origins": 25430,
+            "origin_ids_sha256": "d20f060184b1139725f4ce01566aa163334e073c2b13aa22b7de85d0df0a9e95",
+            "participants": [
+              3,
+              5,
+              14,
+              28,
+              35,
+              36,
+              42,
+              46,
+              49
+            ]
+          },
+          "validation": {
+            "n_origins": 11229,
+            "origin_ids_sha256": "9ce876c93328c81c81c7d76d11b5077afe2a379a7befe9c3878f9747820ca3bb",
+            "participants": [
+              12,
+              30,
+              38,
+              47
+            ]
+          }
+        }
+      ],
+      "outer_fold": "holdout_039",
+      "test": {
+        "n_origins": 2837,
+        "origin_ids_sha256": "d307d3a701e6a81a38b4e71f4f66d534bc65ded7ca4e684b75e7db5cf3382e46",
+        "participants": [
+          39
+        ]
+      },
+      "train": {
+        "n_origins": 36659,
+        "origin_ids_sha256": "08763d3ccc87d5bc824d09b617ea8a9548806ca602e4276ec1e8bd7b2f9d8d69",
+        "participants": [
+          3,
+          5,
+          12,
+          14,
+          28,
+          30,
+          35,
+          36,
+          38,
+          42,
+          46,
+          47,
+          49
+        ]
+      }
+    },
+    {
+      "inner_folds": [
+        {
+          "fold": 0,
+          "train": {
+            "n_origins": 22509,
+            "origin_ids_sha256": "522599403507eaf9fa9c1d66c0182cc421bb3cbebffc212d106a1295635f1824",
+            "participants": [
+              5,
+              12,
+              28,
+              30,
+              36,
+              38,
+              46,
+              47
+            ]
+          },
+          "validation": {
+            "n_origins": 14150,
+            "origin_ids_sha256": "143e5e658bf3c5581d21f371d119b5f464688336abd9ca69946ce918454f09c6",
+            "participants": [
+              3,
+              14,
+              35,
+              39,
+              49
+            ]
+          }
+        },
+        {
+          "fold": 1,
+          "train": {
+            "n_origins": 25379,
+            "origin_ids_sha256": "3b364aa716d5f7ccf2a2dd3a39848835e5b0c7fb4fb612ecb3f261741c8681b4",
+            "participants": [
+              3,
+              12,
+              14,
+              30,
+              35,
+              38,
+              39,
+              47,
+              49
+            ]
+          },
+          "validation": {
+            "n_origins": 11280,
+            "origin_ids_sha256": "b4596da3c3a713e8f4f2e2b8acf9770abad6b8b9cc6fb98c04e17be387d66a99",
+            "participants": [
+              5,
+              28,
+              36,
+              46
+            ]
+          }
+        },
+        {
+          "fold": 2,
+          "train": {
+            "n_origins": 25430,
+            "origin_ids_sha256": "607e6ad156e4a635b9f64209cc0b5191d770648eb4bd1528bb0d80b2b72e12ce",
+            "participants": [
+              3,
+              5,
+              14,
+              28,
+              35,
+              36,
+              39,
+              46,
+              49
+            ]
+          },
+          "validation": {
+            "n_origins": 11229,
+            "origin_ids_sha256": "9ce876c93328c81c81c7d76d11b5077afe2a379a7befe9c3878f9747820ca3bb",
+            "participants": [
+              12,
+              30,
+              38,
+              47
+            ]
+          }
+        }
+      ],
+      "outer_fold": "holdout_042",
+      "test": {
+        "n_origins": 2837,
+        "origin_ids_sha256": "bd94284882216703fe62d35cb2b4341f805b6d9232839506832ef80a2f94041f",
+        "participants": [
+          42
+        ]
+      },
+      "train": {
+        "n_origins": 36659,
+        "origin_ids_sha256": "9da6d6bc8cb4fab7b3e3875165bbad5a57a6b8b5eac9a8f300e819743341e635",
+        "participants": [
+          3,
+          5,
+          12,
+          14,
+          28,
+          30,
+          35,
+          36,
+          38,
+          39,
+          46,
+          47,
+          49
+        ]
+      }
+    },
+    {
+      "inner_folds": [
+        {
+          "fold": 0,
+          "train": {
+            "n_origins": 22549,
+            "origin_ids_sha256": "3422b49a1b772952219c26a17683f0e1486968f60faa5bc2f442ccd3fe086c83",
+            "participants": [
+              5,
+              12,
+              28,
+              30,
+              36,
+              38,
+              42,
+              47
+            ]
+          },
+          "validation": {
+            "n_origins": 14150,
+            "origin_ids_sha256": "143e5e658bf3c5581d21f371d119b5f464688336abd9ca69946ce918454f09c6",
+            "participants": [
+              3,
+              14,
+              35,
+              39,
+              49
+            ]
+          }
+        },
+        {
+          "fold": 1,
+          "train": {
+            "n_origins": 25379,
+            "origin_ids_sha256": "3b364aa716d5f7ccf2a2dd3a39848835e5b0c7fb4fb612ecb3f261741c8681b4",
+            "participants": [
+              3,
+              12,
+              14,
+              30,
+              35,
+              38,
+              39,
+              47,
+              49
+            ]
+          },
+          "validation": {
+            "n_origins": 11320,
+            "origin_ids_sha256": "cccefed6186d91dbe91ce4a1bbec68342ca6d6fe2270530d332dc7ec8fbc6ba0",
+            "participants": [
+              5,
+              28,
+              36,
+              42
+            ]
+          }
+        },
+        {
+          "fold": 2,
+          "train": {
+            "n_origins": 25470,
+            "origin_ids_sha256": "b3c4534a9e3e7848767557aba847a12b70f43f872393cab0c21f9b4bd2cf874a",
+            "participants": [
+              3,
+              5,
+              14,
+              28,
+              35,
+              36,
+              39,
+              42,
+              49
+            ]
+          },
+          "validation": {
+            "n_origins": 11229,
+            "origin_ids_sha256": "9ce876c93328c81c81c7d76d11b5077afe2a379a7befe9c3878f9747820ca3bb",
+            "participants": [
+              12,
+              30,
+              38,
+              47
+            ]
+          }
+        }
+      ],
+      "outer_fold": "holdout_046",
+      "test": {
+        "n_origins": 2797,
+        "origin_ids_sha256": "819579b4261a3046661e050bedbc7a344003d73775f152ae6b2aaad2f35c311c",
+        "participants": [
+          46
+        ]
+      },
+      "train": {
+        "n_origins": 36699,
+        "origin_ids_sha256": "a17c3c3065eb3683d1590638005eaa67b0b22ca4486021fdcd11049619b2ac22",
+        "participants": [
+          3,
+          5,
+          12,
+          14,
+          28,
+          30,
+          35,
+          36,
+          38,
+          39,
+          42,
+          47,
+          49
+        ]
+      }
+    },
+    {
+      "inner_folds": [
+        {
+          "fold": 0,
+          "train": {
+            "n_origins": 22567,
+            "origin_ids_sha256": "26250b98c63076ea9aa2da2544c479aa09ca7991ebbf7a62942329f3bd060716",
+            "participants": [
+              5,
+              12,
+              28,
+              30,
+              36,
+              38,
+              42,
+              46
+            ]
+          },
+          "validation": {
+            "n_origins": 14150,
+            "origin_ids_sha256": "143e5e658bf3c5581d21f371d119b5f464688336abd9ca69946ce918454f09c6",
+            "participants": [
+              3,
+              14,
+              35,
+              39,
+              49
+            ]
+          }
+        },
+        {
+          "fold": 1,
+          "train": {
+            "n_origins": 25397,
+            "origin_ids_sha256": "b1478536c7c36309c210b438c07216ed772c7176e1193a5446b5ba16e5a810cd",
+            "participants": [
+              3,
+              12,
+              14,
+              30,
+              35,
+              38,
+              39,
+              46,
+              49
+            ]
+          },
+          "validation": {
+            "n_origins": 11320,
+            "origin_ids_sha256": "cccefed6186d91dbe91ce4a1bbec68342ca6d6fe2270530d332dc7ec8fbc6ba0",
+            "participants": [
+              5,
+              28,
+              36,
+              42
+            ]
+          }
+        },
+        {
+          "fold": 2,
+          "train": {
+            "n_origins": 25470,
+            "origin_ids_sha256": "b3c4534a9e3e7848767557aba847a12b70f43f872393cab0c21f9b4bd2cf874a",
+            "participants": [
+              3,
+              5,
+              14,
+              28,
+              35,
+              36,
+              39,
+              42,
+              49
+            ]
+          },
+          "validation": {
+            "n_origins": 11247,
+            "origin_ids_sha256": "ee947fa92f867e423272afb20d523bc70675a2095ec8525e12e96db57fd01235",
+            "participants": [
+              12,
+              30,
+              38,
+              46
+            ]
+          }
+        }
+      ],
+      "outer_fold": "holdout_047",
+      "test": {
+        "n_origins": 2779,
+        "origin_ids_sha256": "8dd5f2d9f8efae869ade58fbda9dcd7de71fa5beca7c10fe26de9f0563c977ff",
+        "participants": [
+          47
+        ]
+      },
+      "train": {
+        "n_origins": 36717,
+        "origin_ids_sha256": "1a5963d44dfbc9351912f226c76bec8019278615876146a9e3483bf06a658993",
+        "participants": [
+          3,
+          5,
+          12,
+          14,
+          28,
+          30,
+          35,
+          36,
+          38,
+          39,
+          42,
+          46,
+          49
+        ]
+      }
+    },
+    {
+      "inner_folds": [
+        {
+          "fold": 0,
+          "train": {
+            "n_origins": 22567,
+            "origin_ids_sha256": "26250b98c63076ea9aa2da2544c479aa09ca7991ebbf7a62942329f3bd060716",
+            "participants": [
+              5,
+              12,
+              28,
+              30,
+              36,
+              38,
+              42,
+              46
+            ]
+          },
+          "validation": {
+            "n_origins": 14092,
+            "origin_ids_sha256": "61a48eafde1c68ead0bb64e56b98bdafa7c8d898aa7d8cbe6953db5e6519213c",
+            "participants": [
+              3,
+              14,
+              35,
+              39,
+              47
+            ]
+          }
+        },
+        {
+          "fold": 1,
+          "train": {
+            "n_origins": 25339,
+            "origin_ids_sha256": "5af7960dc37bc4cb49ec191021aada358c427b26fe13d8850a513c3ae41f57fe",
+            "participants": [
+              3,
+              12,
+              14,
+              30,
+              35,
+              38,
+              39,
+              46,
+              47
+            ]
+          },
+          "validation": {
+            "n_origins": 11320,
+            "origin_ids_sha256": "cccefed6186d91dbe91ce4a1bbec68342ca6d6fe2270530d332dc7ec8fbc6ba0",
+            "participants": [
+              5,
+              28,
+              36,
+              42
+            ]
+          }
+        },
+        {
+          "fold": 2,
+          "train": {
+            "n_origins": 25412,
+            "origin_ids_sha256": "5fa7d006ceb36be3f31a37d40a6d597060161457c53e0ac7edaf98e47c6017a6",
+            "participants": [
+              3,
+              5,
+              14,
+              28,
+              35,
+              36,
+              39,
+              42,
+              47
+            ]
+          },
+          "validation": {
+            "n_origins": 11247,
+            "origin_ids_sha256": "ee947fa92f867e423272afb20d523bc70675a2095ec8525e12e96db57fd01235",
+            "participants": [
+              12,
+              30,
+              38,
+              46
+            ]
+          }
+        }
+      ],
+      "outer_fold": "holdout_049",
+      "test": {
+        "n_origins": 2837,
+        "origin_ids_sha256": "c1b944bc2b79e2de890d7987a5dcd38a2513d6aaeb3551bf245ab137baf970d4",
+        "participants": [
+          49
+        ]
+      },
+      "train": {
+        "n_origins": 36659,
+        "origin_ids_sha256": "9b39809636ca1e524a008d34f4f9f2f3da29521d26d2ae86a4f78aba3fe85a15",
+        "participants": [
+          3,
+          5,
+          12,
+          14,
+          28,
+          30,
+          35,
+          36,
+          38,
+          39,
+          42,
+          46,
+          47
+        ]
+      }
+    }
+  ],
+  "inner_scheme": "3-fold sorted participant round-robin",
+  "outer_scheme": "LOPO",
+  "protocol": "stage2-v1",
+  "shared_paired_origins": true
+}

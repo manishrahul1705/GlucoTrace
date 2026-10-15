@@ -1,0 +1,268 @@
+{
+  "baseline": {
+    "accepted_ranges": {
+      "age": [
+        18,
+        69
+      ],
+      "bmi": [
+        20.69,
+        49.09
+      ],
+      "fasting_glucose": [
+        79,
+        218
+      ],
+      "hba1c": [
+        4.6,
+        8.5
+      ]
+    },
+    "actual_available_at": null,
+    "availability_status": "ASSUMPTION: selected screening results known before evaluation; actual result times unknown",
+    "columns": {
+      "age": "Age",
+      "bmi": "BMI",
+      "fasting_glucose": "Fasting GLU - PDL (Lab)",
+      "hba1c": "A1c PDL (Lab)"
+    },
+    "source_row_convention": "1-based data row, excludes header; no synthetic EHR",
+    "unit_resolution": "HbA1c operational percent follows paper Methods group definitions, despite dictionary mmol/mol conflict; no numerical conversion",
+    "units": {
+      "age": "years",
+      "bmi": "kg/m^2",
+      "fasting_glucose": "mg/dL",
+      "hba1c": "percent"
+    }
+  },
+  "causal_certification": false,
+  "dataset": {
+    "name": "CGMacros",
+    "provenance_manifest": "reports/stage1/provenance_manifest.json",
+    "provenance_sha256": "b9006433b4386b2524e0c2d5b97bb6e1c6eb821013eacf63823145ad68c2da73",
+    "source": "PhysioNet",
+    "version": "1.0.0"
+  },
+  "evaluation": {
+    "inner": {
+      "assignment": "sorted outer-training IDs round-robin modulo 3; no random windows",
+      "n_folds": 3
+    },
+    "outer": "leave-one-participant-out",
+    "primary_reporting_metric": "equally weighted outer-test participant MAE",
+    "primary_selection_metric": "equally weighted validation-participant MAE",
+    "secondary_metrics": [
+      "equally weighted participant RMSE",
+      "window-weighted MAE",
+      "window-weighted RMSE",
+      "per-participant errors",
+      "persistence-relative and trend-relative improvement"
+    ],
+    "test_retuning": "forbidden; report worse fusion honestly; no Stage 2 predictions",
+    "uncertainty": "paired participant bootstrap of per-person deltas, seed 20261015, 2000 resamples; exploratory with n=14"
+  },
+  "event": {
+    "confirmation_interval": "[s,s+14] inclusive",
+    "independence": "operational observed recovery only; not statistical independence",
+    "max_label_information_end_offset_minutes": 44,
+    "negative_requirement": "all future cells (t,t+44] valid, no confirmed qualifying onset",
+    "onset_interval": "(t,t+30]",
+    "onset_recovery_interval": "inclusive [s-30,s-1]",
+    "operator": ">",
+    "origin_recovery_interval": "inclusive [t-29,t], valid <=threshold",
+    "positive_information_end": "earliest confirmed qualifying onset +14 minutes",
+    "recovery_cells": 30,
+    "sustained_cells": 15,
+    "thresholds_mg_dl": [
+      180,
+      250
+    ],
+    "unknown_policy": "censor if no known positive and any future cell required by conservative 44-minute observation policy unavailable"
+  },
+  "features": {
+    "baseline_feature_order": [
+      "age",
+      "bmi",
+      "hba1c",
+      "fasting_glucose"
+    ],
+    "imputation": "none",
+    "lag_minutes": [
+      0,
+      5,
+      10,
+      15,
+      20,
+      25,
+      30,
+      35,
+      40,
+      45,
+      50,
+      55,
+      60
+    ],
+    "prohibited": [
+      "participant_id",
+      "source_row",
+      "future glucose",
+      "full-trace statistics",
+      "meals",
+      "activity",
+      "HR",
+      "microbiome",
+      "lipids",
+      "fingersticks"
+    ],
+    "rolling_endpoints": "inclusive [t-W,t], W+1 samples",
+    "rolling_minutes": [
+      15,
+      30,
+      60
+    ],
+    "scaling_fitted_now": false,
+    "shared_eligibility": true,
+    "slope_formula": "OLS slope sum((x-xbar)*(g-gbar))/sum((x-xbar)^2); x elapsed minutes; mg/dL/min",
+    "slope_minutes": [
+      15,
+      30
+    ],
+    "std_ddof": 0
+  },
+  "freeze_type": "versioned local checkpoint; not external preregistration",
+  "history_endpoints": "inclusive [t-60,t], 61 one-minute cells",
+  "history_minutes": 60,
+  "horizon_minutes": 30,
+  "issue_grid_anchor": "first parsed participant timestamp, not first valid glucose; five-minute sampling is not native-observation recovery",
+  "issue_spacing_minutes": {
+    "primary": 5,
+    "reconciliation": 1
+  },
+  "personalization": {
+    "anchor": "first valid Dexcom timestamp",
+    "calibration_elapsed_hours": 48,
+    "calibration_interval": "[first_valid, first_valid+48h)",
+    "calibration_origin_rule": "history_start>=first_valid AND target_time<boundary",
+    "causal_certification": false,
+    "evaluation_origin_rule": "history_start>=boundary; regression target exact valid",
+    "event_calibration_rule": "max_label_information_end<boundary",
+    "later_adapter": "single median residual offset on calibration labels from an otherwise participant-excluded frozen base model; do not fit now",
+    "min_calibration_origins": 100,
+    "min_later_evaluation_origins": 100,
+    "min_valid_calibration_coverage": 0.8
+  },
+  "population": {
+    "eligibility": "finite in-source-range baseline and at least one complete-history/valid-exact-target origin",
+    "expected_t2d_ids": [
+      3,
+      5,
+      12,
+      14,
+      28,
+      30,
+      35,
+      36,
+      38,
+      39,
+      42,
+      46,
+      47,
+      49
+    ],
+    "rule": "A1c PDL (Lab) > 6.4, operational percent per original paper; no independent clinical diagnosis inferred",
+    "training": "T2D-only"
+  },
+  "protocol_version": "stage2-v1",
+  "sensor": "Dexcom GL",
+  "stage3_methods": {
+    "budget_symmetry": "same 4 ridge and 4 boosting candidates, same inner folds and paired origins for each variant",
+    "feature_variants": [
+      "sensor_only",
+      "sensor_plus_baseline"
+    ],
+    "hist_gradient_boosting": {
+      "budget_per_variant": 4,
+      "candidates": [
+        {
+          "early_stopping": false,
+          "l2_regularization": 1.0,
+          "learning_rate": 0.05,
+          "max_iter": 100,
+          "max_leaf_nodes": 7,
+          "min_samples_leaf": 20,
+          "random_state": 20261015
+        },
+        {
+          "early_stopping": false,
+          "l2_regularization": 1.0,
+          "learning_rate": 0.05,
+          "max_iter": 100,
+          "max_leaf_nodes": 15,
+          "min_samples_leaf": 20,
+          "random_state": 20261015
+        },
+        {
+          "early_stopping": false,
+          "l2_regularization": 1.0,
+          "learning_rate": 0.1,
+          "max_iter": 100,
+          "max_leaf_nodes": 7,
+          "min_samples_leaf": 20,
+          "random_state": 20261015
+        },
+        {
+          "early_stopping": false,
+          "l2_regularization": 1.0,
+          "learning_rate": 0.1,
+          "max_iter": 100,
+          "max_leaf_nodes": 15,
+          "min_samples_leaf": 20,
+          "random_state": 20261015
+        }
+      ],
+      "imputation": "none",
+      "scaler": "none"
+    },
+    "persistence": {
+      "bounded": false,
+      "formula": "g(t)"
+    },
+    "prediction_bounds": "unbounded for all methods; record out-of-range predictions later, never clip to target range",
+    "ridge": {
+      "alpha": [
+        0.1,
+        1,
+        10,
+        100
+      ],
+      "budget_per_variant": 4,
+      "fit_intercept": true,
+      "imputation": "none",
+      "scaler": "StandardScaler fit only inner-training; refit only outer-training after selection"
+    },
+    "tie_break": "candidate order in config; exact mean MAE ties pick earliest",
+    "trend": {
+      "bounded": false,
+      "formula": "g(t)+30*slope_OLS([t-15,t])",
+      "lookback_minutes": 15
+    }
+  },
+  "status": {
+    "causal_live_equivalent": "NOT ESTABLISHED",
+    "commercial_reuse": "not cleared under audited NC grant; discrepancy unresolved",
+    "local_retrospective_preparation": "permitted noncommercial local preparation under recorded scope; purpose must remain consistent",
+    "public_competition_release": "UNRESOLVED"
+  },
+  "task": "retrospective_released_signal_regression",
+  "timestamps": {
+    "duplicates": "reject participant input; no aggregation",
+    "nonmonotonic": "reject participant input; no silent sorting",
+    "off_minute_grid": "reject; no nearest matching",
+    "parse_failures": "reject participant input",
+    "timezone": "unknown; preserve shifted naive event times"
+  },
+  "valid_glucose_mg_dl": [
+    40,
+    400
+  ]
+}

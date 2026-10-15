@@ -1,0 +1,29 @@
+{
+  "all_input_hashes_match": true,
+  "baseline_unit_status": "operational percent per original paper; dictionary conflict retained",
+  "causal_certification": false,
+  "eligible_participants": [
+    3,
+    5,
+    12,
+    14,
+    28,
+    30,
+    35,
+    36,
+    38,
+    39,
+    42,
+    46,
+    47,
+    49
+  ],
+  "models_trained": false,
+  "n_combined_features": 25,
+  "n_sensor_features": 21,
+  "paired_origins_1min": 197475,
+  "paired_primary_origins_5min": 39496,
+  "predictions_calculated": false,
+  "public_competition_release": "UNRESOLVED",
+  "task": "retrospective_released_signal_regression"
+}

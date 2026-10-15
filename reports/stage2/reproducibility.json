@@ -1,0 +1,15 @@
+{
+  "compared_files": 115,
+  "config_and_split_hashes": {
+    "configs/stage2_protocol.json": "2cb9be37042bbb6ea4b2a5d233c3d8f9f8bd89a0f11414bbf12b3ee200cd5abf",
+    "reports/stage2/split_manifest.json": "6fbc950407acf1f1a21f17f70ec4c497ac3a55c04805127e68e65a6c713321cd"
+  },
+  "feature_tables": {
+    "data/processed/stage2/sensor_only.csv": "aff438a00dfea96f3564ce3e28bf4360204cc106d8422f2fa413ccc62f85d9de",
+    "data/processed/stage2/sensor_plus_baseline.csv": "401302b33b56da9a6b4c49b9b59cc966119d32a6a45d6a34e9c8d29714d60bea"
+  },
+  "first_sha256": "029b530f7616c50fe634f1c695e25753b4041410ae611cfe7fd6019bc6c0147c",
+  "passed": true,
+  "second_sha256": "029b530f7616c50fe634f1c695e25753b4041410ae611cfe7fd6019bc6c0147c",
+  "timestamps_and_logs_excluded": true
+}

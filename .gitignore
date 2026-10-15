@@ -1,0 +1,100 @@
+# Python environment and bytecode
+.venv/
+env/
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Raw and processed health data
+data/
+sources/
+*.csv.gz
+*.parquet
+*.feather
+
+# Model outputs, per-origin predictions, and weights
+*predictions/
+test_predictions.csv
+*.pkl
+*.joblib
+*.pt
+*.onnx
+*.bin
+
+# Participant traces and source-derived images
+*.png
+*.jpg
+*.jpeg
+*.svg
+reports/stage1/figures/
+reports/stage3/figures/
+reports/stage3_remediation/figures/
+
+# Participant-level derived tables with unresolved sharing permission
+reports/stage3_remediation/per_participant_metrics.csv
+reports/stage3/
+docs/stage1/*.csv
+!docs/stage1/source_register.csv
+
+# Archives, review ZIPs, and local backups
+archive/
+*.zip
+*.tar.gz
+*.tgz
+*.tmp
+*.bak
+*.preparing
+*.log
+reports/**/*.log
+
+# Internal review handoffs and developer scratch files
+STAGE3_HANDOFF_FOR_REVIEW.md
+STAGE3_REMEDIATION_HANDOFF_FOR_REVIEW.md
+HANDOFF_MANIFEST.json
+README-stage2.md
+START_HERE_WINDOWS.md
+scratch/
+.system_generated/
+
+# Historical stage 1 audit and packaging tools
+scripts/audit_dataset.py
+scripts/audit_extras.py
+scripts/build_stage1_docs.py
+scripts/build_stage2_docs.py
+scripts/package_stage1.py
+scripts/verify_audit.py
+
+# Internal audit notes, interviews, and superseded summaries
+docs/stage1/artifact_map.md
+docs/stage1/clarification_questions.md
+docs/stage1/executive_summary.md
+docs/stage1/schema_issues.md
+docs/stage1/stage2_recommendation.md
+docs/stage2/artifact_map.md
+docs/stage2/clarification_questions.md
+docs/stage2/executive_summary.md
+docs/stage2/stage1_reconciliation.md
+docs/stage2/stage3_handoff.md
+docs/stage2/test_results.txt
+docs/stage3/results.md
+
+# Intermediate audit artifacts and package manifests
+reports/stage1/archive_inventory.json
+reports/stage1/audit_results.json
+reports/stage1/execution_record.md
+reports/stage1/figshare_archive_inventory.json
+reports/stage1/joins.json
+reports/stage1/package_manifest.json
+reports/stage1/source_capture_manifest.json
+reports/stage1/supplementary_audit.json
+reports/stage1/verification.json
+reports/stage2/environment.json
+reports/stage2/execution_record.md
+reports/stage2/review_package_manifest.json
+reports/stage3_remediation/review_package_manifest.json
+
+# Sensitive environment configuration
+.env
+.env.*
+!.env.example

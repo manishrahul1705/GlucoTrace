@@ -1,0 +1,93 @@
+{
+  "prediction_differences": {
+    "persistence": {
+      "max_abs_diff": 0.0,
+      "mean_abs_diff": 0.0,
+      "identical_within_1e-6": true
+    },
+    "trend": {
+      "max_abs_diff": 0.0,
+      "mean_abs_diff": 0.0,
+      "identical_within_1e-6": true
+    },
+    "ridge_sensor_only": {
+      "max_abs_diff": 0.0,
+      "mean_abs_diff": 0.0,
+      "identical_within_1e-6": true
+    },
+    "ridge_sensor_plus_baseline": {
+      "max_abs_diff": 0.0,
+      "mean_abs_diff": 0.0,
+      "identical_within_1e-6": true
+    },
+    "hist_gradient_boosting_sensor_only": {
+      "max_abs_diff": 0.0,
+      "mean_abs_diff": 0.0,
+      "identical_within_1e-6": true
+    },
+    "hist_gradient_boosting_sensor_plus_baseline": {
+      "max_abs_diff": 0.0,
+      "mean_abs_diff": 0.0,
+      "identical_within_1e-6": true
+    }
+  },
+  "candidate_selections_identical": true,
+  "candidate_selection_differences": [],
+  "metric_comparisons": [
+    {
+      "method": "persistence",
+      "orig_equal_person_mae": 15.1517,
+      "rem_equal_person_mae": 15.151653582764329,
+      "mae_diff": -4.6417235671114554e-05,
+      "orig_equal_person_rmse": 22.8666,
+      "rem_equal_person_rmse": 22.866586767737747,
+      "rmse_diff": -1.3232262251250404e-05
+    },
+    {
+      "method": "trend",
+      "orig_equal_person_mae": 20.4107,
+      "rem_equal_person_mae": 20.41070631703972,
+      "mae_diff": 6.317039719760942e-06,
+      "orig_equal_person_rmse": 30.133,
+      "rem_equal_person_rmse": 30.133012196016715,
+      "rmse_diff": 1.2196016715648739e-05
+    },
+    {
+      "method": "ridge_sensor_only",
+      "orig_equal_person_mae": 13.4963,
+      "rem_equal_person_mae": 13.49632593502922,
+      "mae_diff": 2.5935029221102468e-05,
+      "orig_equal_person_rmse": 19.8716,
+      "rem_equal_person_rmse": 19.871621539668247,
+      "rmse_diff": 2.1539668246361998e-05
+    },
+    {
+      "method": "ridge_sensor_plus_baseline",
+      "orig_equal_person_mae": 13.5528,
+      "rem_equal_person_mae": 13.552781637705166,
+      "mae_diff": -1.836229483309637e-05,
+      "orig_equal_person_rmse": 19.7227,
+      "rem_equal_person_rmse": 19.72271401775143,
+      "rmse_diff": 1.4017751428951897e-05
+    },
+    {
+      "method": "hist_gradient_boosting_sensor_only",
+      "orig_equal_person_mae": 14.1121,
+      "rem_equal_person_mae": 14.112092785800128,
+      "mae_diff": -7.214199872151994e-06,
+      "orig_equal_person_rmse": 20.7447,
+      "rem_equal_person_rmse": 20.74468541234042,
+      "rmse_diff": -1.4587659581621892e-05
+    },
+    {
+      "method": "hist_gradient_boosting_sensor_plus_baseline",
+      "orig_equal_person_mae": 14.4865,
+      "rem_equal_person_mae": 14.48648896197645,
+      "mae_diff": -1.103802354940342e-05,
+      "orig_equal_person_rmse": 20.9452,
+      "rem_equal_person_rmse": 20.945179071518076,
+      "rmse_diff": -2.0928481923476738e-05
+    }
+  ],
+  "conclusion": "The remediation run preserved the exact scientific experiment. All candidate selections are identical. All predictions match within numerical precision. Slight sub-decimal metric differences reflect unrounded float64 precision retention in place of intermediate 4-decimal truncation."
+}

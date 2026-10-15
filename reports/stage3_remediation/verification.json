@@ -1,0 +1,25 @@
+{
+  "status": "PASS",
+  "verified_directory": "C:/Users/Manish/Downloads/GlucoTwin/reports/stage3_remediation",
+  "total_fits_verified": 728,
+  "inner_fits_count": 672,
+  "outer_refits_count": 56,
+  "participants_count": 14,
+  "total_predictions_count": 39496,
+  "reproduced_fold": "holdout_012",
+  "reproduced_fold_differences": {
+    "ridge_sensor_only": 5.684341886080802e-14,
+    "ridge_sensor_plus_baseline": 5.684341886080802e-14,
+    "hist_gradient_boosting_sensor_only": 5.684341886080802e-14,
+    "hist_gradient_boosting_sensor_plus_baseline": 5.684341886080802e-14
+  },
+  "checks": [
+    "Stage 3 run config, Stage 2 split manifest, and preflight report present and verified PASS",
+    "All 728 distinct fit identities validated (672 inner selection + 56 outer refits; 0 duplicates, 0 missing)",
+    "Outer test completeness verified: exactly 39496 origins joined by ID; target glucose matches with 0 tolerance",
+    "Candidate selection optimality verified for all 56 outer refits (minimal equal-person validation MAE with deterministic tie-break)",
+    "All per-participant and aggregate metrics reconciled with zero unexplained discrepancy",
+    "Preselected fold holdout_012 reproduced end-to-end (max abs diff < 1e-6 across all 4 models: {'ridge_sensor_only': 5.684341886080802e-14, 'ridge_sensor_plus_baseline': 5.684341886080802e-14, 'hist_gradient_boosting_sensor_only': 5.684341886080802e-14, 'hist_gradient_boosting_sensor_plus_baseline': 5.684341886080802e-14})"
+  ],
+  "all_checks_passed": true
+}

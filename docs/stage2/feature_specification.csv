@@ -1,0 +1,26 @@
+name,order,variant,units,endpoints,std_ddof,availability,learned_transform
+glucose_lag_0m,0,both,mg/dL,"lag exact or trailing inclusive [t-W,t]",,retrospective event-time constraint only; upstream unknown,none
+glucose_lag_5m,1,both,mg/dL,"lag exact or trailing inclusive [t-W,t]",,retrospective event-time constraint only; upstream unknown,none
+glucose_lag_10m,2,both,mg/dL,"lag exact or trailing inclusive [t-W,t]",,retrospective event-time constraint only; upstream unknown,none
+glucose_lag_15m,3,both,mg/dL,"lag exact or trailing inclusive [t-W,t]",,retrospective event-time constraint only; upstream unknown,none
+glucose_lag_20m,4,both,mg/dL,"lag exact or trailing inclusive [t-W,t]",,retrospective event-time constraint only; upstream unknown,none
+glucose_lag_25m,5,both,mg/dL,"lag exact or trailing inclusive [t-W,t]",,retrospective event-time constraint only; upstream unknown,none
+glucose_lag_30m,6,both,mg/dL,"lag exact or trailing inclusive [t-W,t]",,retrospective event-time constraint only; upstream unknown,none
+glucose_lag_35m,7,both,mg/dL,"lag exact or trailing inclusive [t-W,t]",,retrospective event-time constraint only; upstream unknown,none
+glucose_lag_40m,8,both,mg/dL,"lag exact or trailing inclusive [t-W,t]",,retrospective event-time constraint only; upstream unknown,none
+glucose_lag_45m,9,both,mg/dL,"lag exact or trailing inclusive [t-W,t]",,retrospective event-time constraint only; upstream unknown,none
+glucose_lag_50m,10,both,mg/dL,"lag exact or trailing inclusive [t-W,t]",,retrospective event-time constraint only; upstream unknown,none
+glucose_lag_55m,11,both,mg/dL,"lag exact or trailing inclusive [t-W,t]",,retrospective event-time constraint only; upstream unknown,none
+glucose_lag_60m,12,both,mg/dL,"lag exact or trailing inclusive [t-W,t]",,retrospective event-time constraint only; upstream unknown,none
+glucose_mean_15m,13,both,mg/dL,"lag exact or trailing inclusive [t-W,t]",,retrospective event-time constraint only; upstream unknown,none
+glucose_std_15m,14,both,mg/dL,"lag exact or trailing inclusive [t-W,t]",0,retrospective event-time constraint only; upstream unknown,none
+glucose_mean_30m,15,both,mg/dL,"lag exact or trailing inclusive [t-W,t]",,retrospective event-time constraint only; upstream unknown,none
+glucose_std_30m,16,both,mg/dL,"lag exact or trailing inclusive [t-W,t]",0,retrospective event-time constraint only; upstream unknown,none
+glucose_mean_60m,17,both,mg/dL,"lag exact or trailing inclusive [t-W,t]",,retrospective event-time constraint only; upstream unknown,none
+glucose_std_60m,18,both,mg/dL,"lag exact or trailing inclusive [t-W,t]",0,retrospective event-time constraint only; upstream unknown,none
+glucose_slope_15m,19,both,mg/dL/min,"lag exact or trailing inclusive [t-W,t]",,retrospective event-time constraint only; upstream unknown,none
+glucose_slope_30m,20,both,mg/dL/min,"lag exact or trailing inclusive [t-W,t]",,retrospective event-time constraint only; upstream unknown,none
+age,21,sensor_plus_baseline,years,"screening baseline, not full-trace derived",,ASSUMPTION: baseline results known before evaluation; actual timestamp unknown,none
+bmi,22,sensor_plus_baseline,kg/m^2,"screening baseline, not full-trace derived",,ASSUMPTION: baseline results known before evaluation; actual timestamp unknown,none
+hba1c,23,sensor_plus_baseline,percent,"screening baseline, not full-trace derived",,ASSUMPTION: baseline results known before evaluation; actual timestamp unknown,none
+fasting_glucose,24,sensor_plus_baseline,mg/dL,"screening baseline, not full-trace derived",,ASSUMPTION: baseline results known before evaluation; actual timestamp unknown,none

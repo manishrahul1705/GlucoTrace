@@ -1,0 +1,60 @@
+{
+  "status": "PASS",
+  "checks": {
+    "stage2_protocol_hash": {
+      "expected": "2cb9be37042bbb6ea4b2a5d233c3d8f9f8bd89a0f11414bbf12b3ee200cd5abf",
+      "observed": "2cb9be37042bbb6ea4b2a5d233c3d8f9f8bd89a0f11414bbf12b3ee200cd5abf",
+      "pass": true
+    },
+    "split_manifest_hash": {
+      "expected": "6fbc950407acf1f1a21f17f70ec4c497ac3a55c04805127e68e65a6c713321cd",
+      "observed": "6fbc950407acf1f1a21f17f70ec4c497ac3a55c04805127e68e65a6c713321cd",
+      "pass": true
+    },
+    "source_provenance": {
+      "expected": "b9006433b4386b2524e0c2d5b97bb6e1c6eb821013eacf63823145ad68c2da73",
+      "observed": "b9006433b4386b2524e0c2d5b97bb6e1c6eb821013eacf63823145ad68c2da73",
+      "pass": true
+    },
+    "prepared_feature_hashes": {
+      "sensor_only": {
+        "expected": "aff438a00dfea96f3564ce3e28bf4360204cc106d8422f2fa413ccc62f85d9de",
+        "observed": "aff438a00dfea96f3564ce3e28bf4360204cc106d8422f2fa413ccc62f85d9de",
+        "pass": true
+      },
+      "sensor_plus_baseline": {
+        "expected": "401302b33b56da9a6b4c49b9b59cc966119d32a6a45d6a34e9c8d29714d60bea",
+        "observed": "401302b33b56da9a6b4c49b9b59cc966119d32a6a45d6a34e9c8d29714d60bea",
+        "pass": true
+      }
+    },
+    "expected_participants": {
+      "expected_count": 14,
+      "observed_count": 14,
+      "pass": true
+    },
+    "origin_uniqueness": {
+      "expected_origins": 39496,
+      "observed_origins": 39496,
+      "pass": true
+    },
+    "paired_origins_and_targets": {
+      "pass": true
+    },
+    "timestamp_spacing": {
+      "history_delta_min": 60,
+      "target_horizon_min": 30,
+      "pass": true
+    },
+    "feature_columns_and_finiteness": {
+      "sensor_features_count": 21,
+      "combined_features_count": 25,
+      "pass": true
+    },
+    "prohibited_metadata_excluded": {
+      "pass": true
+    }
+  },
+  "timestamp": "2026-10-15T11:19:25Z",
+  "execution_policy": "restart_only"
+}

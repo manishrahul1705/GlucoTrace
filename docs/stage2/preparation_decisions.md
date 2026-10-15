@@ -1,0 +1,7 @@
+# Decisions recorded before final preparation
+RECOMMENDATION: retain Stage 1 task, participant rule, sensor and validity bounds. No default population/window amendment is planned.
+VERIFIED SOURCE: original paper Methods explicitly prints HbA1c thresholds in percent. Operational schema therefore uses percent without converting raw values; the conflicting dictionary label remains unresolved with maintainers. Baseline actual availability remains unknown; baseline-before-evaluation is an ASSUMPTION.
+RECOMMENDATION: inclusive duration windows [t-W,t] contain W+1 cells; population standard deviation ddof=0 and OLS slope use all one-minute history cells. Deterministic five-minute issues are anchored to first parsed timestamp and do not identify native observations.
+RECOMMENDATION: three inner participant folds, sorted round-robin, with four predeclared candidates per learned family/feature variant. No model fitting now.
+RECOMMENDATION: at-risk event origin requires 30 observed non-high cells through t. Negatives require a conservative complete 44-minute future interval. Known positive can be confirmed earlier; both actual decision-information end and maximum horizon-support end are stored. Unknown endpoints are censored.
+RECOMMENDATION: personalization adequacy is >=80% valid glucose in first 48 elapsed hours, >=100 paired primary-grid calibration origins and >=100 later origins. These are research preparation gates, not clinical criteria.

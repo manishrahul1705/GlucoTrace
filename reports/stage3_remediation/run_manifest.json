@@ -1,0 +1,51 @@
+{
+  "timestamp": "2026-10-15T12:08:29Z",
+  "total_duration_sec": 2944.19,
+  "execution_policy": "restart_only",
+  "fits_planned": 728,
+  "fits_completed": 728,
+  "outer_folds": 14,
+  "participants": [
+    3,
+    5,
+    12,
+    14,
+    28,
+    30,
+    35,
+    36,
+    38,
+    39,
+    42,
+    46,
+    47,
+    49
+  ],
+  "total_paired_origins": 39496,
+  "methods_evaluated": [
+    "persistence",
+    "trend",
+    "ridge_sensor_only",
+    "ridge_sensor_plus_baseline",
+    "hist_gradient_boosting_sensor_only",
+    "hist_gradient_boosting_sensor_plus_baseline"
+  ],
+  "precision_retained": "float64_full",
+  "files_generated": [
+    "reports/stage3_remediation/preflight_report.json",
+    "reports/stage3_remediation/fit_ledger.csv",
+    "reports/stage3_remediation/inner_selection_scores.csv",
+    "reports/stage3_remediation/selected_candidates.csv",
+    "reports/stage3_remediation/per_participant_metrics.csv",
+    "reports/stage3_remediation/aggregate_metrics.csv",
+    "reports/stage3_remediation/fusion_comparison.csv",
+    "reports/stage3_remediation/bootstrap_summary.json",
+    "reports/stage3_remediation/execution_record.md",
+    "reports/stage3_remediation/environment.json",
+    "reports/stage3_remediation/figures/per_participant_mae.png",
+    "reports/stage3_remediation/figures/paired_fusion_differences.png",
+    "reports/stage3_remediation/figures/aggregate_metrics.png",
+    "reports/stage3_remediation/figures/representative_forecast_traces.png",
+    "data/processed/stage3_remediation/predictions/test_predictions.csv"
+  ]
+}
