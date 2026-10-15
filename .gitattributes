@@ -1,0 +1,6 @@
+# Enforce deterministic LF line endings across all platforms for cryptographic reproducibility
+* text=auto eol=lf
+*.json text eol=lf
+*.csv text eol=lf
+*.py text eol=lf
+*.md text eol=lf

@@ -141,7 +141,8 @@ class TestStage4Evaluation(unittest.TestCase):
             for rel_path, expected_h in list(real_hashes.items())[:1]:
                 target = Path(__file__).resolve().parents[1] / rel_path
                 if target.exists():
-                    actual_h = hashlib.sha256(target.read_bytes()).hexdigest()
+                    raw = target.read_bytes().replace(b'\r\n', b'\n')
+                    actual_h = hashlib.sha256(raw).hexdigest()
                     self.assertEqual(actual_h, expected_h)
                     # Simulated tamper
                     tampered_h = '0' * 64
