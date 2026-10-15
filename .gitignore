@@ -33,6 +33,7 @@ reports/stage3_remediation/figures/
 
 # Participant-level derived tables with unresolved sharing permission
 reports/stage3_remediation/per_participant_metrics.csv
+reports/stage4/per_participant_metrics.csv
 reports/stage3/
 docs/stage1/*.csv
 !docs/stage1/source_register.csv
@@ -51,6 +52,7 @@ reports/**/*.log
 # Internal review handoffs and developer scratch files
 STAGE3_HANDOFF_FOR_REVIEW.md
 STAGE3_REMEDIATION_HANDOFF_FOR_REVIEW.md
+STAGE4_HANDOFF_FOR_REVIEW.md
 HANDOFF_MANIFEST.json
 README-stage2.md
 START_HERE_WINDOWS.md

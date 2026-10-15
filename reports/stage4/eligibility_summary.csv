@@ -1,0 +1,15 @@
+participant_id,calibration_valid_minutes,calibration_expected_minutes,calibration_valid_coverage,paired_calibration_origins_5min,paired_later_origins_5min,purged_boundary_origins_5min,calibration_adequate,later_adequate,protocol_eligible
+3,2865,2880,0.9947916666666666,547,2261,9,True,True,True
+5,2880,2880,1.0,558,2261,18,True,True,True
+12,2875,2880,0.9982638888888888,543,2261,18,True,True,True
+14,2880,2880,1.0,558,2261,18,True,True,True
+28,2880,2880,1.0,558,2233,18,True,True,True
+30,2880,2880,1.0,558,2230,18,True,True,True
+35,2875,2880,0.9982638888888888,543,2261,18,True,True,True
+36,2880,2880,1.0,558,2261,18,True,True,True
+38,2875,2880,0.9982638888888888,543,2261,18,True,True,True
+39,2880,2880,1.0,558,2261,18,True,True,True
+42,2880,2880,1.0,558,2261,18,True,True,True
+46,2850,2880,0.9895833333333331,526,2261,10,True,True,True
+47,2875,2880,0.9982638888888888,543,2218,18,True,True,True
+49,2880,2880,1.0,558,2261,18,True,True,True

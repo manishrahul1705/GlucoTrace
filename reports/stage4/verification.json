@@ -1,0 +1,67 @@
+{
+  "timestamp": "2026-10-15T14:51:20Z",
+  "overall_verdict": "PASS",
+  "gates": {
+    "gate1_input_hashes": {
+      "status": "PASS",
+      "details": {
+        "configs/stage2_protocol.json": "MATCH",
+        "configs/stage3_run.json": "MATCH",
+        "docs/stage2/personalization_protocol.md": "MATCH",
+        "reports/stage2/split_manifest.json": "MATCH",
+        "reports/stage2/personalization_coverage.csv": "MATCH",
+        "reports/stage3_remediation/selected_candidates.csv": "MATCH",
+        "data/processed/stage2/sensor_only.csv": "MATCH",
+        "data/processed/stage2/sensor_plus_baseline.csv": "MATCH",
+        "data/processed/stage3_remediation/predictions/test_predictions.csv": "MATCH"
+      }
+    },
+    "gate2_participant_eligibility": {
+      "status": "PASS",
+      "n_eligible": 14
+    },
+    "gate3_temporal_partitioning": {
+      "status": "PASS",
+      "calibration_origins": 7709,
+      "later_evaluation_origins": 31552,
+      "purged_boundary_origins": 235,
+      "total_origins": 39496
+    },
+    "gate4_base_model_exclusion": {
+      "status": "PASS",
+      "folds_checked": 14
+    },
+    "gate5_offset_recomputation": {
+      "status": "PASS",
+      "participants_verified": 14
+    },
+    "gate6_adapted_prediction_identity": {
+      "status": "PASS",
+      "rows_verified": 31552
+    },
+    "gate7_origin_joins": {
+      "status": "PASS",
+      "evaluated_origins": 31552
+    },
+    "gate8_metric_recomputation": {
+      "status": "PASS",
+      "max_diff": 3.552713678800501e-15
+    },
+    "gate9_shared_bootstrap": {
+      "status": "PASS",
+      "draw_hash": "af81ab357e83b64b24ddefa2fc2f3e87c2485e02cf43fcab0603816a1b2cadc9"
+    },
+    "gate10_refit_reproduction": {
+      "status": "PASS",
+      "participant_id": 12,
+      "max_diff_sensor_preds": 5.684341886080802e-14,
+      "max_diff_comb_preds": 5.684341886080802e-14,
+      "recomputed_sensor_offset": -4.369777789829868,
+      "recomputed_comb_offset": -5.413627725000595,
+      "later_mae_mg_dl": 10.177252451413176
+    },
+    "gate11_historical_preservation": {
+      "status": "PASS"
+    }
+  }
+}

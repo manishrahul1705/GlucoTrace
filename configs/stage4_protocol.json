@@ -1,0 +1,117 @@
+{
+  "protocol": "stage4-v1",
+  "created_at": "2026-10-15T20:10:00+05:30",
+  "purpose": "Retrospective within-patient median residual adaptation on processed CGMacros signals",
+  "status": "Exploratory retrospective research on previously examined cohort; not live-equivalent; not clinical validation",
+  "cohort": {
+    "population": "Type 2 Diabetes (CGMacros release)",
+    "n_participants": 14,
+    "eligible_participant_ids": [3, 5, 12, 14, 28, 30, 35, 36, 38, 39, 42, 46, 47, 49],
+    "preselected_reproduction_fold": "holdout_012",
+    "preselected_reproduction_participant": 12
+  },
+  "temporal_partition": {
+    "duration_hours": 48,
+    "anchor": "first_valid_Dexcom_timestamp",
+    "boundary": "anchor + 48 elapsed hours",
+    "missing_time_rule": "Elapsed clock time; never compressed to usable hours",
+    "calibration_rule": "history_start >= anchor and target_time < boundary",
+    "later_evaluation_rule": "history_start >= boundary",
+    "purge_rule": "Straddling boundary (history_start < boundary <= target_time) or prior to anchor",
+    "adequacy_gates": {
+      "min_calibration_valid_coverage_ratio": 0.80,
+      "min_calibration_origins": 100,
+      "min_later_origins": 100
+    }
+  },
+  "models": {
+    "methods": [
+      "persistence",
+      "ridge_sensor_only_unadapted",
+      "ridge_sensor_only_adapted",
+      "ridge_sensor_plus_baseline_unadapted",
+      "ridge_sensor_plus_baseline_adapted"
+    ],
+    "base_estimator": "Ridge (L2 regularized linear regression)",
+    "base_estimator_source": "Stage 3 remediation LOPO outer refits with grouped-inner candidate selection",
+    "feature_variants": [
+      "sensor_only",
+      "sensor_plus_baseline"
+    ],
+    "feature_columns": {
+      "sensor_only": [
+        "glucose_lag_0m",
+        "glucose_lag_5m",
+        "glucose_lag_10m",
+        "glucose_lag_15m",
+        "glucose_lag_20m",
+        "glucose_lag_25m",
+        "glucose_lag_30m",
+        "glucose_lag_35m",
+        "glucose_lag_40m",
+        "glucose_lag_45m",
+        "glucose_lag_50m",
+        "glucose_lag_55m",
+        "glucose_lag_60m",
+        "glucose_mean_15m",
+        "glucose_std_15m",
+        "glucose_mean_30m",
+        "glucose_std_30m",
+        "glucose_mean_60m",
+        "glucose_std_60m",
+        "glucose_slope_15m",
+        "glucose_slope_30m"
+      ],
+      "baseline": [
+        "age",
+        "bmi",
+        "hba1c",
+        "fasting_glucose"
+      ]
+    }
+  },
+  "adaptation": {
+    "formula": {
+      "residual": "target_mg_dl - base_prediction",
+      "offset": "median(calibration_residuals)",
+      "adapted_prediction": "base_prediction + offset"
+    },
+    "constraints": {
+      "estimation_data": "Eligible calibration origins strictly before 48h boundary",
+      "later_evaluation_data": "Eligible later origins strictly at or after 48h boundary",
+      "update_frequency": "Single fixed scalar offset per participant; no rolling updates",
+      "clipping": "None; raw float predictions retained",
+      "variant_selection": "No adaptive selection; both sensor-only and combined variants adapted independently"
+    }
+  },
+  "evaluation": {
+    "shared_origins": "All 5 methods evaluated on exact identical paired later-period origin IDs (expected N=31,552)",
+    "primary_metric": "Equally-weighted participant MAE",
+    "secondary_metrics": [
+      "Equally-weighted participant RMSE",
+      "Window-weighted MAE",
+      "Window-weighted RMSE",
+      "Per-participant MAE, RMSE, Mean Signed Error, non-finite count, out-of-range count"
+    ],
+    "delta_convention": "adapted_error - unadapted_error (negative indicates improvement)",
+    "bootstrap": {
+      "n_resamples": 2000,
+      "seed": 20261015,
+      "participant_order": "sorted ascending",
+      "draw_matrix_sharing": "Single (2000, 14) draw index matrix reused across all paired comparisons",
+      "quantile_method": "linear",
+      "alpha": 0.05
+    }
+  },
+  "input_hashes": {
+    "configs/stage2_protocol.json": "2cb9be37042bbb6ea4b2a5d233c3d8f9f8bd89a0f11414bbf12b3ee200cd5abf",
+    "configs/stage3_run.json": "cffe07ae41436b6ee9999ec82019b2b985d2f7261c696a89e7e1d161efb1c4d8",
+    "docs/stage2/personalization_protocol.md": "19747a30690523011cdcaaf27436d6d5efad2ab9d2b13044f250530a05fed49f",
+    "reports/stage2/split_manifest.json": "6fbc950407acf1f1a21f17f70ec4c497ac3a55c04805127e68e65a6c713321cd",
+    "reports/stage2/personalization_coverage.csv": "8ba08df7034fa7a839b1f8c23bbb90a300c3c2e27d466c8dc58bbc38b68dd6e0",
+    "reports/stage3_remediation/selected_candidates.csv": "52891b8169031ac08704ff9772336cdd9db836c9ae04fe70c58348d58194c1b0",
+    "data/processed/stage2/sensor_only.csv": "aff438a00dfea96f3564ce3e28bf4360204cc106d8422f2fa413ccc62f85d9de",
+    "data/processed/stage2/sensor_plus_baseline.csv": "401302b33b56da9a6b4c49b9b59cc966119d32a6a45d6a34e9c8d29714d60bea",
+    "data/processed/stage3_remediation/predictions/test_predictions.csv": "a1f7a8dff5ec2a092fb1b5302dbca7c6ef2b9ba9ee5fec595094b138a419f260"
+  }
+}

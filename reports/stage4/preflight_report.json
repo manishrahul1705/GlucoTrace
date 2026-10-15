@@ -1,0 +1,60 @@
+{
+  "timestamp": "2026-10-15T14:47:44Z",
+  "overall_status": "PASS",
+  "checks": [
+    {
+      "path": "configs/stage2_protocol.json",
+      "status": "PASS",
+      "expected_sha256": "2cb9be37042bbb6ea4b2a5d233c3d8f9f8bd89a0f11414bbf12b3ee200cd5abf",
+      "actual_sha256": "2cb9be37042bbb6ea4b2a5d233c3d8f9f8bd89a0f11414bbf12b3ee200cd5abf"
+    },
+    {
+      "path": "configs/stage3_run.json",
+      "status": "PASS",
+      "expected_sha256": "cffe07ae41436b6ee9999ec82019b2b985d2f7261c696a89e7e1d161efb1c4d8",
+      "actual_sha256": "cffe07ae41436b6ee9999ec82019b2b985d2f7261c696a89e7e1d161efb1c4d8"
+    },
+    {
+      "path": "docs/stage2/personalization_protocol.md",
+      "status": "PASS",
+      "expected_sha256": "19747a30690523011cdcaaf27436d6d5efad2ab9d2b13044f250530a05fed49f",
+      "actual_sha256": "19747a30690523011cdcaaf27436d6d5efad2ab9d2b13044f250530a05fed49f"
+    },
+    {
+      "path": "reports/stage2/split_manifest.json",
+      "status": "PASS",
+      "expected_sha256": "6fbc950407acf1f1a21f17f70ec4c497ac3a55c04805127e68e65a6c713321cd",
+      "actual_sha256": "6fbc950407acf1f1a21f17f70ec4c497ac3a55c04805127e68e65a6c713321cd"
+    },
+    {
+      "path": "reports/stage2/personalization_coverage.csv",
+      "status": "PASS",
+      "expected_sha256": "8ba08df7034fa7a839b1f8c23bbb90a300c3c2e27d466c8dc58bbc38b68dd6e0",
+      "actual_sha256": "8ba08df7034fa7a839b1f8c23bbb90a300c3c2e27d466c8dc58bbc38b68dd6e0"
+    },
+    {
+      "path": "reports/stage3_remediation/selected_candidates.csv",
+      "status": "PASS",
+      "expected_sha256": "52891b8169031ac08704ff9772336cdd9db836c9ae04fe70c58348d58194c1b0",
+      "actual_sha256": "52891b8169031ac08704ff9772336cdd9db836c9ae04fe70c58348d58194c1b0"
+    },
+    {
+      "path": "data/processed/stage2/sensor_only.csv",
+      "status": "PASS",
+      "expected_sha256": "aff438a00dfea96f3564ce3e28bf4360204cc106d8422f2fa413ccc62f85d9de",
+      "actual_sha256": "aff438a00dfea96f3564ce3e28bf4360204cc106d8422f2fa413ccc62f85d9de"
+    },
+    {
+      "path": "data/processed/stage2/sensor_plus_baseline.csv",
+      "status": "PASS",
+      "expected_sha256": "401302b33b56da9a6b4c49b9b59cc966119d32a6a45d6a34e9c8d29714d60bea",
+      "actual_sha256": "401302b33b56da9a6b4c49b9b59cc966119d32a6a45d6a34e9c8d29714d60bea"
+    },
+    {
+      "path": "data/processed/stage3_remediation/predictions/test_predictions.csv",
+      "status": "PASS",
+      "expected_sha256": "a1f7a8dff5ec2a092fb1b5302dbca7c6ef2b9ba9ee5fec595094b138a419f260",
+      "actual_sha256": "a1f7a8dff5ec2a092fb1b5302dbca7c6ef2b9ba9ee5fec595094b138a419f260"
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "protocol": "stage4-v1",
+  "execution_timestamp": "2026-10-15T14:47:44Z",
+  "elapsed_seconds": 0.9095215797424316,
+  "environment": {
+    "platform": "Windows-11-10.0.26300-SP0",
+    "python_version": "3.12.3 (tags/v3.12.3:f6650f9, Apr  9 2024, 14:05:25) [MSC v.1938 64 bit (AMD64)]",
+    "numpy_version": "2.3.5",
+    "pandas_version": "2.2.3"
+  },
+  "cohort_participants": [
+    3,
+    5,
+    12,
+    14,
+    28,
+    30,
+    35,
+    36,
+    38,
+    39,
+    42,
+    46,
+    47,
+    49
+  ],
+  "total_evaluated_origins": 31552,
+  "shared_bootstrap_draw_sha256": "af81ab357e83b64b24ddefa2fc2f3e87c2485e02cf43fcab0603816a1b2cadc9",
+  "generated_files": {
+    "configs/stage4_protocol.json": "b2b0bd75f53dfa09b68afb5bc94bf57ab9189c50310d8106c7f35913af2171b6",
+    "reports/stage4/preflight_report.json": "c51b1c84c5bd14cb17a25193ab70d58fd2905e9daa03746645108722aae61832",
+    "reports/stage4/eligibility_summary.csv": "2a5bffc390528de449e24d5392684fbe2eb9afaedfa350a83d505781b8d1376b",
+    "reports/stage4/per_participant_metrics.csv": "4c7cfb0264a6bcf0fd3cd4db66249e6b9b098c3936c82bec078ae209df26ec48",
+    "reports/stage4/aggregate_metrics.csv": "7910b9f600ce58df6ca5278833d31057cd7dc08d2e2db7ca0b1e8ed52a5cf7d3",
+    "reports/stage4/adaptation_comparison.csv": "8a297610fc9ea7680341ed3c17d7b466df34eebb85d1a7177d9f35ec0dde8ebf",
+    "reports/stage4/bootstrap_summary.json": "f526662c410d388a098310d1a98217a40ec8e0910d24d01fd095a9c3ff09fde1"
+  }
+}
