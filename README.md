@@ -12,11 +12,23 @@ This repository contains the independently authored open-source research codebas
 
 The core scientific inquiry of GlucoTwin is evaluating whether concatenating static patient screening variables to short-term dynamic sensor features improves 30-minute forward glucose extrapolation in unseen individuals, or whether short-term sensor dynamics dominate the forecast horizon.
 
-- **Current Stage**: Stage 3 (Retrospective Forecasting Benchmark) completed.
+- **Current Stage**: Stage 6 local research app implemented and verified with Playwright Chromium. Historical experiments remain frozen.
 - **Current Scope**: Retrospective research on released, processed continuous glucose monitoring data from the PhysioNet CGMacros v1.0.0 cohort.
 - **Evaluation Design**: 14 Leave-One-Participant-Out (LOPO) outer test folds with nested 3-fold grouped inner cross-validation for hyperparameter selection across 39,496 paired 5-minute issue origins.
 
 ---
+
+## Local research dashboard
+
+Start the synthetic-only dashboard (after the setup in [Stage 6 instructions](docs/stage6/README.md)):
+
+```powershell
+.\.venv\Scripts\python.exe scripts/start_stage6.py
+```
+
+Open http://127.0.0.1:15173/. Add `--local` only for private processed-data replay.
+Chromium verification passes at 1440px, 768px and 390px; six synthetic screenshots and actual results are in `reports/stage6/`. This is retrospective/synthetic research,
+not a live sensor connection or clinical tool. No deployment is included.
 
 ## 2. Implemented Components
 
@@ -55,15 +67,16 @@ cd GlucoTwin
 ```powershell
 py -3.12 -m venv .venv
 .\.venv\Scripts\python.exe -m pip install --upgrade pip
-.\.venv\Scripts\python.exe -m pip install -r requirements-stage3.txt
+.\.venv\Scripts\python.exe -m pip install -r requirements-stage6.txt
 ```
 
 ### 3. Run Synthetic Verification Tests (No Data Required)
-The test suite operates entirely in memory using synthetic fixtures. It does not require downloading external datasets:
+The unit suite uses synthetic fixtures and repository integrity checks. It does not require downloading external datasets. Install the Stage 6 dependencies above for the API tests:
 ```powershell
+$env:PYTHONPATH="src"
 .\.venv\Scripts\python.exe -m unittest discover -s tests -p "test_*.py" -v
 ```
-All **46 unit tests** (33 Stage 2 + 13 Stage 3) will execute and pass in under 2 seconds.
+The current full Python suite has **100 tests**; the Stage 6 frontend has **7 separate tests**. See the Stage 6 execution record for actual results and limitations; Chromium browser verification now passes.
 
 ---
 

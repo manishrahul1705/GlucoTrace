@@ -148,7 +148,52 @@ class TestStage4Evaluation(unittest.TestCase):
                     tampered_h = '0' * 64
                     self.assertNotEqual(actual_h, tampered_h)
 
+    def test_signed_error_convention(self):
+        """Verify signed error convention: mean(y_pred - y_true)."""
+        y_true = np.array([100.0, 150.0])
+        # Overpredicting by +10 and +20 -> mean signed error should be +15.0
+        y_pred_high = np.array([110.0, 170.0])
+        metrics_high = compute_point_metrics(y_true, y_pred_high)
+        self.assertEqual(metrics_high['mean_signed_error'], 15.0)
+
+        # Underpredicting by -10 and -20 -> mean signed error should be -15.0
+        y_pred_low = np.array([90.0, 130.0])
+        metrics_low = compute_point_metrics(y_true, y_pred_low)
+        self.assertEqual(metrics_low['mean_signed_error'], -15.0)
+
+    def test_glycemic_slices_computation_and_sparsity(self):
+        """Verify glycemic slicing logic and graceful handling of absent/sparse slices."""
+        from glucotwin.stage4.evaluation import compute_glycemic_slices
+        # Synthetic DataFrame where participant 1 has euglycemia and hyperglycemia,
+        # participant 2 has only euglycemia, and NO participant has hypoglycemia (<70).
+        df = pd.DataFrame([
+            {'participant_id': 1, 'target_mg_dl': 100.0, 'unadapted': 105.0, 'adapted': 102.0},
+            {'participant_id': 1, 'target_mg_dl': 200.0, 'unadapted': 190.0, 'adapted': 195.0},
+            {'participant_id': 2, 'target_mg_dl': 120.0, 'unadapted': 130.0, 'adapted': 125.0},
+        ])
+
+        slices_df = compute_glycemic_slices(df, method='adapted', unadapted_method='unadapted')
+        self.assertEqual(len(slices_df), 3)
+
+        # Hypoglycemia slice should have 0 origins and sparsity_flag=True
+        hypo = slices_df[slices_df['slice_name'].str.startswith('hypoglycemic')].iloc[0]
+        self.assertEqual(hypo['n_origins'], 0)
+        self.assertEqual(hypo['contributing_participants'], 0)
+        self.assertTrue(hypo['sparsity_flag'])
+        self.assertTrue(np.isnan(hypo['equal_person_mae_adapted']))
+
+        # Euglycemia slice should have 2 origins across 2 participants
+        eugly = slices_df[slices_df['slice_name'].str.startswith('euglycemic')].iloc[0]
+        self.assertEqual(eugly['n_origins'], 2)
+        self.assertEqual(eugly['contributing_participants'], 2)
+        self.assertFalse(eugly['sparsity_flag'])
+
+        # Hyperglycemia slice should have 1 origin from 1 participant
+        hyper = slices_df[slices_df['slice_name'].str.startswith('hyperglycemic')].iloc[0]
+        self.assertEqual(hyper['n_origins'], 1)
+        self.assertEqual(hyper['contributing_participants'], 1)
+        self.assertTrue(hyper['sparsity_flag'])
+
 
 if __name__ == '__main__':
     unittest.main()
-

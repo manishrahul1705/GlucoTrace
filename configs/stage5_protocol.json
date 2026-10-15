@@ -1,0 +1,75 @@
+{
+  "protocol": "stage5-v1",
+  "status": "Frozen before Stage 5 evaluation; exploratory retrospective processed-signal research",
+  "scope": "No new selection; both sensor-only Ridge references retained; no default or target-dependent switching",
+  "history_minutes": 60,
+  "history_cells": 61,
+  "horizon_minutes": 30,
+  "observation_cadence_minutes": 1,
+  "issue_cadence_minutes": 5,
+  "issue_anchor": "First parsed timestamp, inherited Stage 2 grid; never first valid timestamp",
+  "partition_anchor": "Predetermined first valid Dexcom timestamp from Stage 2, verified against stream",
+  "partition_rules": {
+    "offset": "history_start >= anchor and target_time < anchor+24h",
+    "calibration": "history_start >= anchor+24h and target_time < anchor+48h",
+    "evaluation": "history_start >= anchor+48h",
+    "purge": "All other origins; target_time equal to either boundary crosses the earlier half-open partition",
+    "support": "Every minute in [issue-60m,issue] valid; exact issue+30m valid for eligibility/scoring. Intermediate future cells are not required by regression.",
+    "missing_time": "Elapsed time retained; no compression"
+  },
+  "adequacy": {
+    "min_offset_origins": 100,
+    "min_interval_calibration_origins": 100,
+    "min_later_eligible_origins": 100,
+    "basis": "Retained existing corrected proposal minimums (not a statistical guarantee); distinct from rank feasibility. No new 80% per-24h gate is inferred from Stage 4's 48h coverage gate. Report per-phase minute coverage locally."
+  },
+  "adaptation": "One fixed median(target-base_prediction), first phase only; new 24h experiment; no later updates",
+  "models": ["sensor_only_unadapted", "sensor_only_offset24h"],
+  "population_models": "Reproduce only frozen selected Ridge outer refits on original outer-training participants; no inner search; verify against stored Stage 3 predictions before evaluation",
+  "interval": {
+    "alphas": ["0.10", "0.05"],
+    "score": "abs(target-prediction), separately per participant and variant",
+    "rank": "Exact rational arithmetic for decimal alpha: k=ceil((n+1)*(1-alpha)); sorted_scores[k-1]",
+    "insufficient": "INSUFFICIENT_CALIBRATION if n<100 or k>n; no capped rank",
+    "nonfinite": "Any non-finite/negative calibration score invalidates calibration with explicit INVALID_CALIBRATION_SCORES cause; never discard and proceed",
+    "endpoints": "Closed interval; lower<=target<=upper",
+    "clipping": "None",
+    "interval_score": "Deferred; no Winkler score in this initial implementation"
+  },
+  "failure_handling": {
+    "unit": "mg/dL only; no conversion",
+    "sensor": "Dexcom GL only; no stream substitution",
+    "source_valid_bounds_mg_dl": [40, 400],
+    "bounds_basis": "Inherited Stage 2 source validity rule only; no new physiological threshold",
+    "duplicates": "Reject all duplicate timestamps; CONFLICTING_DUPLICATE for conflicting values, DUPLICATE_TIMESTAMP otherwise",
+    "stale_minutes": 10,
+    "stale_basis": "Existing proposal engineering threshold; evaluated only on revealed valid readings. Missing current cell always suppresses point regardless of age.",
+    "future_access": "Only event_time<=issue consumed for prediction; actual arrival times unknown",
+    "resumption": "First scheduled issue with all 61 consecutive minute cells valid",
+    "target": "Evaluator only, exact t+30 reference; missing target does not suppress an otherwise valid point"
+  },
+  "dropout": {
+    "durations_minutes": [15, 30, 60, 120],
+    "placement": "One gap per participant per separate duration scenario, starting at first inherited five-minute grid timestamp >= anchor+72h; no seed needed; deterministic timestamp rule, never performance-based",
+    "interval": "[gap_start,gap_start+duration) on the existing minute grid",
+    "mode": "A: input/transport loss before feature construction; evaluator retains clean exact reference targets",
+    "offsets_and_quantiles": "Clean first/second-phase artifacts frozen in all scenarios",
+    "deferred": ["B: observation/target loss", "Calibration-period dropout"],
+    "scheduled": "All inherited grid issues with issue-60m>=anchor+48h, through recording end; includes invalid histories and missing/outside-recording targets",
+    "matched": "Intersection of clean/dropout accepted and scoreable origins, separately by variant/nominal level"
+  },
+  "aggregation": {
+    "equal_participant": "Compute metrics per contributing participant first then arithmetic mean; omit undefined metrics, report denominator and absent participants",
+    "pooled": "Compute directly over all scored windows; RMSE is sqrt pooled mean squared error",
+    "variation": "Min/max participant empirical coverage and mean width; local participant evidence retained",
+    "slices": ["target<70", "70<=target<=180", "target>180"],
+    "empty_slice": "Zero counts; metrics undefined, no imputed zero error; explicit contributing/absent participant counts"
+  },
+  "limitations": [
+    "Excluded from model fitting and interval calibration; outcomes from this cohort have previously been examined, so this analysis remains exploratory.",
+    "Nominal coverage separate from measured held-out empirical coverage; exchangeability not established for dependent overlapping windows.",
+    "Processed released signals include upstream interpolation; original observations and actual availability unresolved. Application access isolation cannot undo upstream processing.",
+    "Stage 4 48h adaptation worsened >180 slice MAE by 0.570931 mg/dL and increased underprediction. Preserve this trade-off; do not tune against evaluation outcomes.",
+    "No live/prospective validation, clinical efficacy, dosing or guaranteed coverage claims; permissions remain unresolved."
+  ]
+}

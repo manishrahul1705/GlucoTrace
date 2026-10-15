@@ -12,6 +12,7 @@ from .evaluation import (
     generate_shared_bootstrap_draws,
     paired_participant_bootstrap,
     compute_cohort_aggregates,
+    compute_glycemic_slices,
 )
 
 __all__ = [
@@ -25,4 +26,5 @@ __all__ = [
     'generate_shared_bootstrap_draws',
     'paired_participant_bootstrap',
     'compute_cohort_aggregates',
+    'compute_glycemic_slices',
 ]

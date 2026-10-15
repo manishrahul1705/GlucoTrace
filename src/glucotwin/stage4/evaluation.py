@@ -12,6 +12,44 @@ import pandas as pd
 VALID_GLUCOSE_RANGE = (40.0, 400.0)
 
 
+def reconcile_glycemic_mae(eval_df, methods):
+    """Return local participant slice evidence and equal-person reconciliation.
+
+    Empty slice MAE is undefined (NaN); its weighted contribution is zero.
+    Targets 70 and 180 belong to the middle slice. Reject non-finite inputs.
+    """
+    if eval_df.empty or eval_df['participant_id'].isna().any():
+        raise ValueError('Nonempty data with participant IDs required')
+    if not np.isfinite(eval_df[['target_mg_dl', *methods]].to_numpy(dtype=float)).all():
+        raise ValueError('Finite targets and predictions required')
+    evidence, participants = [], []
+    for pid, group in eval_df.groupby('participant_id'):
+        target = group['target_mg_dl'].to_numpy(dtype=float)
+        masks = [('below70', target < 70), ('70to180', (target >= 70) & (target <= 180)),
+                 ('above180', target > 180)]
+        for method in methods:
+            errors = np.abs(group[method].to_numpy(dtype=float) - target)
+            reconstructed = 0.0
+            for name, mask in masks:
+                count = int(mask.sum())
+                fraction = count / len(group)
+                mae = float(errors[mask].mean()) if count else np.nan
+                contribution = fraction * mae if count else 0.0
+                reconstructed += contribution
+                evidence.append(dict(participant_id=pid, method=method, slice_name=name,
+                                     n_origins=count, origin_fraction=fraction, slice_mae=mae,
+                                     weighted_contribution=contribution))
+            direct = float(errors.mean())
+            if not np.isclose(direct, reconstructed, rtol=0, atol=1e-10):
+                raise AssertionError('Participant slice reconciliation failed')
+            participants.append(dict(participant_id=pid, method=method,
+                                     direct_mae=direct, reconstructed_mae=reconstructed))
+    details = pd.DataFrame(evidence)
+    per_person = pd.DataFrame(participants)
+    aggregate = per_person.groupby('method')[['direct_mae', 'reconstructed_mae']].mean().reset_index()
+    return details, per_person, aggregate
+
+
 def compute_point_metrics(y_true: Sequence[float], y_pred: Sequence[float]) -> Dict[str, Any]:
     """Calculate MAE, RMSE, mean signed error, and boundary violation counts.
 
@@ -46,14 +84,14 @@ def compute_point_metrics(y_true: Sequence[float], y_pred: Sequence[float]) -> D
     residuals = yp - yt
     mae = float(np.mean(np.abs(residuals)))
     rmse = float(np.sqrt(np.mean(residuals ** 2)))
-    mse = float(np.mean(residuals))
+    mean_signed_error = float(np.mean(residuals))
     non_finite = int(np.sum(~np.isfinite(yp)))
     out_of_range = int(np.sum((yp < VALID_GLUCOSE_RANGE[0]) | (yp > VALID_GLUCOSE_RANGE[1])))
 
     return {
         'mae': mae,
         'rmse': rmse,
-        'mean_signed_error': mse,
+        'mean_signed_error': mean_signed_error,
         'non_finite_count': non_finite,
         'out_of_range_count': out_of_range
     }
@@ -137,13 +175,13 @@ def compute_cohort_aggregates(
 
         eq_mae = float(np.mean(sub['mae_mg_dl']))
         eq_rmse = float(np.mean(sub['rmse_mg_dl']))
-        eq_mse = float(np.mean(sub['mean_signed_error_mg_dl']))
+        eq_mean_signed_error = float(np.mean(sub['mean_signed_error_mg_dl']))
 
         ww_mae = float(np.sum(sub['mae_mg_dl'].to_numpy(dtype=np.float64) * weights))
         # Window-weighted RMSE is sqrt of weighted mean squared error
         mse_per_person = sub['rmse_mg_dl'].to_numpy(dtype=np.float64) ** 2
         ww_rmse = float(np.sqrt(np.sum(mse_per_person * weights)))
-        ww_mse = float(np.sum(sub['mean_signed_error_mg_dl'].to_numpy(dtype=np.float64) * weights))
+        ww_mean_signed_error = float(np.sum(sub['mean_signed_error_mg_dl'].to_numpy(dtype=np.float64) * weights))
 
         tot_nan = int(sub['non_finite_count'].sum())
         tot_oor = int(sub['out_of_range_count'].sum())
@@ -154,10 +192,10 @@ def compute_cohort_aggregates(
             'total_origins': n_origins_total,
             'primary_equal_person_mae_mg_dl': eq_mae,
             'secondary_equal_person_rmse_mg_dl': eq_rmse,
-            'equal_person_mean_signed_error_mg_dl': eq_mse,
+            'equal_person_mean_signed_error_mg_dl': eq_mean_signed_error,
             'window_weighted_mae_mg_dl': ww_mae,
             'window_weighted_rmse_mg_dl': ww_rmse,
-            'window_weighted_mean_signed_error_mg_dl': ww_mse,
+            'window_weighted_mean_signed_error_mg_dl': ww_mean_signed_error,
             'total_non_finite_predictions': tot_nan,
             'total_out_of_range_predictions': tot_oor
         })
@@ -291,3 +329,102 @@ def paired_participant_bootstrap(
         'delta_mae_per_participant': [float(x) for x in delta_mae],
         'delta_rmse_per_participant': [float(x) for x in delta_rmse],
     }
+
+
+def compute_glycemic_slices(
+    eval_df: pd.DataFrame,
+    method: str,
+    unadapted_method: str = 'ridge_sensor_only_unadapted'
+) -> pd.DataFrame:
+    """Compute descriptive retrospective glycemic slices (<70, 70-180, >180 mg/dL).
+
+    Handles participants with zero qualifying origins gracefully by computing
+    participant-balanced MAE and mean signed error over contributing participants only,
+    and explicitly reporting the contributing participant count and origin count.
+
+    Parameters
+    ----------
+    eval_df : pd.DataFrame
+        DataFrame containing 'participant_id', 'target_mg_dl', and prediction columns.
+    method : str
+        Target prediction method column.
+    unadapted_method : str, default='ridge_sensor_only_unadapted'
+        Reference unadapted method column for calculating adaptation deltas.
+
+    Returns
+    -------
+    pd.DataFrame
+        Table with slice definitions, counts, participant-balanced MAE/mean signed error, and deltas.
+    """
+    slices = [
+        ('hypoglycemic (<70 mg/dL)', eval_df['target_mg_dl'] < 70.0),
+        ('euglycemic (70-180 mg/dL)', (eval_df['target_mg_dl'] >= 70.0) & (eval_df['target_mg_dl'] <= 180.0)),
+        ('hyperglycemic (>180 mg/dL)', eval_df['target_mg_dl'] > 180.0),
+    ]
+
+    total_origins = len(eval_df)
+    total_cohort_participants = len(eval_df['participant_id'].unique())
+    records = []
+
+    for slice_name, mask in slices:
+        sub = eval_df[mask]
+        n_origins_slice = len(sub)
+        pct_origins = (n_origins_slice / total_origins * 100.0) if total_origins > 0 else 0.0
+
+        contributing_pids = sorted(sub['participant_id'].unique())
+        n_contributing = len(contributing_pids)
+
+        if n_contributing == 0:
+            records.append({
+                'slice_name': slice_name,
+                'n_origins': 0,
+                'pct_total_origins': 0.0,
+                'contributing_participants': 0,
+                'total_cohort_participants': total_cohort_participants,
+                'equal_person_mae_unadapted': np.nan,
+                'equal_person_mean_signed_error_unadapted': np.nan,
+                'equal_person_mae_adapted': np.nan,
+                'equal_person_mean_signed_error_adapted': np.nan,
+                'delta_equal_person_mae': np.nan,
+                'delta_equal_person_mean_signed_error': np.nan,
+                'sparsity_flag': True
+            })
+            continue
+
+        p_mae_un = []
+        p_mean_signed_error_un = []
+        p_mae_ad = []
+        p_mean_signed_error_ad = []
+
+        for pid in contributing_pids:
+            p_sub = sub[sub['participant_id'] == pid]
+            y_t = p_sub['target_mg_dl'].to_numpy(dtype=np.float64)
+            y_un = p_sub[unadapted_method].to_numpy(dtype=np.float64)
+            y_ad = p_sub[method].to_numpy(dtype=np.float64)
+
+            p_mae_un.append(float(np.mean(np.abs(y_un - y_t))))
+            p_mean_signed_error_un.append(float(np.mean(y_un - y_t)))
+            p_mae_ad.append(float(np.mean(np.abs(y_ad - y_t))))
+            p_mean_signed_error_ad.append(float(np.mean(y_ad - y_t)))
+
+        eq_mae_un = float(np.mean(p_mae_un))
+        eq_mean_signed_error_un = float(np.mean(p_mean_signed_error_un))
+        eq_mae_ad = float(np.mean(p_mae_ad))
+        eq_mean_signed_error_ad = float(np.mean(p_mean_signed_error_ad))
+
+        records.append({
+            'slice_name': slice_name,
+            'n_origins': n_origins_slice,
+            'pct_total_origins': pct_origins,
+            'contributing_participants': n_contributing,
+            'total_cohort_participants': total_cohort_participants,
+            'equal_person_mae_unadapted': eq_mae_un,
+            'equal_person_mean_signed_error_unadapted': eq_mean_signed_error_un,
+            'equal_person_mae_adapted': eq_mae_ad,
+            'equal_person_mean_signed_error_adapted': eq_mean_signed_error_ad,
+            'delta_equal_person_mae': eq_mae_ad - eq_mae_un,
+            'delta_equal_person_mean_signed_error': eq_mean_signed_error_ad - eq_mean_signed_error_un,
+            'sparsity_flag': bool((n_contributing < total_cohort_participants) or (pct_origins < 5.0))
+        })
+
+    return pd.DataFrame(records)

@@ -1,0 +1,21 @@
+{
+  "version": "stage6-replay-v1",
+  "default_mode": "synthetic-only; set GLUCOTWIN_LOCAL_REPLAY=1 to enable approved local sources",
+  "backend": "http://127.0.0.1:18060",
+  "frontend": "http://127.0.0.1:15173",
+  "artificial_session_epoch": "2026-01-01T08:00:00+00:00",
+  "measurement_time": "source elapsed minute mapped onto artificial UTC session epoch; original naive source timezone remains unknown",
+  "assumed_arrival_time": "same as mapped measurement time; zero simulated delay is an assumption",
+  "ordering": ["reading arrival and duplicate resolution", "freeze at phase boundary", "five-minute forecast issuance", "target maturity and scoring"],
+  "clock": "Single manager task; monotonic wall time drives each session virtual time. Snapshots never advance it.",
+  "history": "61 minute cells covering inclusive [t-60,t], spanning 60 elapsed minutes",
+  "target": "exact origin+30 elapsed minutes, not six subsequent records",
+  "phase_rules": "Unchanged configs/stage5_protocol.json; full support purging and at least 100 eligible matured pairs",
+  "warm_start": "All minute events processed by the same engine: synthetic to minute120; local to first inherited grid issue with history_start>=anchor+48h",
+  "synthetic_generator": {"seed":1705,"baseline":"108 + 7*sin(2*pi*t/360)","correlated_noise":"AR(1), coefficient .92 and innovation SD .3","observation_noise_sd":0.6,"pulses":"Hand-authored starts75/335/435, amplitudes57/72/-23, widths32/43/45; not fit to data","length_minutes":721,"predictor":"persistence","intervals":"Unavailable; no independent synthetic interval calibration"},
+  "scenarios": {"durations_minutes":[15,30,60,120],"synthetic_start_minute":180,"local_start":"first inherited grid minute>=anchor+72h","boundaries":"half-open; inputs removed before features, evaluator retains original targets"},
+  "restart": "Sessions expire with HTTP410, events retained in ignored SQLite; no automatic recovery",
+  "snapshot_bounds": {"history_cells":181,"default_forecast_records":30,"max_forecast_records":100,"max_active_sessions":12},
+  "deferred": ["Configurable delayed arrivals", "Observation-loss mode B", "Independent synthetic interval calibration", "Production authentication", "Internet hosting"],
+  "scientific_boundary": "Exploratory processed-data replay; upstream interpolation unresolved; no clinical/live validation or guaranteed coverage"
+}

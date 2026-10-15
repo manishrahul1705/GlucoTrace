@@ -53,6 +53,7 @@ reports/**/*.log
 STAGE3_HANDOFF_FOR_REVIEW.md
 STAGE3_REMEDIATION_HANDOFF_FOR_REVIEW.md
 STAGE4_HANDOFF_FOR_REVIEW.md
+STAGE4_REMEDIATION_HANDOFF_FOR_REVIEW.md
 HANDOFF_MANIFEST.json
 README-stage2.md
 START_HERE_WINDOWS.md
@@ -100,3 +101,15 @@ reports/stage3_remediation/review_package_manifest.json
 .env
 .env.*
 !.env.example
+
+# Detailed local Stage 5 review handoff (participant provenance / working tree)
+STAGE5_HANDOFF_FOR_REVIEW.md
+
+# Local research application dependencies, builds and private Stage 6 handoff
+frontend/node_modules/
+frontend/dist/
+frontend/*.tsbuildinfo
+STAGE6_HANDOFF_FOR_REVIEW.md
+
+# Browser-verified independent synthetic screenshots only; patient images stay ignored
+!reports/stage6/synthetic-screenshots/*.png
