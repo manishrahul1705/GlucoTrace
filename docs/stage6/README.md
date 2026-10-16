@@ -1,6 +1,6 @@
 # Local research replay
 
-Stage 6 implements a FastAPI backend, deterministic minute-event engine and a
+The original Stage 6 checkpoint implements a FastAPI backend, deterministic minute-event engine and a
 React/TypeScript dashboard. Local Chromium browser verification now passes at
 1440px, 768px and 390px. Playwright checked controls, delayed scoring, all input-loss
 durations, disclosure persistence, clipping/overflow and console/API failures.
@@ -72,7 +72,7 @@ Warm synthetic sessions process minutes 0-120 before opening. Warm local session
 process the entire early history through the same engine, opening at the first
 inherited issue whose history starts at/after hour48. A warm start is explicitly
 labelled. Full chronology remains available. Local early processing may take time;
-the UI shows Working and does not substitute precomputed predictions.
+the UI shows Preparing and explains chronological processing; it does not substitute precomputed predictions.
 
 The chart displays revealed readings only, gaps for missing cells and separate
 forecast endpoints at origin+30. No smooth future trajectory is invented. An
@@ -118,10 +118,22 @@ Set-Location frontend
 npm.cmd ci
 npx.cmd playwright install chromium
 Set-Location ..
-node scripts/verify_stage6_browser.mjs
+node scripts/verify_feature_update_browser.mjs
 ```
 
 This launches actual headless Chromium and operates the app via its visible controls.
-It saves a structured report and six synthetic screenshots; pending patient data
+The current feature runner saves a separate report and fourteen synthetic screenshots under `reports/feature_update/`; pending patient data
 are never used. Before/after source hashes bind the report to the tested UI.
-The source/model and scientific limitations remain unchanged. No deployment occurs.
+The source/model and scientific limitations remain unchanged. No deployment occurs. The older Stage 6 runner/reports are historical evidence; use the feature-update runner for the current UI. For private agreement, use `scripts/verify_stage6.py --output reports/feature_update --browser-report reports/feature_update/browser_verification.json`; it requires the local frozen artifacts.
+
+## Completion-pass improvements
+
+The current dashboard adds keyboard Help, readable reason codes, separate pending/missing-target metrics, historical endpoint focus details and explicit expired-session recovery. The [showcase guide](../showcase/README.md) gives the tested Python/Node versions, full installation, synthetic walkthrough, alternate ports and publication boundaries. New evidence is in `reports/completion/`; the original Stage 6 reports are preserved. The historical agreement verifier requires private Stage 5 artifacts; source-only replay and its fixture tests do not.
+
+## Scenario Lab feature update
+
+See [Scenario Lab contracts and walkthrough](SCENARIO_LAB.md) for seed/duration bounds, session recreation versus resume, inspector/history exploration, metric denominators, SQLite backup/migration and synthetic-only exports. Current browser command: `node scripts/verify_feature_update_browser.mjs`; it writes separate evidence under `reports/feature_update/`. Prior reports remain historical. Session preparation has a bounded 120-second request timeout; ordinary API requests retain 30 seconds. No research model or protocol was changed.
+
+## Functional and UI audit
+
+See [the current interaction guide](FUNCTIONAL_UI_AUDIT.md) for source-switch handling, fixed as-of inspectors, follow mode, guarded library actions and export feedback. Separate before/after evidence is under `reports/functional_ui/`; prior reports remain historical. Restart a running Python service to load backend validation changes; session evidence is retained.

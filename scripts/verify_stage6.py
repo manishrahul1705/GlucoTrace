@@ -6,6 +6,7 @@ import hashlib
 import json
 import sys
 import tempfile
+import argparse
 import numpy as np
 import pandas as pd
 ROOT=Path(__file__).resolve().parents[1]
@@ -15,7 +16,11 @@ from glucotwin.stage6.engine import Session
 
 
 def run():
-    out=ROOT/'reports/stage6';out.mkdir(parents=True,exist_ok=True)
+    parser=argparse.ArgumentParser()
+    parser.add_argument('--output',default='reports/stage6')
+    parser.add_argument('--browser-report',default='reports/stage6/browser_verification.json')
+    args=parser.parse_args()
+    out=ROOT/args.output;out.mkdir(parents=True,exist_ok=True)
     initial=json.loads((ROOT/'data/runtime/stage6/starting_state.json').read_text())
     # Byte preservation, including the Stage 5 frozen config and all reports.
     preserved={name:value for name,value in initial['hashes'].items()
@@ -63,7 +68,7 @@ def run():
                 assert count>0
                 rows.append(dict(n_matched_forecasts=count,max_abs_error=max_error))
                 print(f'Local chronological agreement checked ({len(rows)}/{len(registry.mapping)})',flush=True)
-    browser_path=out/'browser_verification.json'
+    browser_path=ROOT/args.browser_report
     browser=json.loads(browser_path.read_text()) if browser_path.exists() else {}
     browser_ok=browser.get('status')=='PASS' and bool(browser.get('tested_source_sha256')) and all(
         hashlib.sha256((ROOT/name).read_bytes()).hexdigest()==value for name,value in browser.get('tested_source_sha256',{}).items())

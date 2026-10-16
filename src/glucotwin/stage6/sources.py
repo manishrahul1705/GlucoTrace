@@ -38,6 +38,7 @@ class Source:
     source_timezone: str = 'not_applicable'
     gap: tuple[int,int] | None = None
     artifact_reason: str = 'OK'
+    configuration: dict | None = None
 
 
 class SourceUnavailable(ValueError):
@@ -77,6 +78,9 @@ class Registry:
                     keypath.write_bytes(secrets.token_bytes(32))
                 key=keypath.read_bytes()
                 artifacts=json.loads((root/'data/processed/stage5/calibration_artifacts.json').read_text())
+                if (not isinstance(artifacts,list) or not artifacts or
+                    any(not isinstance(a,dict) or type(a.get('participant_id')) is not int or a['participant_id']<1 for a in artifacts)):
+                    raise ValueError('Invalid local artifact schema')
                 for pid in sorted({a['participant_id'] for a in artifacts}):
                     identifier='local-'+hmac.new(key,str(pid).encode(),hashlib.sha256).hexdigest()[:16]
                     self.mapping[identifier]=pid

@@ -7,6 +7,7 @@ import json
 import math
 import sqlite3
 import uuid
+from datetime import datetime,timezone
 from glucotwin.stage5.core import Calibration,fit_offset,calibrate
 from .sources import Reading,Source
 from .prediction import PredictRequest,Predictor,timestamp
@@ -23,6 +24,8 @@ class Forecast:
     value: float | None
     reason: str
     intervals: tuple
+    history_count: int = 0
+    artifact_identity: str = 'legacy-unrecorded'
 
 
 @dataclass(frozen=True)
@@ -39,18 +42,31 @@ class Store:
     def __init__(self,path):
         Path(path).parent.mkdir(parents=True,exist_ok=True)
         self.db=sqlite3.connect(path,check_same_thread=False)
+        exists=self.db.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='sessions'").fetchone()
+        if exists and 'configuration' not in {r[1] for r in self.db.execute('PRAGMA table_info(sessions)')}:
+            backup=Path(str(path)+'.before-library-v0.sqlite3')
+            if backup.exists():backup=Path(str(path)+'.before-library-'+uuid.uuid4().hex+'.sqlite3')
+            destination=sqlite3.connect(backup)
+            try:self.db.backup(destination)
+            finally:destination.close()
         self.db.executescript('''
         CREATE TABLE IF NOT EXISTS sessions(id TEXT PRIMARY KEY,generation TEXT,metadata TEXT,expired INTEGER DEFAULT 0);
         CREATE TABLE IF NOT EXISTS events(session TEXT,generation TEXT,id TEXT,kind TEXT,payload TEXT,
           PRIMARY KEY(session,generation,id,kind));
         ''')
+        columns={r[1] for r in self.db.execute('PRAGMA table_info(sessions)')}
+        for name,kind in [('display_name','TEXT'),('created_at','TEXT'),('configuration','TEXT'),('summary','TEXT')]:
+            if name not in columns:self.db.execute(f'ALTER TABLE sessions ADD COLUMN {name} {kind}')
+        self.db.execute('PRAGMA user_version=1')
         # Recovery is deliberately not implemented. Preserve evidence, expire sessions.
         self.db.execute('UPDATE sessions SET expired=1');self.db.commit()
 
     def metadata(self,session):
         payload=json.dumps(dict(source_id=session.source.id,mode=session.source.mode,minute=session.minute,status=session.status))
-        self.db.execute('INSERT INTO sessions VALUES(?,?,?,0) ON CONFLICT(id) DO UPDATE SET generation=excluded.generation,metadata=excluded.metadata,expired=0',
-                        (session.id,session.generation,payload));self.db.commit()
+        config=json.dumps(session.source.configuration) if session.source.configuration else None
+        summary=json.dumps(dict(virtual_cutoff=timestamp(session.minute),summaries=session.summaries(),mode=session.source.mode),allow_nan=False)
+        self.db.execute('INSERT INTO sessions(id,generation,metadata,expired,display_name,created_at,configuration,summary) VALUES(?,?,?,0,?,?,?,?) ON CONFLICT(id) DO UPDATE SET generation=excluded.generation,metadata=excluded.metadata,expired=0,configuration=excluded.configuration,summary=excluded.summary',
+                        (session.id,session.generation,payload,'Untitled replay',datetime.now(timezone.utc).isoformat(),config,summary));self.db.commit()
 
     def event(self,session,kind,id,payload):
         self.db.execute('INSERT INTO events VALUES(?,?,?,?,?)',(session.id,session.generation,id,kind,json.dumps(payload,allow_nan=False)))
@@ -173,7 +189,10 @@ class Session:
             bounds=result.intervals if reason=='OK' else tuple((a,None,None,reason) for a in ['0.10','0.05'])
             identity=hashlib.sha256(f'{self.source.id}|{variant}|{origin}'.encode()).hexdigest()[:20]
             self.seq+=1
-            f=Forecast(identity,self.seq,origin,origin+30,variant,self.support_phase(origin),value,reason,bounds)
+            accepted=sum(r.valid and r.value is not None and origin-60<=r.minute<=origin for r in self.history.request(origin))
+            artifact=('persistence/'+(self.source.configuration or {}).get('generator_version','scripted-v1') if self.source.mode=='synthetic' else
+                      'stage5-pinned/'+hashlib.sha256(json.dumps(self.source.expected,sort_keys=True).encode()).hexdigest()[:12]+('/intervals-frozen' if self.frozen else '/intervals-pending'))
+            f=Forecast(identity,self.seq,origin,origin+30,variant,self.support_phase(origin),value,reason,bounds,accepted,artifact)
             self.forecasts.append(f);self.pending.setdefault(f.target,[]).append(f)
             if self.store:self.store.event(self,'forecast',f.id,asdict(f))
 
@@ -222,6 +241,7 @@ class Session:
             score=self.scores.get(f.id)
             ledger.append(dict(id=f.id,seq=f.seq,variant=f.variant,phase=f.phase,
                 origin_time=timestamp(f.origin),target_time=timestamp(f.target),value=f.value,point_reason=f.reason,
+                history_start=timestamp(f.origin-60),history_end=timestamp(f.origin),history_count=f.history_count,artifact_identity=f.artifact_identity,
                 intervals=[dict(alpha=a,lower=l,upper=u,reason=r) for a,l,u,r in f.intervals],
                 score=None if score is None else dict(observed=score.observed,signed_error=score.signed_error,
                     reason=score.reason,matured_time=timestamp(score.matured),coverage=dict(score.coverage))))
@@ -232,18 +252,7 @@ class Session:
                                   assumed_arrival_time=timestamp(minute),value=r.value if r and r.valid else None))
         last=next((self.history.by_time[k] for k in sorted(self.history.by_time,reverse=True)
                    if self.history.by_time[k].valid and self.history.by_time[k].value is not None),None)
-        variants=['persistence'] if self.source.mode=='synthetic' else ['sensor_only_unadapted','sensor_only_offset24h']
-        summaries=[]
-        for variant in variants:
-            fs=[f for f in self.forecasts if f.variant==variant and f.phase in ('synthetic','evaluation')]
-            scored=[self.scores[f.id] for f in fs if f.id in self.scores and self.scores[f.id].reason=='OK']
-            errors=[s.signed_error for s in scored]
-            coverage={a:[dict(s.coverage).get(a) for s in scored if dict(s.coverage).get(a) is not None] for a in ['0.10','0.05']}
-            summaries.append(dict(variant=variant,scheduled=len(fs),issued=sum(f.value is not None for f in fs),
-                matured=sum(f.id in self.scores for f in fs),scored=len(scored),
-                interval_available=sum(any(i[3]=='OK' for i in f.intervals) for f in fs),
-                mae=sum(abs(e) for e in errors)/len(errors) if errors else None,
-                empirical_coverage={a:sum(vals)/len(vals) if vals else None for a,vals in coverage.items()}))
+        summaries=self.summaries()
         return dict(session_id=self.id,generation=self.generation,sequence=self.seq,source_id=self.source.id,mode=self.source.mode,
                     provenance='independent hand-authored generator / seeded persistence' if self.source.mode=='synthetic' else 'local pinned Stage 5 artifacts',
                     source_timezone=self.source.source_timezone,session_epoch=timestamp(0),arrival_assumption='zero simulated delay; artificial UTC epoch',
@@ -253,5 +262,26 @@ class Session:
                     history=displayed,latest_reading=None if last is None else dict(value=last.value,measurement_time=timestamp(last.minute),age_minutes=self.virtual_seconds/60-last.minute),
                     forecasts=ledger,next_after_seq=selected[-1].seq if selected else after_seq,
                     has_more=bool(selected and any(f.seq>selected[-1].seq for f in forecasts)),summaries=summaries,
-                    disclosure=self.source.disclosure,forecast_count=len(self.forecasts),arrival_reason=self.last_arrival_reason,
-                    gap=None if not self.source.gap else dict(start_time=timestamp(self.source.gap[0]),end_time=timestamp(self.source.gap[1]),label='Synthetic input-loss stress test'))
+                    configuration=self.source.configuration,
+                    disclosure=self.source.disclosure,forecast_count=len(self.forecasts),arrival_reason=self.last_arrival_reason,gap=None)
+
+    def summaries(self):
+        variants=['persistence'] if self.source.mode=='synthetic' else ['sensor_only_unadapted','sensor_only_offset24h']
+        summaries=[]
+        for variant in variants:
+            fs=[f for f in self.forecasts if f.variant==variant and f.phase in ('synthetic','evaluation')]
+            scored=[self.scores[f.id] for f in fs if f.id in self.scores and self.scores[f.id].reason=='OK']
+            errors=[s.signed_error for s in scored]
+            coverage={a:[dict(s.coverage).get(a) for s in scored if dict(s.coverage).get(a) is not None] for a in ['0.10','0.05']}
+            summaries.append(dict(variant=variant,scheduled=len(fs),issued=sum(f.value is not None for f in fs),
+                matured=sum(f.id in self.scores for f in fs),scored=len(scored),
+                pending=sum(f.value is not None and f.id not in self.scores for f in fs),
+                missing_targets=sum(f.value is not None and f.id in self.scores and self.scores[f.id].reason=='TARGET_MISSING' for f in fs),
+                coverage_denominators={a:len(vals) for a,vals in coverage.items()},
+                interval_available=sum(any(i[3]=='OK' for i in f.intervals) for f in fs),
+                mae=sum(abs(e) for e in errors)/len(errors) if errors else None,
+                mean_signed_error=sum(errors)/len(errors) if errors else None,
+                forecast_availability=sum(f.value is not None for f in fs)/len(fs) if fs else None,
+                scoring_availability=len(scored)/sum(f.value is not None for f in fs) if any(f.value is not None for f in fs) else None,
+                empirical_coverage={a:sum(vals)/len(vals) if vals else None for a,vals in coverage.items()}))
+        return summaries

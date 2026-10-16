@@ -8,6 +8,7 @@ export function responseIsCurrent(requestEpoch:number,activeEpoch:number){return
 export class PollingGate {
   paused=false;
   private requests=new Set<Promise<unknown>>();
+  get inFlight(){return this.requests.size>0;}
   track(request:Promise<unknown>){
     this.requests.add(request);
     void request.then(()=>this.requests.delete(request),()=>this.requests.delete(request));

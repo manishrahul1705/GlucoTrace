@@ -5,9 +5,13 @@ import time
 import uuid
 from datetime import datetime
 import httpx
+import argparse
 
 
 def main():
+    parser=argparse.ArgumentParser()
+    parser.add_argument('--output',default='reports/stage6/api_integration.json')
+    args=parser.parse_args()
     checks=[]
     with httpx.Client(base_url='http://127.0.0.1:18060',timeout=30) as client:
         def get(path):
@@ -55,7 +59,7 @@ def main():
     assert page.status_code==200 and 'id="root"' in page.text;checks.append('frontend HTTP availability (not visual verification)')
     result=dict(status='PASS',scope='Network API integration; synthetic data only; no browser or layout verification',checks=checks)
     root=Path(__file__).resolve().parents[1]
-    (root/'reports/stage6/api_integration.json').write_text(json.dumps(result,indent=2)+'\n')
+    (root/args.output).write_text(json.dumps(result,indent=2)+'\n')
     print(json.dumps(result,indent=2))
 
 

@@ -93,8 +93,11 @@ response models define forecasts, intervals, matured scores and summaries.
 Snapshot defaults to 30 forecast records, max100; history max181 minute cells.
 Use `after_seq` and `limit` for ascending event pages. Default snapshots show the
 latest bounded records. Summary denominators distinguish scheduled, issued,
-interval-available, matured and scored; empirical coverage uses scored intervals
-only. Synthetic coverage is null. Forecasts targeting beyond recording end remain
+interval-available, matured and scored. Completion adds pending **issued** points,
+issued points whose matured exact target is missing, and per-alpha coverage
+denominators. Pending and missing-target counts exclude suppressed point issues.
+MAE uses scored points; empirical coverage uses scored points with that interval
+available, with an explicit denominator for each alpha. Synthetic coverage is null. Forecasts targeting beyond recording end remain
 pending/unscored when the clock ends, never fabricated missing outcomes in advance.
 
 SQLite under ignored `data/runtime/stage6/` persists metadata and immutable events.
@@ -121,3 +124,7 @@ failed API responses are zero. Six synthetic screenshots were visually inspected
 The original computer-use-only blocker is historical; locally installed Chromium
 resolved it. The browser report records exact scope and tested-source hashes.
 This is Chromium viewport verification, not physical-device or clinical validation.
+
+## Completion evidence
+
+Current UI/browser/source-copy checks are separate in `reports/completion/`; original Stage 6 evidence above is preserved as historical context. Help is inline and keyboard-accessible. One outstanding poll and synchronous transition/discovery guards bound browser requests. Expired sessions stop polling and expose create-new recovery. Malformed private inventories are unavailable. Current SVG endpoints represent every issued point in the bounded displayed page; interval whiskers remain absent for issues created before interval availability. Exact data/scientific contracts are unchanged.

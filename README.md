@@ -1,6 +1,6 @@
 # GlucoTwin
 
-> **Restrospective 30-Minute Continuous Glucose Forecasting Research Benchmark**
+> **Retrospective 30-Minute Continuous Glucose Forecasting Research Benchmark**
 
 GlucoTwin investigates 30-minute ahead continuous glucose monitoring (CGM) forecasting in adults with Type 2 Diabetes using trailing sensor dynamics and baseline clinical screening characteristics (Age, BMI, HbA1c, Fasting Glucose).
 
@@ -27,8 +27,12 @@ Start the synthetic-only dashboard (after the setup in [Stage 6 instructions](do
 ```
 
 Open http://127.0.0.1:15173/. Add `--local` only for private processed-data replay.
-Chromium verification passes at 1440px, 768px and 390px; six synthetic screenshots and actual results are in `reports/stage6/`. This is retrospective/synthetic research,
+Prior Stage 6 evidence is preserved in `reports/stage6/`; the expanded completion checks and synthetic screenshots are separate in `reports/completion/`. See the [local showcase and startup guide](docs/showcase/README.md). This is retrospective/synthetic research,
 not a live sensor connection or clinical tool. No deployment is included.
+
+## Scenario Lab and session tools
+
+The replay workspace now supports authored seeded scenarios, a local session library, forecast inspection, revealed-history exploration and five synthetic-only export formats. See [feature setup/API/export contracts](docs/stage6/SCENARIO_LAB.md). Original research results and earlier evidence remain preserved; current feature evidence is separate under `reports/feature_update/`.
 
 ## 2. Implemented Components
 
@@ -54,7 +58,7 @@ The project is structured modularly under `src/glucotwin/`:
 ## 3. Quickstart & Installation (Windows / PowerShell)
 
 ### Prerequisites
-- Python 3.12 (recommended) or compatible Python 3.10+
+- Python 3.12 (tested: 3.12.3); Node 24.21.0 / npm 11.11.1 for the dashboard
 - Git
 
 ### 1. Clone the Repository
@@ -76,7 +80,7 @@ The unit suite uses synthetic fixtures and repository integrity checks. It does 
 $env:PYTHONPATH="src"
 .\.venv\Scripts\python.exe -m unittest discover -s tests -p "test_*.py" -v
 ```
-The current full Python suite has **100 tests**; the Stage 6 frontend has **7 separate tests**. See the Stage 6 execution record for actual results and limitations; Chromium browser verification now passes.
+The feature update full Python suite has **114 tests**; the frontend has **13 separate tests**. See [feature-update checks](reports/feature_update/checks.json) for commands and scope. Source-only synthetic tests do not establish private-data provenance or clinical validity.
 
 ---
 
@@ -122,10 +126,10 @@ Verify fit ledger integrity, origin joins, candidate selection optimality, and r
 1. **Short-Term Dynamics Outperform Baselines**:
    - Ridge regression on 21 sensor features achieved a primary equal-person MAE of **13.50 mg/dL**, outperforming simple persistence (15.15 mg/dL) by **+10.93% skill**.
    - Trailing linear extrapolation failed severely (**20.41 mg/dL MAE**, -34.71% skill vs persistence) due to noise amplification.
-2. **Static Demographic Fusion Does Not Assist**:
+2. **No Demonstrated Static-Fusion Benefit in This Cohort**:
    - Concatenating static baseline screening variables (Age, BMI, HbA1c, Fasting Glucose) to the sensor trajectory yielded a statistically negligible difference for Ridge (\(\Delta = +0.056\) mg/dL, 95% bootstrap CI `[-0.33, +0.39]`).
    - For Histogram Gradient Boosting, static fusion degraded performance by \(\Delta = +0.374\) mg/dL (9 of 14 participants worsened).
-   - Short-term glucose dynamics (\(t-60\) to \(t\)) contain virtually all predictive signal for 30-minute forecasting; static screening values collected weeks or months earlier provide no actionable forward signal.
+   - In this cohort and candidate set, static screening features did not demonstrate additional benefit over trailing sensor dynamics. This does not establish lack of benefit in other cohorts or settings.
 
 ---
 

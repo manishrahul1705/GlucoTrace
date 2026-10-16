@@ -113,3 +113,21 @@ STAGE6_HANDOFF_FOR_REVIEW.md
 
 # Browser-verified independent synthetic screenshots only; patient images stay ignored
 !reports/stage6/synthetic-screenshots/*.png
+
+# Completion handoff stays local; only independent synthetic captures are candidates.
+GLUCOTWIN_COMPLETION_HANDOFF_FOR_REVIEW.md
+!reports/completion/synthetic-screenshots/*.png
+
+# Feature-update private handoff and independent synthetic captures
+GLUCOTWIN_FEATURE_UPDATE_HANDOFF_FOR_REVIEW.md
+!reports/feature_update/synthetic-screenshots/*.png
+
+# Local release handoff; only independent synthetic captures are review candidates
+GLUCOTWIN_RELEASE_READINESS_HANDOFF_FOR_REVIEW.md
+!reports/release_readiness/synthetic-screenshots/*.png
+
+# Functional/UI audit: local handoff and independent synthetic comparisons
+GLUCOTWIN_FUNCTIONAL_UI_AUDIT_HANDOFF.md
+!reports/functional_ui/phase1/synthetic-screenshots/*.png
+!reports/functional_ui/final/synthetic-screenshots/*.png
+!reports/functional_ui/comparison/*.png
