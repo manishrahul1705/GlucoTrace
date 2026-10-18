@@ -263,7 +263,8 @@ class Session:
                     forecasts=ledger,next_after_seq=selected[-1].seq if selected else after_seq,
                     has_more=bool(selected and any(f.seq>selected[-1].seq for f in forecasts)),summaries=summaries,
                     configuration=self.source.configuration,
-                    disclosure=self.source.disclosure,forecast_count=len(self.forecasts),arrival_reason=self.last_arrival_reason,gap=None)
+                    disclosure=self.source.disclosure,forecast_count=len(self.forecasts),arrival_reason=self.last_arrival_reason,
+                    gap=(None if not getattr(self.source,'gap',None) else dict(start_time=timestamp(self.source.gap[0]),end_time=timestamp(self.source.gap[1]),label=f'{self.source.gap[1]-self.source.gap[0]}-minute sensor dropout')))
 
     def summaries(self):
         variants=['persistence'] if self.source.mode=='synthetic' else ['sensor_only_unadapted','sensor_only_offset24h']
