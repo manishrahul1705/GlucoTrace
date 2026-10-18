@@ -1,14 +1,16 @@
 # GlucoTwin — Project Status & Roadmap
 
+> **GlucoTwin — Patient-Adaptive Glucose Forecasting and Replay Research Prototype**
+
 ## 1. Project Purpose & Scope
 
 GlucoTwin investigates retrospective 30-minute continuous glucose forecasting in adults with Type 2 Diabetes using trailing sensor observations and static baseline clinical screening characteristics.
 
-- **Current Stage**: Stage 6 local research replay - **implemented and verified, including Chromium browser checks**.
-- **Current Scope**: Restricted retrospective research on published, processed sensor signals.
-- **Commit SHA**: `c2aa0201fa2a5e48315eac2492a5db205e8641dd` (actual completion-pass starting HEAD on `main`; subsequent work remains unstaged).
+- **Current Stage**: Stage 6 local research replay implemented and verified; Stages 1 & 2 research-integrity and submission review completed.
+- **Current Scope**: Restricted retrospective research on published, processed sensor signals and independent synthetic replay.
+- **Commit SHA**: `5007db3` (`5007db3 Expose replay gap metadata for chart display` on `main`; review documentation and ignore rules added unstaged).
 - **Causal Live Equivalence**: **NOT ESTABLISHED**.
-- **Public Competition Permissions**: **UNRESOLVED**.
+- **Public Competition Permissions**: **UNRESOLVED** (dual-licensing clarification draft prepared; zero patient data tracked).
 - **Medical / Clinical Clearance**: **NONE**. Not a medical device; no treatment, dosing, or autonomous alerting capabilities.
 
 ---
@@ -22,21 +24,21 @@ GlucoTwin investigates retrospective 30-minute continuous glucose forecasting in
 | **3** | **Retrospective benchmark** | **reported complete** | Executed all 728 planned fits across 14 LOPO folds (39,496 paired 5-minute origins). 46 unit tests passing. Observed no demonstrated benefit from static baseline demographic fusion over sensor-only dynamics in this cohort. Resolved bootstrap discrepancy. Evidence: `reports/stage3_remediation/preflight_report.json`, `reports/stage3_remediation/verification.json`, `reports/stage4/stage3_bootstrap_reconciliation.md`. |
 | **4** | **Patient adaptation** | **reported complete** | Evaluated fixed patient-specific median residual correction from first 48 elapsed hours across 31,552 later-period origins. All 14 participants met adequacy gates. Ridge sensor-only improved by -0.4703 mg/dL MAE (95% CI [-0.9165, -0.1054], 11 improved, 3 worsened). Evidence: `configs/stage4_protocol.json`, `reports/stage4/verification.json`, `reports/stage4/aggregate_metrics.csv`, `reports/stage4/adaptation_comparison.csv`, `reports/stage4_remediation/adaptation_comparison_extended.csv`, `reports/stage4_remediation/glycemic_slices_summary.csv`. |
 | **5** | **Uncertainty and failure handling** | **EXECUTED / VERIFIED (exploratory)** | Frozen 24h offset / 24h interval calibration; both sensor-only references, exact ranks and input-loss stress tests executed. Evidence: `configs/stage5_protocol.json`, `reports/stage5/verification.json`, `reports/stage5/execution_record.md`. No guaranteed coverage or default selection. |
-| **6** | **Research backend/dashboard** | **IMPLEMENTED / VERIFIED** | FastAPI, deterministic replay, React dashboard, 114 Python tests and 13 frontend tests pass. Playwright Chromium controls/dropouts/scoring pass; prior Stage 6 browser evidence is preserved. Completion redesign, help, accounting, failure recovery and expanded checks are recorded separately in `reports/completion/`. |
-| **7** | **External feedback and permission clarification** | **PARTIAL ? UNSENT DRAFTS** | Clarify dual-licensing discrepancy with data maintainers (ODC-BY / CC BY-NC-SA vs Figshare CC BY) before competition submission or public model weight distribution. Tracker: `docs/licensing_and_permissions_tracker.md`. |
-| **8** | **Final verification/submission materials** | **LOCAL VERIFICATION / PACKAGING; SUBMISSION GATES OPEN** | Local showcase/startup/demo/submission checklist drafted; Windows source-copy installation and checks recorded in `reports/completion/`. Official competition requirements, independent multi-platform review and permission gate remain open. |
-| **9** | **Submission** | **PLANNED** | Final entry packaging and formal review submission. |
+| **6** | **Research backend/dashboard** | **IMPLEMENTED / VERIFIED** | FastAPI, deterministic replay, React dashboard, 117 Python contract tests and 22 frontend tests pass. Playwright Chromium controls/dropouts/scoring pass; prior Stage 6 browser evidence is preserved. Completion redesign, help, accounting, failure recovery and expanded checks are recorded separately in `reports/completion/`. |
+| **7** | **External feedback and permission clarification** | **PARTIAL — UNSENT DRAFTS** | Clarify dual-licensing discrepancy with data maintainers (ODC-BY / CC BY-NC-SA vs Figshare CC BY) before competition submission or public model weight distribution. Tracker: `docs/licensing_and_permissions_tracker.md`; formal inquiry drafted in `docs/review/SUBMISSION_GAPS_AND_CLARIFICATIONS.md`. |
+| **8** | **Final verification/submission materials** | **IN PROGRESS / REVIEW COMPLETE** | Requirements mapped in `docs/review/REQUIREMENTS_EVIDENCE_MATRIX.md`. Naming disambiguated in `docs/review/PROJECT_POSITIONING_AND_NAMING.md`. Missing submission deliverables (video, presentation, architecture PDF) outlined with production blueprints. |
+| **9** | **Submission** | **PLANNED** | Final entry packaging and formal review submission upon user confirmation. |
 
 ---
 
 ## 3. Current Test & Verification Status
 
-- Full Python suite: **114 tests passed** (33 Stage 2, 13 Stage 3, 21 Stage 4, 13 Stage 5, 20 Stage 6, 4 completion regressions, 10 feature-update tests). Frontend: **13 tests passed**; TypeScript and production build pass. Chromium browser verification passes at 1440/768/390/360px; current evidence is in `reports/completion/`.
-- Stage 5 focused suite: **13 passed**. Synthetic fixtures plus existing repository integrity checks; no claim that test counts establish scientific validity.
-- Stage 5 verifier: **PASS**, recomputing 705,720 stored scenario/variant/level rows, timestamp partitions, offsets, exact ranks, target joins, availability, nested intervals and aggregate/matched metrics.
+- Static repository source inventory comprises **117 Python contract tests** across 15 test files in `tests/test_*.py` (33 Stage 2, 13 Stage 3, 21 Stage 4, 13 Stage 5, 20 Stage 6, 4 completion regressions, 10 feature-update tests, 3 release-readiness tests), plus 13 verification tests in `scripts/verify_*.py`, and **22 Vitest frontend tests** across 5 test suites in `frontend/src/*.test.ts`. Test pass statuses reflect historical audit runs; fresh execution in this session was blocked by sandbox Python environment path configuration.
+- Stage 5 focused suite: **13 passed** in historical runs. Synthetic fixtures plus existing repository integrity checks; no claim that test counts establish scientific validity.
+- Stage 5 verifier: historical **PASS**, recomputing 705,720 stored scenario/variant/level rows, timestamp partitions, offsets, exact ranks, target joins, availability, nested intervals and aggregate/matched metrics.
 - All 14 frozen selected Ridge outer refits reproduced original held-out predictions within 5.69e-14 mg/dL. No inner search or full Stage 3 rerun.
 - Historical Stage 4 offsets and point metrics reproduced read-only; original outputs unchanged.
-- Verifier shares the Stage 2 feature builder and production replay for access-isolation checks; it is not wholly independent. Details: `reports/stage5/verification.json`.
+- Verifier shares the Stage 2 feature builder and production replay for access-isolation checks; it is not wholly independent.
 
 ---
 
@@ -223,3 +225,15 @@ Release execution outcome: 116 full Python tests, 13 frontend tests, TypeScript/
 Scoped to the existing replay application. Historical-inspector polling and incompatible source/scenario switching were corrected; library coordination/name validation/feedback, chart follow behavior and visual hierarchy were improved. Evidence is separate in `reports/functional_ui/`; previous reports, frozen research and permissions status remain preserved. No models, quantiles, partitions, treatment/live-sensor features, submission work or external messages were added. Final counts and limitations are recorded in the local functional/UI handoff.
 
 Functional/UI final scope: 65 feature/action rows, 117 full Python tests, 22 frontend tests, 18 main Chromium groups at1440/768/390/360px, plus explicit control/error/stress/private checks. The isolated44-file copy passes37 source-only Python tests,22 frontend tests/build and18 browser groups; a separate no-runtime/no-report startup also passes. Limited frozen agreement remains700 forecasts/14 sources, not a full-cohort reanalysis. The normal synthetic app is available on15173/18060. No permission, clinical or production-validation claim is added.
+
+## 8. Research-Integrity & Submission Audit (2026-10-18)
+
+Comprehensive review and documentation reconciliation conducted for the **Happiest Health CRP Digital Twin Challenge 2026** (Unstop):
+
+1. **Official Requirement Mapping:** Mapped all 12 challenge requirements against repository evidence in [`docs/review/REQUIREMENTS_EVIDENCE_MATRIX.md`](docs/review/REQUIREMENTS_EVIDENCE_MATRIX.md). Marked static/dynamic fusion and adverse-event output as unresolved scope divergences. Marked regulatory compliance (DPDP Act, HIPAA) as explicitly unassessed.
+2. **Scientific Scope Reconciliation:**
+   - *Static EHR Fusion:* Feature pipelines in `src/glucotwin/features.py` support multimodal concatenation. In our specific experimental setup across 14 LOPO folds on CGMacros, static fusion yielded no demonstrated benefit at 30 minutes ($\Delta = +0.056$ mg/dL for Ridge; degradation for tree models). This finding is limited to this experimental setup and does not establish universal sensor dominance. Because the challenge requested static + dynamic fusion, deploying a sensor-only model is an unresolved divergence requiring organizer confirmation.
+   - *Adverse Event Output:* Model provides a continuous scalar forecast at a single future point ($t+30$ minutes) with conformal prediction intervals (`src/glucotwin/stage5/core.py`). The codebase contains no multi-step trajectory, no adverse event probability calculation, no threshold-crossing detection, and no clinical warning or alert mechanisms. Whether single-point 30m regression satisfies the challenge's adverse event requirement is unresolved.
+3. **Project Positioning & Prior Art Disambiguation:** Reconciled preliminary web search results (`glucotwin.com`, Sayed et al. EHB 2023, public GitHub repos) in [`docs/review/PROJECT_POSITIONING_AND_NAMING.md`](docs/review/PROJECT_POSITIONING_AND_NAMING.md). Standardized descriptive subtitle instituted; non-affiliation notice applied; legal trademark clearance remains unassessed.
+4. **Submission Action Plan & Missing Deliverables:** Blueprints for the $\ge$ 20-minute video walkthrough, 10-slide presentation deck, architecture diagram export, and folder naming (`Team Name_College Name`) documented in [`docs/review/SUBMISSION_GAPS_AND_CLARIFICATIONS.md`](docs/review/SUBMISSION_GAPS_AND_CLARIFICATIONS.md). Unsent clarification drafts to organizers and dataset maintainers prepared.
+5. **Execution Log:** Complete audit transcript recorded in [`docs/review/STAGES_1_2_EXECUTION_RECORD.md`](docs/review/STAGES_1_2_EXECUTION_RECORD.md). Zero changes made to application code, model weights, or research results; zero private artifacts tracked.

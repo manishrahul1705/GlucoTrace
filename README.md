@@ -1,10 +1,16 @@
 # GlucoTwin
 
-> **Retrospective 30-Minute Continuous Glucose Forecasting Research Benchmark**
+> **GlucoTwin — Patient-Adaptive Glucose Forecasting and Replay Research Prototype**
 
-GlucoTwin investigates 30-minute ahead continuous glucose monitoring (CGM) forecasting in adults with Type 2 Diabetes using trailing sensor dynamics and baseline clinical screening characteristics (Age, BMI, HbA1c, Fasting Glucose).
+GlucoTwin investigates retrospective 30-minute ahead continuous glucose monitoring (CGM) forecasting and within-patient calibration in adults with Type 2 Diabetes using trailing sensor dynamics and baseline clinical screening characteristics (Age, BMI, HbA1c, Fasting Glucose).
 
-This repository contains the independently authored open-source research codebase, data preparation pipelines, feature extraction modules, cross-validation protocols, and synthetic test suites.
+This repository contains the independently authored open-source research codebase, data preparation pipelines, feature extraction modules, cross-validation protocols, interactive virtual replay engine, Scenario Lab, and synthetic test suites.
+
+**Competition Review Documentation:**
+- [Requirements & Evidence Matrix](docs/review/REQUIREMENTS_EVIDENCE_MATRIX.md)
+- [Project Positioning & Naming Reconciliation](docs/review/PROJECT_POSITIONING_AND_NAMING.md)
+- [Submission Gaps, Clarifications & Deliverables Blueprint](docs/review/SUBMISSION_GAPS_AND_CLARIFICATIONS.md)
+- [Stages 1 & 2 Execution Record](docs/review/STAGES_1_2_EXECUTION_RECORD.md)
 
 ---
 
@@ -26,13 +32,12 @@ Start the synthetic-only dashboard (after the setup in [Stage 6 instructions](do
 .\.venv\Scripts\python.exe scripts/start_stage6.py
 ```
 
-Open http://127.0.0.1:15173/. Add `--local` only for private processed-data replay.
-Prior Stage 6 evidence is preserved in `reports/stage6/`; the expanded completion checks and synthetic screenshots are separate in `reports/completion/`. See the [local showcase and startup guide](docs/showcase/README.md). This is retrospective/synthetic research,
+Open http://127.0.0.1:15173/. Add `--local` only for private processed-data replay (requires local CGMacros data files). See the [Stage 6 instructions and startup guide](docs/stage6/README.md). This is retrospective/synthetic research,
 not a live sensor connection or clinical tool. No deployment is included.
 
 ## Scenario Lab and session tools
 
-The replay workspace now supports authored seeded scenarios, a local session library, forecast inspection, revealed-history exploration and five synthetic-only export formats. See [feature setup/API/export contracts](docs/stage6/SCENARIO_LAB.md). Original research results and earlier evidence remain preserved; current feature evidence is separate under `reports/feature_update/`.
+The replay workspace supports authored seeded scenarios, a local session library, forecast inspection, revealed-history exploration, and five synthetic-only export formats. See [feature setup/API/export contracts](docs/stage6/SCENARIO_LAB.md). Original research results remain preserved.
 
 ## 2. Implemented Components
 
@@ -80,7 +85,7 @@ The unit suite uses synthetic fixtures and repository integrity checks. It does 
 $env:PYTHONPATH="src"
 .\.venv\Scripts\python.exe -m unittest discover -s tests -p "test_*.py" -v
 ```
-The feature update full Python suite has **114 tests**; the frontend has **13 separate tests**. See [feature-update checks](reports/feature_update/checks.json) for commands and scope. Source-only synthetic tests do not establish private-data provenance or clinical validity.
+The repository includes **117 Python contract tests** across 15 test suites in `tests/` (plus 13 verifier tests in `scripts/`), and **22 Vitest frontend tests** across 5 test suites in `frontend/src/`. All tests run against synthetic fixtures without external data dependencies. Source-only synthetic tests do not establish private-data provenance or clinical validity.
 
 ---
 
@@ -140,9 +145,11 @@ These boundaries reflect technical constraints, not claims of regulatory clearan
 - **Retrospective Processed Signal Only**: The released PhysioNet CGMacros signals contain upstream sensor-level filtering, interpolation, and artifact correction. **Causal live equivalence is NOT ESTABLISHED**.
 - **Sampling vs Packet Arrivals**: The computational 5-minute grid does not reconstruct native Bluetooth packet receipt times, transmitter clock drift, or transmission dropouts.
 - **No Clinical Clearance or Device Exemption**: GlucoTwin is not an approved medical device, diagnostic tool, or clinical decision support system. It has not received FDA clearance, CE marking, CDSCO approval, or prospective clinical trial validation. Labeling software as "research only" does not confer legal exemption for clinical use.
+- **Regulatory Compliance Not Assessed**: Technical exclusion of raw data via `.gitignore` and running offline synthetic demonstrations do not constitute compliance with the Digital Personal Data Protection Act (DPDP Act 2023) or HIPAA. Formal statutory and regulatory compliance has not been assessed.
+- **Single-Point Endpoint & No Alert Mechanisms**: Predictions are restricted to a single continuous scalar value at origin + 30 minutes ($t+30$). The software contains no multi-step future trajectory, no threshold-crossing detection, no adverse event probability calculation, and no clinical warning or alert mechanisms.
 - **No Treatment, Dosing, or Alert Guidance**: Under no circumstances should predictions be used for insulin titration, oral agent adjustments, carbohydrate intake, or acute clinical alerts.
 - **No Population Generalization to Indian Cohorts**: Glycemic variability, pathophysiology, and dietary compositions in Indian or South Asian populations have not been validated.
-- **Public Competition Permissions Unresolved**: Reconciling the PhysioNet ODC-BY / CC BY-NC-SA terms with the Figshare CC BY cross-deposit remains pending with maintainers. Raw data, participant feature tables, per-origin predictions, and model weights are strictly retained in ignored local storage.
+- **Public Competition Permissions Unresolved**: Reconciling the PhysioNet ODC-BY / CC BY-NC-SA terms with the Figshare CC BY cross-deposit remains pending with maintainers. Raw data, participant feature tables, per-origin predictions, and model weights are strictly retained in ignored local storage. Competition eligibility and redistribution rights are not cleared.
 
 ---
 
@@ -153,3 +160,22 @@ These boundaries reflect technical constraints, not claims of regulatory clearan
 - **Citation**:
   - Gutierrez-Osuna, Kerr, Mortazavi & Das, *Continuous Glucose Monitoring and Macronutrient Composition (CGMacros)*, PhysioNet v1.0.0 (2025), DOI: [10.13026/3z8q-x658](https://doi.org/10.13026/3z8q-x658).
   - Das et al., "CGMacros: A multimodal dataset of continuous glucose monitoring and dietary macronutrients in type 2 diabetes," *Scientific Data* 12:1557 (2025), DOI: [10.1038/s41597-025-05851-7](https://doi.org/10.1038/s41597-025-05851-7).
+
+---
+
+## 8. Hackathon Submission & Team Attribution
+
+- **Target Competition**: Happiest Health — CRP Digital Twin Challenge 2026 (Hosted on Unstop)
+- **Challenge Track**: Chronic Disease Management Proof of Concept (Type 2 Diabetes)
+- **Team Name**: `[Your Team Name]`
+- **Institution / College**: `[Your College / University Name]`
+- **Team Members & Roles**:
+  - `[Member 1 Name]` — Machine Learning & Research Architecture
+  - `[Member 2 Name]` — Frontend Engineering & Data Visualization
+  - `[Collaborator 3 Name]` — Clinical Data Pipelines & Verification
+- **Submission Repository**: https://github.com/manishrahul1705/GlucoTwin
+- **Video Walkthrough ($\ge$ 20 min)**: `[Link to unlisted YouTube / Google Drive demonstration]`
+- **Architecture & Presentation Decks**: See `docs/review/SUBMISSION_GAPS_AND_CLARIFICATIONS.md` for preparation blueprints.
+
+### Non-Affiliation & Trademark Notice
+*GlucoTwin is an independent academic and open-source research prototype developed by Manish Rahul and collaborators for the Happiest Health CRP Digital Twin Challenge 2026. This project is not affiliated with, sponsored by, or endorsed by glucotwin.com, commercial metabolic health platforms, or unrelated academic research publications sharing the name.*
