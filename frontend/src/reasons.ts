@@ -21,7 +21,10 @@ Object.assign(messages,{
  SOURCE_INVALID_READING:'The current reading fails the inherited source-validity contract.',
  INVALID_INTERVAL:'Interval bounds are invalid; point availability is assessed separately.',
  INVALID_CALIBRATION_SCORES:'Calibration contains invalid scores; the interval is unavailable.',
- MISSING_MODEL:'The matching model is missing. Restore local artifacts; there is no automatic fallback.'
+ MISSING_MODEL:'The matching model is missing. Restore local artifacts; there is no automatic fallback.',
+ LOCAL_ARTIFACTS_UNAVAILABLE:'Required local research artifacts are missing. Restore the matching bundle or select synthetic mode.',
+ SOURCE_UNAVAILABLE:'The requested source stream is unavailable.',
+ PRIVATE_CONFIGURATION_FIXED:'Private replay configuration is fixed to default seed (1705) and 720m duration.'
 });
 export function reasonText(code:string){return code.split(';').map(c=>messages[c]??c.toLowerCase().replaceAll('_',' ')).join(' · ')}
 export function reasonDetail(code:string){return `${reasonText(code)} [${code}]`}

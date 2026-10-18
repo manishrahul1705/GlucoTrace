@@ -113,7 +113,10 @@ class Registry:
     def load(self,identifier,scenario):
         if scenario not in SCENARIOS: raise SourceUnavailable('UNKNOWN_SCENARIO')
         if identifier=='synthetic-dawn': return synthetic(scenario)
-        if identifier not in self.mapping: raise SourceUnavailable('SOURCE_UNAVAILABLE')
+        if identifier not in self.mapping:
+            if not self.local_enabled: raise SourceUnavailable('LOCAL_MODE_DISABLED')
+            if self.local_error: raise SourceUnavailable(self.local_error)
+            raise SourceUnavailable('SOURCE_UNAVAILABLE')
         pid=self.mapping[identifier];self._check(pid)
         try:
             import joblib

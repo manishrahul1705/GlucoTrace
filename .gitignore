@@ -1,5 +1,6 @@
 # Python environment and bytecode
 .venv/
+.venv312/
 env/
 venv/
 __pycache__/
@@ -131,3 +132,9 @@ GLUCOTWIN_FUNCTIONAL_UI_AUDIT_HANDOFF.md
 !reports/functional_ui/phase1/synthetic-screenshots/*.png
 !reports/functional_ui/final/synthetic-screenshots/*.png
 !reports/functional_ui/comparison/*.png
+
+# Redesign verification handoff
+GLUCOTWIN_REDESIGN_VERIFICATION_HANDOFF.md
+
+# Feature completeness handoff
+GLUCOTWIN_FEATURE_COMPLETENESS_HANDOFF.md
