@@ -112,8 +112,8 @@ const SCENARIO_CATALOG_DATA = [
   {
     id: 'dropout15',
     name: '15-Min Input Loss',
-    category: 'Sensor Outage',
-    desc: '15-minute sensor outage at minute 180. Suppresses forecasts; requires 61 valid cells to recover.',
+    category: 'Simulated Input Dropout',
+    desc: '15-minute simulated input dropout at minute 180. Suppresses forecasts; requires 61 valid cells to recover.',
     version: 'scripted-v1',
     loss: 15,
     badge: 'Loss 15m'
@@ -121,8 +121,8 @@ const SCENARIO_CATALOG_DATA = [
   {
     id: 'dropout30',
     name: '30-Min Input Loss',
-    category: 'Sensor Outage',
-    desc: '30-minute sensor dropout at minute 180. Evaluates prompt suppression and exact recovery boundary.',
+    category: 'Simulated Input Dropout',
+    desc: '30-minute simulated input dropout at minute 180. Evaluates prompt suppression and exact recovery boundary.',
     version: 'scripted-v1',
     loss: 30,
     badge: 'Loss 30m'
@@ -130,8 +130,8 @@ const SCENARIO_CATALOG_DATA = [
   {
     id: 'dropout60',
     name: '60-Min Input Loss',
-    category: 'Sensor Outage',
-    desc: '1-hour sensor outage at minute 180. Evaluator reference targets retained for retrospective scoring.',
+    category: 'Simulated Input Dropout',
+    desc: '1-hour simulated input dropout at minute 180. Evaluator reference targets retained for retrospective scoring.',
     version: 'scripted-v1',
     loss: 60,
     badge: 'Loss 60m'
@@ -139,8 +139,8 @@ const SCENARIO_CATALOG_DATA = [
   {
     id: 'dropout120',
     name: '120-Min Input Loss',
-    category: 'Sensor Outage',
-    desc: 'Extended 2-hour sensor outage at minute 180. Demonstrates full history rebuilding before restoration.',
+    category: 'Simulated Input Dropout',
+    desc: 'Extended 2-hour simulated input dropout at minute 180. Demonstrates full history rebuilding before restoration.',
     version: 'scripted-v1',
     loss: 120,
     badge: 'Loss 120m'
@@ -1194,6 +1194,59 @@ function App() {
               max={snapshot?.end_minutes ?? 721}
             />
 
+            {/* History Support & Recovery Explanation */}
+            <section className="panel recovery-panel" aria-label="History support and recovery tracking">
+              <div className="recovery-header">
+                <div className="recovery-title-group">
+                  <div className="recovery-eyebrow">HISTORY SUPPORT &amp; RECOVERY STATUS</div>
+                  <div className="recovery-summary-line">
+                    <span className="recovery-label">Required Support:</span>
+                    <strong>61 consecutive minute cells spanning 60 elapsed minutes</strong>
+                    <span className="recovery-sep">·</span>
+                    <span className="recovery-label">Current Valid Support:</span>
+                    <strong>
+                      {snapshot?.recovery
+                        ? `${snapshot.recovery.consecutive_valid_cells} of 61 consecutive minute cells (${snapshot.recovery.consecutive_valid_minutes} of 60 elapsed min)`
+                        : 'Awaiting session creation'}
+                    </strong>
+                  </div>
+                </div>
+                <div className="recovery-badge-group">
+                  <span className={`recovery-badge ${snapshot?.recovery?.is_suppressed ? 'suppressed' : 'active'}`}>
+                    {snapshot?.recovery?.is_suppressed ? 'Forecasts Suppressed' : 'Forecasts Active'}
+                  </span>
+                </div>
+              </div>
+
+              <div className="recovery-details-grid">
+                <div className="recovery-detail-item">
+                  <span className="recovery-detail-label">Next Issue Eligibility</span>
+                  <span className="recovery-detail-val">
+                    {snapshot?.recovery
+                      ? `Minute ${snapshot.recovery.next_issue_minute} (${time(snapshot.recovery.next_issue_time)}) · ${snapshot.recovery.next_issue_eligible ? 'Eligible on 5-min grid' : 'Suppressed (insufficient history)'}`
+                      : '—'}
+                  </span>
+                </div>
+
+                <div className="recovery-detail-item">
+                  <span className="recovery-detail-label">Suppression Status &amp; Reason</span>
+                  <span className="recovery-detail-val">
+                    {snapshot?.recovery?.suppression_message ?? (snapshot ? 'History requirement satisfied.' : 'Awaiting session creation.')}
+                  </span>
+                </div>
+
+                <div className="recovery-detail-item recovery-detail-estimate">
+                  <span className="recovery-detail-label">Conditional Recovery Estimate</span>
+                  <span className="recovery-detail-val recovery-estimate-highlight">
+                    {snapshot?.recovery?.conditional_recovery_label ?? '—'}
+                  </span>
+                  <p className="recovery-boundary-disclaimer">
+                    Calculated strictly from revealed history and 5-min issue grid without future-schedule knowledge. Any missing reading resets consecutive support and immediately voids this estimate.
+                  </p>
+                </div>
+              </div>
+            </section>
+
             {/* 4 Key Metric Cards */}
             <section className="stat-grid">
               <article className="stat">
@@ -1235,7 +1288,7 @@ function App() {
                           — <small>Suppressed</small>
                         </div>
                         <p>
-                          Suppressed ({f.history_count}/61 cells) · {reason(f.point_reason)}
+                          Suppressed ({snapshot?.recovery?.consecutive_valid_cells ?? f.history_count}/61 cells) · {reason(f.point_reason)}
                         </p>
                       </>
                     );
@@ -1345,8 +1398,97 @@ function App() {
                   </div>
                 </div>
 
+                {/* Mode-Specific Capability Consolidation */}
+                <div className="capability-card" aria-label="Mode capability and active source profile">
+                  <div className="capability-top-bar">
+                    <span className="capability-mode-badge">
+                      {snapshot ? (snapshot.mode === 'synthetic' ? 'INDEPENDENT SYNTHETIC' : 'RETROSPECTIVE REPLAY') : 'NO SESSION'}
+                    </span>
+                    <span className="capability-horizon-badge">Horizon: +30 min</span>
+                  </div>
+
+                  <div className="capability-source-alignment">
+                    <div className="source-alignment-row">
+                      <span className="cap-meta-label">Active Session:</span>
+                      <span className="cap-meta-val">
+                        {snapshot
+                          ? (sources.find(s => s.id === snapshot.source_id)?.label ?? (snapshot.mode === 'synthetic' ? 'Scripted day / independent synthetic' : 'Local processed stream'))
+                          : 'No active session'}
+                      </span>
+                    </div>
+                    {snapshot && source !== snapshot.source_id && (
+                      <div className="source-alignment-row mismatch">
+                        <span className="cap-meta-label">Configured in Dropdown:</span>
+                        <span className="cap-meta-val">
+                          {sources.find(s => s.id === source)?.label ?? source}
+                          <span className="pending-badge">Pending (applies to next session)</span>
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="capability-grid">
+                    <div className="cap-item">
+                      <span className="cap-label">Predictor</span>
+                      <span className="cap-val">
+                        {snapshot?.mode === 'local'
+                          ? 'Ridge Regression baseline'
+                          : 'Scripted Persistence baseline (zero-order hold)'}
+                      </span>
+                    </div>
+                    <div className="cap-item">
+                      <span className="cap-label">Variants</span>
+                      <span className="cap-val">
+                        {snapshot?.mode === 'local'
+                          ? 'sensor_only_unadapted, sensor_only_offset24h'
+                          : 'persistence (sensor-only baseline)'}
+                      </span>
+                    </div>
+                    <div className="cap-item">
+                      <span className="cap-label">Point Availability</span>
+                      <span className="cap-val">
+                        {latest.size > 0 && [...latest.values()][0]?.value != null
+                          ? `Available (${number([...latest.values()][0].value)} mg/dL at +30 min)`
+                          : latest.size > 0
+                          ? `Suppressed · ${reason([...latest.values()][0].point_reason)}`
+                          : 'Pending (awaiting 61 consecutive minute cells)'}
+                      </span>
+                    </div>
+                    <div className="cap-item">
+                      <span className="cap-label">Interval Calibration</span>
+                      <span className="cap-val">
+                        {snapshot?.mode === 'local'
+                          ? (snapshot.artifacts_frozen ? 'Conformal intervals frozen' : 'Calibration pairs accumulating')
+                          : 'Unavailable in synthetic mode (no synthetic interval calibration)'}
+                      </span>
+                    </div>
+                    <div className="cap-item full-width">
+                      <span className="cap-label">Evaluation Status</span>
+                      <span className="cap-val">
+                        {snapshot?.mode === 'local'
+                          ? 'Retrospective benchmark evaluation (delayed ground-truth scoring at +30m target maturity)'
+                          : 'Synthetic demonstration (scripted reference comparison; no patient data)'}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="evidence-boundary-note">
+                    <strong>Evidence Boundary: </strong>
+                    <span>
+                      {snapshot?.mode === 'local'
+                        ? 'Retrospective replay on processed dataset. Arrival times are assumed under artificial UTC clock; values reflect upstream interpolation. Research prototype only — no live sensor connection, treatment advice, or event probability predictions.'
+                        : 'Synthetic benchmark simulation. Model uses scripted persistence without patient-trained weights; interval calibration is not performed and interval bounds remain unavailable. Not a physiological simulator.'}
+                    </span>
+                  </div>
+                </div>
+
                 <div className="nominal">
-                  <span>Nominal interval</span>
+                  <div className="nominal-label-wrap">
+                    <span>Nominal interval</span>
+                    {snapshot?.mode === 'synthetic' && (
+                      <span className="nominal-unavailable-hint">(Unavailable in Synthetic)</span>
+                    )}
+                  </div>
                   <div>
                     {['0.10', '0.05'].map(a => (
                       <button
@@ -1452,7 +1594,7 @@ function App() {
                   ) : (
                     <>
                       {snapshot.mode === 'synthetic'
-                        ? 'Synthetic intervals are uncalibrated (empirical coverage not evaluated). '
+                        ? 'Intervals unavailable in synthetic mode (no synthetic interval calibration). '
                         : 'Intervals not yet evaluated for empirical coverage. '}
                     </>
                   )}

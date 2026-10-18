@@ -66,7 +66,7 @@ async function screenshot(name,fullPage=true){
  await page.screenshot({path:path.join(screenshots,name),fullPage});images.push('reports/stage6/synthetic-screenshots/'+name);
 }
 async function layout(width){
- await page.setViewportSize({width,height:width===390?844:1000});
+ await page.setViewportSize({width,height:(width===390||width===360)?844:1000});
  await page.evaluate(()=>document.fonts.ready);await page.locator('h1').scrollIntoViewIfNeeded();
  const measurements=await page.evaluate(()=>{
   const overflowing=[...document.querySelectorAll('h1,h2,.stat,.panel,.disclosure,.transport,button,td,th,.prediction-title,.interval-line,.stat-number')].filter(e=>{
@@ -81,7 +81,7 @@ async function layout(width){
  assert.deepEqual(measurements.clipped,[],`Clipped content at ${width}`);
  await screenshot(`synthetic-${width}.png`);
  await page.locator('#ledger').scrollIntoViewIfNeeded();await expect(disclosure).toBeInViewport();
- if(width===390)await screenshot('synthetic-390-ledger.png',false);
+ if(width===390||width===360)await screenshot(`synthetic-${width}-ledger.png`,false);
 }
 let status='FAIL',failure=null;
 try{
@@ -103,7 +103,7 @@ try{
  assert.equal(latest.elapsed_minutes,paused);await assertDisclosure();
  const generation=s.generation;s=await reset();assert.notEqual(s.generation,generation);assert.equal(s.elapsed_minutes,120);
  checks.push('Start, 300x playback, pause stability across polls, five-minute step and reset generation');
- for(const width of [1440,768,390])await layout(width);
+ for(const width of [1440,768,390,360])await layout(width);
  await page.locator('#ledger').scrollIntoViewIfNeeded();await expect(disclosure).toBeInViewport();
  checks.push('Persistent disclosure while scrolling the ledger');
  await page.setViewportSize({width:1440,height:1000});

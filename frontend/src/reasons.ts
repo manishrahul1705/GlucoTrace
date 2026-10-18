@@ -1,7 +1,7 @@
 const messages:Record<string,string>={
  OK:'Available',STALE_INPUT:'The latest input is too old for a fresh forecast.',
- INCOMPLETE_HISTORY:'Rebuilding history: all 61 valid minute cells are required.',
- INSUFFICIENT_HISTORY:'Not enough history yet: 61 valid minute cells spanning 60 minutes are required.',
+ INCOMPLETE_HISTORY:'incomplete history: all 61 valid minute cells are required.',
+ INSUFFICIENT_HISTORY:'insufficient history: 61 valid minute cells spanning 60 minutes are required.',
  MISSING_CURRENT:'The current reading is missing.',
  SYNTHETIC_INTERVALS_UNCALIBRATED:'No synthetic interval calibration exists; the point forecast can still be available.',
  INSUFFICIENT_CALIBRATION:'Too few eligible calibration pairs for an interval.',
@@ -14,7 +14,8 @@ const messages:Record<string,string>={
  LOCAL_MODE_DISABLED:'Private replay is disabled. Start with --local only when matching private artifacts are available.'
 };
 Object.assign(messages,{
- MISSING_CURRENT_READING:'The current exact-minute reading is missing; no fresh point is issued.',
+ MISSING_CURRENT_READING:'missing current reading: the current exact-minute reading is missing; no fresh point is issued.',
+ SIMULATED_INPUT_DROPOUT:'Simulated input dropout active: current reading is missing.',
  STALE_READING:'The last accepted reading is over 10 minutes old. Wait for new input and history rebuilding.',
  INVALID_UNIT:'Input units must be mg/dL. The affected history is rejected.',
  NON_FINITE_READING:'A reading is not finite; the affected history is unavailable.',

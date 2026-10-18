@@ -113,6 +113,20 @@ class GapView(BaseModel):
     start_time:str
     end_time:str
     label:str
+class RecoveryView(BaseModel):
+    required_cells:int=61
+    required_minutes:int=60
+    consecutive_valid_cells:int
+    consecutive_valid_minutes:int
+    is_suppressed:bool
+    suppression_reason:str|None
+    suppression_message:str
+    next_issue_minute:int
+    next_issue_time:str
+    next_issue_eligible:bool
+    conditional_recovery_minute:int|None
+    conditional_recovery_time:str|None
+    conditional_recovery_label:str
 class Snapshot(BaseModel):
     session_id:str
     generation:str
@@ -143,6 +157,7 @@ class Snapshot(BaseModel):
     forecast_count:int
     arrival_reason:str
     gap:GapView|None
+    recovery:RecoveryView
     configuration:ScenarioConfiguration|None
 class Exploration(BaseModel):
     virtual_time:str

@@ -13,4 +13,15 @@ describe('availability explanations',()=>{
   gate.track(new Promise<void>(resolve=>{finish=resolve}));expect(gate.inFlight).toBe(true);
   finish();await gate.suspend();expect(gate.inFlight).toBe(false);
  });
+ it('explains simulated input dropout without claiming native hardware failure',()=>{
+  expect(reasonDetail('SIMULATED_INPUT_DROPOUT')).toContain('Simulated input dropout active');
+  expect(reasonDetail('SIMULATED_INPUT_DROPOUT')).not.toContain('hardware failure');
+  expect(reasonDetail('SIMULATED_INPUT_DROPOUT')).not.toContain('sensor malfunction');
+ });
+ it('guarantees reasons contain no file paths or patient identifiers',()=>{
+  for(const code of ['OK','INSUFFICIENT_HISTORY','INCOMPLETE_HISTORY','SIMULATED_INPUT_DROPOUT','LOCAL_MODE_DISABLED','LOCAL_ARTIFACTS_UNAVAILABLE']){
+   const text=reasonDetail(code);
+   expect(text).not.toMatch(/[C-Z]:\\|\/home\/|\/Users\/|participant_|subject_/i);
+  }
+ });
 });

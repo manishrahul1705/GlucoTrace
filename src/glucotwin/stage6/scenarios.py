@@ -9,7 +9,7 @@ CATALOG={
  'meal':('Scripted rise & recovery','Authored meal-related rise and recovery; not validated physiology.'),
  'activity':('Activity variation','An authored downward variation and return; no treatment simulation.'),
  'noisy':('Noisy observations','Independent observation noise around an authored baseline.'),
- **{f'dropout{n}':(f'{n}-minute input loss',f'Original scripted signal with {n} minutes of missing inputs; evaluator targets retained.') for n in [15,30,60,120]}
+ **{f'dropout{n}':(f'{n}-minute simulated input dropout',f'Original scripted signal with {n} minutes of simulated input dropout; evaluator targets retained.') for n in [15,30,60,120]}
 }
 
 def make_scenario(scenario='clean',seed=1705,duration_minutes=720):

@@ -66,6 +66,163 @@ class TestReplay(unittest.TestCase):
                 self.assertTrue(s.source.reference[180] is not None)
                 self.assertEqual(next(f for f in s.forecasts if f.origin==180+duration+55).reason,'INCOMPLETE_HISTORY')
 
+    def test_history_recovery_calculation_and_gap_label(self):
+        s0=Session(synthetic('clean'))
+        r0=s0.snapshot()['recovery']
+        self.assertEqual(r0['consecutive_valid_cells'],1)
+        self.assertEqual(r0['required_cells'],61)
+        self.assertEqual(r0['suppression_reason'],'INSUFFICIENT_HISTORY')
+        self.assertEqual(r0['conditional_recovery_minute'],60)
+        self.assertTrue(r0['is_suppressed'])
+        self.assertFalse(r0['next_issue_eligible'])
+
+        s0.advance_to(60)
+        r60=s0.snapshot()['recovery']
+        self.assertEqual(r60['consecutive_valid_cells'],61)
+        self.assertFalse(r60['is_suppressed'])
+        self.assertIsNone(r60['suppression_reason'])
+        self.assertEqual(r60['conditional_recovery_minute'],60)
+        self.assertTrue(r60['next_issue_eligible'])
+
+        s=Session(synthetic('dropout30'))
+        snap=s.snapshot()
+        self.assertIn('30-minute simulated input dropout',snap['gap']['label'])
+
+        s.advance_to(185)
+        r_drop=s.snapshot()['recovery']
+        self.assertEqual(r_drop['consecutive_valid_cells'],0)
+        self.assertTrue(r_drop['is_suppressed'])
+        self.assertEqual(r_drop['suppression_reason'],'SIMULATED_INPUT_DROPOUT')
+        self.assertIsNone(r_drop['conditional_recovery_minute'])
+        self.assertIsNone(r_drop['conditional_recovery_time'])
+        self.assertFalse(r_drop['next_issue_eligible'])
+
+        s.advance_to(210)
+        r_post=s.snapshot()['recovery']
+        self.assertEqual(r_post['consecutive_valid_cells'],1)
+        self.assertTrue(r_post['is_suppressed'])
+        self.assertEqual(r_post['suppression_reason'],'INCOMPLETE_HISTORY')
+        self.assertEqual(r_post['conditional_recovery_minute'],270)
+        self.assertFalse(r_post['next_issue_eligible'])
+
+        s.advance_to(230)
+        r_230=s.snapshot()['recovery']
+        self.assertEqual(r_230['consecutive_valid_cells'],21)
+        self.assertEqual(r_230['conditional_recovery_minute'],270)
+
+        s.advance_to(270)
+        r_rec=s.snapshot()['recovery']
+        self.assertEqual(r_rec['consecutive_valid_cells'],61)
+        self.assertFalse(r_rec['is_suppressed'])
+        self.assertIsNone(r_rec['suppression_reason'])
+
+        s.arrivals[275]=[Reading('gap-test',275,None,False)]
+        s.advance_to(275)
+        r_interrupted=s.snapshot()['recovery']
+        self.assertEqual(r_interrupted['consecutive_valid_cells'],0)
+        self.assertTrue(r_interrupted['is_suppressed'])
+        self.assertIsNone(r_interrupted['conditional_recovery_minute'])
+
+    def test_recovery_off_grid_reconnection_and_anchors(self):
+        # 1. Off-grid reconnection at minute 183:
+        # Readings are missing for minutes 180, 181, 182; valid readings resume at minute 183.
+        src = synthetic('clean')
+        readings_183 = tuple(r for r in src.readings if not (180 <= r.minute <= 182))
+        s_183 = Session(replace(src, readings=readings_183))
+
+        s_183.advance_to(182)
+        r_182 = s_183.snapshot()['recovery']
+        self.assertEqual(r_182['consecutive_valid_cells'], 0)
+        self.assertTrue(r_182['is_suppressed'])
+        self.assertIsNone(r_182['conditional_recovery_minute'])
+
+        # At minute 183, first valid reading arrives
+        s_183.advance_to(183)
+        r_183 = s_183.snapshot()['recovery']
+        self.assertEqual(r_183['consecutive_valid_cells'], 1)
+        self.assertTrue(r_183['is_suppressed'])
+        # Continuous 61 cells complete at 183 + 60 = 243.
+        # Earliest eligible issue-grid anchor (minute % 5 == 0) is 245.
+        self.assertEqual(r_183['conditional_recovery_minute'], 245)
+
+        # At minute 240 (scheduled issue): consecutive = 58 cells (< 61) -> suppressed
+        s_183.advance_to(240)
+        r_240 = s_183.snapshot()['recovery']
+        self.assertEqual(r_240['consecutive_valid_cells'], 58)
+        self.assertTrue(r_240['is_suppressed'])
+        self.assertEqual(r_240['conditional_recovery_minute'], 245)
+        f_240 = next(f for f in s_183.forecasts if f.origin == 240)
+        self.assertIsNone(f_240.value)
+        self.assertEqual(f_240.reason, 'INCOMPLETE_HISTORY')
+
+        # At minute 243: continuous cells = 61. History requirement is satisfied.
+        # But minute 243 is not on the issue grid (243 % 5 != 0), so no forecast is issued.
+        s_183.advance_to(243)
+        r_243 = s_183.snapshot()['recovery']
+        self.assertEqual(r_243['consecutive_valid_cells'], 61)
+        self.assertFalse(r_243['is_suppressed'])
+        self.assertIsNone(r_243['suppression_reason'])
+        self.assertEqual(r_243['next_issue_minute'], 245)
+        self.assertTrue(r_243['next_issue_eligible'])
+        self.assertFalse(any(f.origin == 243 for f in s_183.forecasts))
+
+        # At minute 245: on issue grid (245 % 5 == 0). Consecutive = 63 (>= 61).
+        # Trailing 61 cells [185..245] are valid -> Forecast issued with reason OK.
+        s_183.advance_to(245)
+        f_245 = next(f for f in s_183.forecasts if f.origin == 245)
+        self.assertIsNotNone(f_245.value)
+        self.assertEqual(f_245.reason, 'OK')
+
+        # 2. Off-grid reconnection at minute 187:
+        # Outage from 180 to 186; valid readings resume at 187.
+        readings_187 = tuple(r for r in src.readings if not (180 <= r.minute <= 186))
+        s_187 = Session(replace(src, readings=readings_187))
+        s_187.advance_to(187)
+        r_187 = s_187.snapshot()['recovery']
+        self.assertEqual(r_187['consecutive_valid_cells'], 1)
+        # 187 + 60 = 247. Earliest issue-grid anchor is ceil(247/5)*5 = 250.
+        self.assertEqual(r_187['conditional_recovery_minute'], 250)
+
+        s_187.advance_to(245)
+        f_245_b = next(f for f in s_187.forecasts if f.origin == 245)
+        self.assertIsNone(f_245_b.value)
+        self.assertEqual(f_245_b.reason, 'INCOMPLETE_HISTORY')
+
+        s_187.advance_to(250)
+        f_250 = next(f for f in s_187.forecasts if f.origin == 250)
+        self.assertIsNotNone(f_250.value)
+        self.assertEqual(f_250.reason, 'OK')
+
+        # 3. Interrupted recovery:
+        # Resume at 183, accumulate 30 cells (minute 212), then drop out at 213.
+        s_int = Session(replace(src, readings=readings_183))
+        s_int.advance_to(212)
+        self.assertEqual(s_int.snapshot()['recovery']['consecutive_valid_cells'], 30)
+        s_int.arrivals[213] = [Reading('dropout', 213, None, False)]
+        s_int.advance_to(213)
+        r_int = s_int.snapshot()['recovery']
+        self.assertEqual(r_int['consecutive_valid_cells'], 0)
+        self.assertTrue(r_int['is_suppressed'])
+        self.assertIsNone(r_int['conditional_recovery_minute'])
+
+        # 4. Already-complete history:
+        s_comp = Session(synthetic('clean'))
+        s_comp.advance_to(120)
+        r_comp = s_comp.snapshot()['recovery']
+        self.assertGreaterEqual(r_comp['consecutive_valid_cells'], 61)
+        self.assertFalse(r_comp['is_suppressed'])
+        self.assertIsNone(r_comp['suppression_reason'])
+        self.assertTrue(r_comp['next_issue_eligible'])
+
+        # 5. Warm start:
+        s_warm = Session(synthetic('clean'), warm=True)
+        self.assertEqual(s_warm.minute, 120)
+        r_warm = s_warm.snapshot()['recovery']
+        self.assertGreaterEqual(r_warm['consecutive_valid_cells'], 61)
+        self.assertFalse(r_warm['is_suppressed'])
+        f_120 = next(f for f in s_warm.forecasts if f.origin == 120)
+        self.assertEqual(f_120.reason, 'OK')
+
     def test_duplicates_idempotent_equivalent_conflicting(self):
         h=History();r=Reading('a',0,100,True)
         self.assertEqual(h.accept(r),'ACCEPTED');self.assertEqual(h.accept(r),'IDEMPOTENT')

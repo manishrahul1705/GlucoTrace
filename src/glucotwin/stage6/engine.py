@@ -125,7 +125,78 @@ class Evaluator:
         return Score(forecast.id,now,target,target is not None and forecast.value-target,'OK',coverage)
 
 
+def compute_recovery(session):
+    m = int(session.virtual_seconds / 60)
+    consecutive = 0
+    k = m
+    while k >= 0:
+        reading = session.history.by_time.get(k)
+        if reading is not None and reading.valid and reading.value is not None:
+            consecutive += 1
+            k -= 1
+        else:
+            break
+    required_cells = 61
+    required_minutes = 60
+    valid_minutes = max(0, consecutive - 1) if consecutive > 0 else 0
+    next_issue = ((m // 5) + 1) * 5
+    next_issue_time = timestamp(next_issue)
+    gap = getattr(session.source, 'gap', None)
+    in_gap = bool(gap and gap[0] <= m < gap[1])
+    is_suppressed = consecutive < required_cells
+
+    if consecutive >= required_cells:
+        suppression_reason = None
+        suppression_message = 'History requirement satisfied (61 consecutive minute cells spanning 60 elapsed minutes).'
+        conditional_recovery_minute = m
+        conditional_recovery_time = timestamp(m)
+        conditional_recovery_label = 'Fully recovered: history requirement satisfied.'
+        next_issue_eligible = True
+    elif consecutive == 0:
+        suppression_reason = 'SIMULATED_INPUT_DROPOUT' if in_gap else 'MISSING_CURRENT_READING'
+        suppression_message = 'Simulated input dropout active: current reading is missing.' if in_gap else 'Current reading is missing; input stream interrupted.'
+        conditional_recovery_minute = None
+        conditional_recovery_time = None
+        conditional_recovery_label = 'Awaiting continuous valid input arrival (0 of 61 cells). Recovery estimate will be computed once continuous readings begin arriving.'
+        next_issue_eligible = False
+    else:
+        cells_needed = required_cells - consecutive
+        ready_minute = m + cells_needed
+        rec_min = math.ceil(ready_minute / 5) * 5
+        conditional_recovery_minute = rec_min
+        conditional_recovery_time = timestamp(rec_min)
+        rec_hhmm = conditional_recovery_time[11:16]
+        if gap and m >= gap[1]:
+            suppression_reason = 'INCOMPLETE_HISTORY'
+            suppression_message = f'History recovery in progress: {consecutive} of 61 consecutive minute cells ({valid_minutes} of 60 elapsed minutes) accumulated following simulated input dropout.'
+        elif m < 60:
+            suppression_reason = 'INSUFFICIENT_HISTORY'
+            suppression_message = f'Initial warm-up period: {consecutive} of 61 consecutive minute cells ({valid_minutes} of 60 elapsed minutes) accumulated.'
+        else:
+            suppression_reason = 'INCOMPLETE_HISTORY'
+            suppression_message = f'History rebuilding in progress: {consecutive} of 61 consecutive minute cells ({valid_minutes} of 60 elapsed minutes) accumulated.'
+        conditional_recovery_label = f'Earliest eligible issue if readings continue without interruption: Minute {rec_min} ({rec_hhmm} UTC). Requires {cells_needed} more consecutive valid minute readings.'
+        next_issue_eligible = (next_issue >= rec_min)
+
+    return dict(
+        required_cells=required_cells,
+        required_minutes=required_minutes,
+        consecutive_valid_cells=consecutive,
+        consecutive_valid_minutes=valid_minutes,
+        is_suppressed=is_suppressed,
+        suppression_reason=suppression_reason,
+        suppression_message=suppression_message,
+        next_issue_minute=next_issue,
+        next_issue_time=next_issue_time,
+        next_issue_eligible=next_issue_eligible,
+        conditional_recovery_minute=conditional_recovery_minute,
+        conditional_recovery_time=conditional_recovery_time,
+        conditional_recovery_label=conditional_recovery_label
+    )
+
+
 class Session:
+
     def __init__(self,source:Source,store=None,id=None,warm=False):
         self.id=id or str(uuid.uuid4());self.generation=str(uuid.uuid4());self.source=source;self.store=store
         self.predictor=Predictor(source.predictor);self.evaluator=Evaluator(source.reference)
@@ -264,7 +335,8 @@ class Session:
                     has_more=bool(selected and any(f.seq>selected[-1].seq for f in forecasts)),summaries=summaries,
                     configuration=self.source.configuration,
                     disclosure=self.source.disclosure,forecast_count=len(self.forecasts),arrival_reason=self.last_arrival_reason,
-                    gap=(None if not getattr(self.source,'gap',None) else dict(start_time=timestamp(self.source.gap[0]),end_time=timestamp(self.source.gap[1]),label=f'{self.source.gap[1]-self.source.gap[0]}-minute sensor dropout')))
+                    gap=(None if not getattr(self.source,'gap',None) else dict(start_time=timestamp(self.source.gap[0]),end_time=timestamp(self.source.gap[1]),label=f'{self.source.gap[1]-self.source.gap[0]}-minute simulated input dropout')),
+                    recovery=compute_recovery(self))
 
     def summaries(self):
         variants=['persistence'] if self.source.mode=='synthetic' else ['sensor_only_unadapted','sensor_only_offset24h']
