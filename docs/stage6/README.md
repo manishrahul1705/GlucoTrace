@@ -78,7 +78,9 @@ node scripts/verify_responsive_browser.mjs --url http://127.0.0.1:15173/ --outpu
 
 The script requires existing Playwright Chromium (`npm.cmd exec --prefix frontend -- playwright install chromium` installs it if needed outside this audit). It checks 360/390/720/1024/1440px at normal CSS zoom and the confirmed720px case separately at CSS zoom2, header/transport bounds, keyboard step, playback speed, start/pause/reset, console errors and failed API requests. CSS zoom is an approximation, separate from native browser UI zoom; native zoom is NOT RUN by this script. It creates a synthetic session on the specified service and never starts/stops that service. Do not target an existing private/user session during an audit.
 
-Older `verify_stage6_browser.mjs` and `verify_capability_recovery_browser.mjs` runners are historical checks with historical selectors and repository output locations, not the current acceptance command. The previously documented `verify_feature_update_browser.mjs` is absent and must not be invoked. Existing local audit reports are optional historical evidence for source setup, not committed browser proof.
+Use `verify_demo_browser.mjs` for current demo scenarios, readiness/recovery, exact target timing, historical cutoffs, session tools and exports. It accepts the same `--url` and new external `--output` arguments shown above. `verify_responsive_browser.mjs` separately checks layout and transport. Private replay uses the dedicated [patient acceptance runner](NEW_EXPERIMENT.md).
+
+The historical `verify_stage6_browser.mjs` is retained because `verify_stage6.py` consumes its report and validates every `tested_source_sha256` entry, including the browser script itself. It is not the current UI acceptance command. Retired capability/recovery wrappers are superseded by the current demo/responsive runners and `start_stage6.py`. Historical local reports remain separate evidence; no old PASS is converted into current acceptance.
 
 ## Replay controls
 

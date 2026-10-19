@@ -37,6 +37,11 @@ Because the primary PhysioNet release specifies **CC BY-NC-SA 4.0** (Non-Commerc
 
 ---
 
+Additional scope questions (unsent):
+
+- Does evaluated baseline-plus-sensor fusion with no demonstrated improvement satisfy the requested fusion scope when sensor-only remains the default?
+- Does an exact +30-minute endpoint decision satisfy the requested adverse-event/trajectory scope? It is not an episode/onset or two-hour predictor.
+
 ## 4. Current Compliance Boundary
 
 - **Local Data Boundary**: All raw CSV files, prepared feature matrices, per-origin predictions, individual patient offsets, and trained model binaries remain strictly in local `.gitignore` storage.
