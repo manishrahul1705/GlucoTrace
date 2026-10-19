@@ -1,6 +1,8 @@
-# Local synthetic replay: setup and verification
+# GlucoTrace: local demo replay setup and verification
 
 The synthetic app runs without patient data, learned weights, calibration files or local audit reports. It uses authored seeded scenarios and persistence. Historical experiment aggregates and old local browser reports are separate evidence; local `reports/stage6`, `reports/feature_update`, `reports/completion` and audit screenshots are not guaranteed to exist in a source checkout. No current verification claim depends on those paths.
+
+For the current GlucoTrace interface, use the [30-minute demo checklist](DEMO_RECORDING.md). The preserved release-rehearsal candidate is a separate older snapshot; launch the updated checkout or the newly verified branding candidate. Internal module/environment names remain `glucotwin`/`GLUCOTWIN_`.
 
 ## Select the Python environment
 

@@ -154,7 +154,7 @@ function LibraryRow({
       <div className="library-item-heading">
         <span>
           {current ? 'Current replay / ' : ''}
-          {item.mode === 'synthetic' ? 'Synthetic configuration' : 'Private research'}
+          {item.mode === 'synthetic' ? 'Demo session' : 'Private research'}
         </span>
         <span className={`library-state ${item.status}`}>{item.status}</span>
       </div>
@@ -303,7 +303,7 @@ export function FeaturePanels({
     });
 
   const download = (kind: string) =>
-    run('Preparing synthetic export…', async () => {
+    run('Preparing demo export…', async () => {
       if (!snapshot) return '';
       const r = await fetch(`/api/replay/sessions/${snapshot.session_id}/export`, {
         method: 'POST',
@@ -324,12 +324,12 @@ export function FeaturePanels({
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `glucotwin-synthetic-${kind}.${
+      a.download = `glucotrace-demo-${kind}.${
         ['configuration', 'summary'].includes(kind) ? 'json' : 'csv'
       }`;
       a.click();
       URL.revokeObjectURL(url);
-      return `Synthetic ${kind} export prepared · cutoff ${snapshot.virtual_time}`;
+      return `Demo ${kind} export prepared · cutoff ${snapshot.virtual_time}`;
     });
 
   const filteredItems = search.trim()
@@ -365,7 +365,7 @@ export function FeaturePanels({
           </p>
           <p>
             {snapshot?.mode === 'synthetic'
-              ? 'Scenario-specific engineering results, not patient accuracy. Synthetic intervals and coverage remain unavailable.'
+              ? 'Demo results, not patient accuracy. Intervals and coverage remain unavailable.'
               : 'Patient-backed downloads are disabled. No patient values, models or calibration artifacts can be exported here.'}
           </p>
           <div className="export-actions">
@@ -375,7 +375,7 @@ export function FeaturePanels({
                 disabled={!snapshot || snapshot.mode !== 'synthetic' || busy || working}
                 onClick={() => void download(kind)}
               >
-                Export {kind}
+                Export demo {kind}
               </button>
             ))}
           </div>
@@ -400,7 +400,7 @@ export function FeaturePanels({
         </div>
         <div className="panel-body">
           <p>
-            Recreate a retained synthetic configuration as a new session. Restart expires runtimes;
+            Recreate a retained demo configuration as a new session. Restart expires runtimes;
             summaries and immutable evidence remain local.
           </p>
           {items.length > 3 && (

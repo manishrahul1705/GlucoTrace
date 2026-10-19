@@ -8,7 +8,7 @@ export function EndpointFlags({snapshot}:{snapshot:Snapshot|null}){
  return <section className="panel" aria-label="Exact +30-minute endpoint research flags">
   <h3>Exact +30-minute endpoint research flags</h3>
   <p>Current replay cutoff: {snapshot.virtual_time}. Research only: strictly greater than 180 or 250 mg/dL at the exact target time. These are endpoint flags, not episode/onset predictions or event probabilities. Already-high origins remain included; repeated flags are separate endpoint decisions.</p>
-  {snapshot.mode==='synthetic'&&<p>Synthetic persistence-derived flags; these are not patient performance.</p>}
+  {snapshot.mode==='synthetic'&&<p>Demo persistence-derived flags; these are not patient performance.</p>}
   {[...latest.values()].map(f=><article key={f.variant} data-event-variant={f.variant}><strong>{variantLabel(f.variant)}</strong><p>Origin {f.origin_time}; exact target {f.target_time}; model family {f.model_family??f.variant}.</p>
    {f.endpoint_flags?.map(flag=><p key={flag.threshold_mg_dl}>Endpoint &gt;{flag.threshold_mg_dl} mg/dL: {flag.flag_status}; target {flag.target_status}; {flag.label==null?'outcome unavailable':`observed endpoint ${flag.label?'above':'not above'} threshold`}{flag.confusion?` · ${flag.confusion}`:''}.</p>)}
   </article>)}

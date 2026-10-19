@@ -24,7 +24,7 @@ def main():
         parser.error('Use two distinct unprivileged ports between 1024 and 65535.')
     for port in (args.api_port,args.web_port):
         with socket.socket() as sock:
-            if sock.connect_ex(('127.0.0.1',port))==0:raise SystemExit(f'Loopback port {port} is in use. Stop your earlier GlucoTwin session first; no process was terminated.')
+            if sock.connect_ex(('127.0.0.1',port))==0:raise SystemExit(f'Loopback port {port} is in use. Stop your earlier GlucoTrace session first; no process was terminated.')
     env=os.environ.copy();env['GLUCOTWIN_LOCAL_REPLAY']='1' if args.local else '0'
     env['GLUCOTWIN_API_PORT']=str(args.api_port);env['GLUCOTWIN_WEB_PORT']=str(args.web_port)
     children=[]
@@ -33,7 +33,7 @@ def main():
         vite_args=[node,str(vite),'--host','127.0.0.1']
         if args.config_loader:vite_args+=['--configLoader',args.config_loader]
         children.append(subprocess.Popen(vite_args,cwd=root/'frontend',env=env))
-        print(f'GlucoTwin: http://127.0.0.1:{args.web_port}/ | API: http://127.0.0.1:{args.api_port}/api/health',flush=True)
+        print(f'GlucoTrace: http://127.0.0.1:{args.web_port}/ | API: http://127.0.0.1:{args.api_port}/api/health',flush=True)
         print('Mode: '+('local processed replay + independent synthetic' if args.local else 'independent synthetic only')+'; Ctrl+C to stop.',flush=True)
         while all(p.poll() is None for p in children):time.sleep(.3)
     except KeyboardInterrupt:pass

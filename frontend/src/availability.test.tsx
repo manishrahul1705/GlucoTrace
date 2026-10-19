@@ -37,7 +37,7 @@ describe('availability displays',()=>{
  it('preserves unsupported synthetic intervals at every level',()=>{
   const s={...snapshot([variant('persistence','OK',['SYNTHETIC_INTERVALS_UNCALIBRATED','SYNTHETIC_INTERVALS_UNCALIBRATED'])]),mode:'synthetic'} as Snapshot;
   const html=renderToStaticMarkup(<Availability snapshot={s}/>);
-  expect(html).toContain('not applicable');expect(html).toContain('No synthetic interval calibration exists');
+  expect(html).toContain('not applicable');expect(html).toContain('No interval calibration exists in demo mode');
  });
  it('latest issue support never borrows current recovery counts',()=>{
   const f={variant:'persistence',origin_time:'2026-01-01T11:30:00Z',target_time:'2026-01-01T12:00:00Z',history_count:1,value:null,point_reason:'INCOMPLETE_HISTORY'} as Forecast;

@@ -65,7 +65,7 @@ const SCENARIO_CATALOG_DATA = [
     id: 'clean',
     name: 'Scripted Day',
     category: 'Daily Profile',
-    desc: 'Authored daily profile with physiological rises, meals, and glycemic variation.',
+    desc: 'Simulated daily profile with scripted rises and recovery; not validated physiology.',
     version: 'scripted-v1',
     loss: 0,
     badge: 'Baseline'
@@ -517,7 +517,7 @@ function App() {
     return () => clearInterval(timer);
   }, []);
 
-  const create = async (recreateId?: string) => {
+  const create = async (recreateId?: string, demoScenario?: string) => {
     if (transition.current) return;
     transition.current = true;
     const version = ++epoch.current;
@@ -528,14 +528,16 @@ function App() {
     try {
       await polling.current.suspend();
       const old = active.current;
+      // React state updates are batched: launch the clicked demo, not the prior selection.
+      const requestedSource = demoScenario === undefined ? source : 'synthetic-dawn';
       const next = recreateId
         ? await api<Snapshot>(`/replay/library/${recreateId}/recreate`, { start })
         : await api<Snapshot>('/replay/sessions', {
-            source_id: source,
-            scenario,
+            source_id: requestedSource,
+            scenario: demoScenario ?? scenario,
             start,
-            seed: source === 'synthetic-dawn' ? seed : 1705,
-            duration_minutes: source === 'synthetic-dawn' ? duration : 720
+            seed: requestedSource === 'synthetic-dawn' ? seed : 1705,
+            duration_minutes: requestedSource === 'synthetic-dawn' ? duration : 720
           });
       if (next.configuration) {
         setSource('synthetic-dawn');
@@ -629,11 +631,11 @@ function App() {
     <div className="workspace">
       {/* Primary Left Navigation */}
       <aside className="sidebar">
-        <a className="brand" href="#replay" aria-label="GlucoTwin replay workspace">
+        <a className="brand" href="#replay" aria-label="GlucoTrace replay workspace">
           <span className="brand-mark">
             <Activity size={18} />
           </span>
-          GlucoTwin<span className="brand-dot">.</span>
+          GlucoTrace<span className="brand-dot">.</span>
         </a>
 
         <div className="sidebar-label">PRIMARY WORKSPACES</div>
@@ -651,7 +653,7 @@ function App() {
           aria-current={isScenarioLabView ? 'location' : undefined}
           href="#scenario-lab"
         >
-          <FlaskConical size={16} /> Scenario Lab <ChevronRight size={14} />
+          <FlaskConical size={16} /> Demo scenarios <ChevronRight size={14} />
         </a>
 
         <a
@@ -697,7 +699,7 @@ function App() {
             <br />
             No clinical decisions.
           </p>
-          <span className="version">GLUCOTWIN · STAGE 06</span>
+          <span className="version">GLUCOTRACE · RESEARCH</span>
         </div>
       </aside>
 
@@ -706,11 +708,11 @@ function App() {
         {/* Top Header Bar */}
         <header className="topbar">
           <div className="topbar-breadcrumbs">
-            <span>Workspace</span>
+            <span>GlucoTrace</span>
             <ChevronRight size={13} />
             <b>
               {isScenarioLabView
-                ? 'Scenario Lab'
+                ? 'Demo scenarios'
                 : isSessionLibraryView
                 ? 'Session Library'
                 : isResultsExportsView
@@ -732,36 +734,36 @@ function App() {
           <div>
             <div className="eyebrow">
               {isScenarioLabView
-                ? 'RESEARCH SYNTHETICS / SCENARIO LAB'
+                ? 'DEMO MODE / SCENARIOS'
                 : isSessionLibraryView
                 ? 'LOCAL REPLAY STORAGE / SESSION LIBRARY'
                 : isResultsExportsView
-                ? 'RESULTS EVALUATION / SYNTHETIC EXPORTS'
+                ? 'RESULTS / DEMO EXPORTS'
                 : 'LOCAL RESEARCH / REPLAY WORKSPACE'}
             </div>
             <h1>
               {isScenarioLabView
-                ? 'Synthetic Scenario Lab'
+                ? 'Demo scenarios'
                 : isSessionLibraryView
                 ? 'Session Library'
                 : isResultsExportsView
                 ? 'Research Results & Exports'
-                : 'Explore the signal.'}
+                : 'GlucoTrace'}
             </h1>
             <p>
               {isScenarioLabView
-                ? 'Reproduce, inspect, and launch 9 versioned synthetic scenarios.'
+                ? 'Choose from nine reproducible demo scenarios.'
                 : isSessionLibraryView
                 ? 'Manage local replays, review retained historical summaries, or recreate configurations.'
                 : isResultsExportsView
-                ? 'Verify per-variant error statistics and download permitted synthetic datasets.'
-                : 'Revealed history. Fixed forecasts. Transparent outcomes.'}
+                ? 'Review results and export demo readings.'
+                : 'Patient-Adaptive Glucose Forecasting Research Platform'}
             </p>
           </div>
 
           <span className={`mode-badge ${mode}`}>
             <FlaskConical size={14} />
-            {mode === 'synthetic' ? 'INDEPENDENT SYNTHETIC' : 'PROCESSED-DATA REPLAY'}
+            {mode === 'synthetic' ? 'DEMO MODE' : 'PROCESSED-DATA REPLAY'}
           </span>
         </section>
 
@@ -769,11 +771,14 @@ function App() {
         <div className="disclosure">
           <ShieldCheck size={16} />
           <p>
-            {snapshot?.disclosure ??
-              selected?.disclosure ??
-              'Synthetic scenario demonstration. No real patient readings. Not a validated physiological simulator.'}
+            {mode === 'synthetic' ? 'Demo data — simulated readings' : snapshot?.disclosure ?? selected?.disclosure ?? 'Private retrospective replay of processed patient data. Arrival times are assumed.'}
           </p>
         </div>
+        <details className="source-information">
+          <summary>Source information</summary>
+          <p>{snapshot?.disclosure ?? selected?.disclosure ?? 'Independent simulated demo readings; not real patient data or validated physiology.'}</p>
+          {mode === 'synthetic' && <p>Demo mode uses persistence: the latest accepted reading is the +30-minute point forecast. It does not use patient-trained Ridge models, patient adaptation or calibrated intervals. Simulation provenance stays in API responses, exports and records.</p>}
+        </details>
 
         {/* Navigation Tabs Bar */}
         <nav className="feature-nav" aria-label="Research destinations">
@@ -785,7 +790,7 @@ function App() {
             Replay Workspace
           </a>
           <a href="#scenario-lab" className={isScenarioLabView ? 'active' : ''} aria-current={isScenarioLabView ? 'location' : undefined}>
-            Scenario Lab
+            Demo scenarios
           </a>
           <a href="#session-library" className={isSessionLibraryView ? 'active' : ''} aria-current={isSessionLibraryView ? 'location' : undefined}>
             Session Library
@@ -828,7 +833,7 @@ function App() {
                   >
                     {sources.map(s => (
                       <option key={s.id} value={s.id} disabled={!s.available}>
-                        {s.label}
+                        {s.mode === 'synthetic' ? 'Demo data' : s.label}
                         {s.available ? '' : ` · ${reason(s.reason ?? 'unavailable')}`}
                       </option>
                     ))}
@@ -858,7 +863,7 @@ function App() {
                 </label>
 
                 <button className="primary create" onClick={() => void create()} disabled={busy || !selected?.available}>
-                  {busy ? 'Preparing…' : snapshot ? 'Create new session' : 'Create session'}
+                  {busy ? 'Preparing…' : source === 'synthetic-dawn' ? 'Create demo session' : snapshot ? 'Create new session' : 'Create session'}
                   <ArrowRight size={15} />
                 </button>
               </section>
@@ -913,7 +918,7 @@ function App() {
                   : busy
                   ? `${operation} / ${busySeconds}s elapsed. Controls are temporarily locked; no future targets are exposed.`
                   : start === 'warm'
-                  ? 'Warm start processes earlier arrivals, forecasts and scores chronologically (synthetic: 120 min; local: through calibration and history rebuilding).'
+                  ? 'Warm start processes earlier arrivals, forecasts and scores chronologically (demo: 120 min; private replay: through calibration and history rebuilding).'
                   : 'Full chronology begins at minute zero. Forecasts require 61 valid minute cells spanning 60 minutes.'}
               </p>
             </section>
@@ -967,7 +972,7 @@ function App() {
                       onClick={e => {
                         e.stopPropagation();
                         setScenario(item.id);
-                        void create();
+                        void create(undefined, item.id);
                       }}
                       disabled={busy}
                     >
@@ -1009,7 +1014,7 @@ function App() {
                 >
                   {sources.map(s => (
                     <option key={s.id} value={s.id} disabled={!s.available}>
-                      {s.label}
+                      {s.mode === 'synthetic' ? 'Demo data' : s.label}
                       {s.available ? '' : ` · ${reason(s.reason ?? 'unavailable')}`}
                     </option>
                   ))}
@@ -1039,7 +1044,7 @@ function App() {
               </label>
 
               <button className="primary create" onClick={() => void create()} disabled={busy || !selected?.available}>
-                {busy ? 'Preparing…' : snapshot ? 'Create new session' : 'Create session'}
+                {busy ? 'Preparing…' : source === 'synthetic-dawn' ? 'Create demo session' : snapshot ? 'Create new session' : 'Create session'}
                 <ArrowRight size={15} />
               </button>
             </section>
@@ -1094,7 +1099,7 @@ function App() {
                 : busy
                 ? `${operation} / ${busySeconds}s elapsed. Controls are temporarily locked; no future targets are exposed.`
                 : start === 'warm'
-                ? 'Warm start processes earlier arrivals, forecasts and scores chronologically (synthetic: 120 min; local: through calibration and history rebuilding).'
+                ? 'Warm start processes earlier arrivals, forecasts and scores chronologically (demo: 120 min; private replay: through calibration and history rebuilding).'
                 : 'Full chronology begins at minute zero. Forecasts require 61 valid minute cells spanning 60 minutes.'}
             </p>
           </section>
@@ -1341,7 +1346,7 @@ function App() {
                 <div className="chart-foot">
                   <Clock3 size={13} />
                   <span>
-                    Artificial UTC session clock. {snapshot?.mode === 'local' ? 'Source timezone unknown.' : 'Synthetic minute grid.'}{' '}
+                    Artificial UTC session clock. {snapshot?.mode === 'local' ? 'Source timezone unknown.' : 'Simulated minute grid.'}{' '}
                     Zero assumed arrival delay.
                   </span>
                 </div>
@@ -1360,7 +1365,7 @@ function App() {
                 <div className="capability-card" aria-label="Mode capability and active source profile">
                   <div className="capability-top-bar">
                     <span className="capability-mode-badge">
-                      {snapshot ? (snapshot.mode === 'synthetic' ? 'INDEPENDENT SYNTHETIC' : 'RETROSPECTIVE REPLAY') : 'NO SESSION'}
+                      {snapshot ? (snapshot.mode === 'synthetic' ? 'DEMO MODE' : 'RETROSPECTIVE REPLAY') : 'NO SESSION'}
                     </span>
                     <span className="capability-horizon-badge">Horizon: +30 min</span>
                   </div>
@@ -1370,7 +1375,7 @@ function App() {
                       <span className="cap-meta-label">Active Session:</span>
                       <span className="cap-meta-val">
                         {snapshot
-                          ? (sources.find(s => s.id === snapshot.source_id)?.label ?? (snapshot.mode === 'synthetic' ? 'Scripted day / independent synthetic' : 'Local processed stream'))
+                          ? (snapshot.mode === 'synthetic' ? 'Demo session' : sources.find(s => s.id === snapshot.source_id)?.label ?? 'Local processed stream')
                           : 'No active session'}
                       </span>
                     </div>
@@ -1411,7 +1416,7 @@ function App() {
                       <span className="cap-val">
                         {snapshot?.mode === 'local'
                           ? 'Retrospective benchmark evaluation (delayed ground-truth scoring at +30m target maturity)'
-                          : 'Synthetic demonstration (scripted reference comparison; no patient data)'}
+                          : 'Demo results (persistence comparison; no patient data)'}
                       </span>
                     </div>
                   </div>
@@ -1430,7 +1435,7 @@ function App() {
                   <div className="nominal-label-wrap">
                     <span>Nominal interval</span>
                     {snapshot?.mode === 'synthetic' && (
-                      <span className="nominal-unavailable-hint">(Unavailable in Synthetic)</span>
+                      <span className="nominal-unavailable-hint">(Unavailable in demo mode)</span>
                     )}
                   </div>
                   <div>
@@ -1540,11 +1545,11 @@ function App() {
                   ) : (
                     <>
                       {snapshot.mode === 'synthetic'
-                        ? 'Intervals unavailable in synthetic mode (no synthetic interval calibration). '
+                        ? 'Intervals unavailable in demo mode (no interval calibration). '
                         : 'Intervals not yet evaluated for empirical coverage. '}
                     </>
                   )}
-                  {snapshot.mode === 'local' ? 'Evaluation phase only.' : 'Synthetic scenario only; not patient accuracy.'}
+                  {snapshot.mode === 'local' ? 'Evaluation phase only.' : 'Demo results only; not patient accuracy.'}
                 </p>
               </div>
             )) ?? <p className="setup-note">No session yet. Counts appear after session preparation.</p>}
@@ -1651,7 +1656,7 @@ function App() {
                 <div className="not-clinical">No clinical alarms, dosing or treatment recommendations.</div>
                 {snapshot?.gap && (
                   <div className="gap-note">
-                    <b>Synthetic input-loss schedule</b>
+                    <b>{snapshot.mode === 'local' ? 'Simulated input loss on processed patient replay' : 'Demo input-loss schedule'}</b>
                     {time(snapshot.gap.start_time)}–{time(snapshot.gap.end_time)} · half-open input gap. Evaluator retains
                     reference targets.
                   </div>
@@ -1668,7 +1673,7 @@ function App() {
 
         {/* Master Footer */}
         <footer>
-          <span>GlucoTwin / Local research workspace</span>
+          <span>GlucoTrace / Local research workspace</span>
           <span>No live sensor connection · No coverage guarantees</span>
         </footer>
       </main>

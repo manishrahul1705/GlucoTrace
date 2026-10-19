@@ -1,8 +1,8 @@
-# GlucoTwin
+# GlucoTrace
 
-> **GlucoTwin — Patient-Adaptive Glucose Forecasting and Replay Research Prototype**
+> **GlucoTrace — Patient-Adaptive Glucose Forecasting Research Platform**
 
-GlucoTwin investigates retrospective 30-minute ahead continuous glucose monitoring (CGM) forecasting and within-patient calibration in adults with Type 2 Diabetes using trailing sensor dynamics and baseline clinical screening characteristics (Age, BMI, HbA1c, Fasting Glucose).
+GlucoTrace investigates retrospective 30-minute ahead continuous glucose monitoring (CGM) forecasting and within-patient calibration in adults with Type 2 Diabetes using trailing sensor dynamics and baseline clinical screening characteristics (Age, BMI, HbA1c, Fasting Glucose).
 
 This repository contains the independently authored open-source research codebase, data preparation pipelines, feature extraction modules, cross-validation protocols, interactive virtual replay engine, Scenario Lab, and synthetic test suites.
 
@@ -16,7 +16,7 @@ This repository contains the independently authored open-source research codebas
 
 ## 1. Project Purpose & Scope
 
-The core scientific inquiry of GlucoTwin is evaluating whether concatenating static patient screening variables to short-term dynamic sensor features improves 30-minute forward glucose extrapolation in unseen individuals, or whether short-term sensor dynamics dominate the forecast horizon.
+The core scientific inquiry of GlucoTrace is evaluating whether concatenating static patient screening variables to short-term dynamic sensor features improves 30-minute forward glucose extrapolation in unseen individuals, or whether short-term sensor dynamics dominate the forecast horizon.
 
 - **Current Stage**: Stage 6 local research app implemented and verified with Playwright Chromium. Historical experiments remain frozen.
 - **Current Scope**: Retrospective research on released, processed continuous glucose monitoring data from the PhysioNet CGMacros v1.0.0 cohort.
@@ -25,6 +25,8 @@ The core scientific inquiry of GlucoTwin is evaluating whether concatenating sta
 ---
 
 ## Local research dashboard
+
+The current interface is GlucoTrace. The repository and internal `glucotwin` package retain their existing names. For the 30-minute recording workflow and the current-checkout launch command, see [the demo checklist](docs/stage6/DEMO_RECORDING.md). The preserved release-rehearsal snapshot is a separate copy and does not receive checkout edits.
 
 Select and verify a Python 3.12 environment first (an existing `.venv` may lack dependencies). Start the synthetic-only dashboard (after the setup in [Stage 6 instructions](docs/stage6/README.md)):
 
@@ -143,7 +145,7 @@ These boundaries reflect technical constraints, not claims of regulatory clearan
 
 - **Retrospective Processed Signal Only**: The released PhysioNet CGMacros signals contain upstream sensor-level filtering, interpolation, and artifact correction. **Causal live equivalence is NOT ESTABLISHED**.
 - **Sampling vs Packet Arrivals**: The computational 5-minute grid does not reconstruct native Bluetooth packet receipt times, transmitter clock drift, or transmission dropouts.
-- **No Clinical Clearance or Device Exemption**: GlucoTwin is not an approved medical device, diagnostic tool, or clinical decision support system. It has not received FDA clearance, CE marking, CDSCO approval, or prospective clinical trial validation. Labeling software as "research only" does not confer legal exemption for clinical use.
+- **No Clinical Clearance or Device Exemption**: GlucoTrace is not an approved medical device, diagnostic tool, or clinical decision support system. It has not received FDA clearance, CE marking, CDSCO approval, or prospective clinical trial validation. Labeling software as "research only" does not confer legal exemption for clinical use.
 - **Regulatory Compliance Not Assessed**: Technical exclusion of raw data via `.gitignore` and running offline synthetic demonstrations do not constitute compliance with the Digital Personal Data Protection Act (DPDP Act 2023) or HIPAA. Formal statutory and regulatory compliance has not been assessed.
 - **Single-Point Endpoint & No Alert Mechanisms**: Predictions are restricted to a single continuous scalar value at origin + 30 minutes ($t+30$). The software contains no multi-step future trajectory, no threshold-crossing detection, no adverse event probability calculation, and no clinical warning or alert mechanisms.
 - **No Treatment, Dosing, or Alert Guidance**: Under no circumstances should predictions be used for insulin titration, oral agent adjustments, carbohydrate intake, or acute clinical alerts.
@@ -177,4 +179,4 @@ These boundaries reflect technical constraints, not claims of regulatory clearan
 - **Architecture & Presentation Decks**: See `docs/review/SUBMISSION_GAPS_AND_CLARIFICATIONS.md` for preparation blueprints.
 
 ### Non-Affiliation & Trademark Notice
-*GlucoTwin is an independent academic and open-source research prototype developed by Manish Rahul and collaborators for the Happiest Health CRP Digital Twin Challenge 2026. This project is not affiliated with, sponsored by, or endorsed by glucotwin.com, commercial metabolic health platforms, or unrelated academic research publications sharing the name.*
+*GlucoTrace (previously branded GlucoTwin) is an independent academic and open-source research prototype developed by Manish Rahul and collaborators for the Happiest Health CRP Digital Twin Challenge 2026. This project is not affiliated with, sponsored by, or endorsed by glucotwin.com, commercial metabolic health platforms, or unrelated academic research publications sharing the name.*

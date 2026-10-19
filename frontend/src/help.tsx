@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 
 const steps = [
-  ['Choose a source', 'Scenario Lab offers steady, scripted rise/recovery, activity, noise and four input-loss scenarios. Choose a seed and bounded duration; inspect the generator version/configuration. These are independent engineering scenarios, not validated physiology. Private replay needs explicit opt-in and matching artifacts.'],
-  ['Prepare a session', 'Warm start processes earlier events chronologically; full chronology starts at zero. The session library can rename and recreate a synthetic configuration as a NEW session/generation. Retained summaries are read-only. Server restart expires runtimes; recreation is not resume.'],
+  ['Choose a source', 'Demo scenarios include steady, scripted rise/recovery, activity, noise and four input-loss scenarios. Choose a seed and bounded duration; inspect the generator version/configuration. These are independent engineering scenarios, not validated physiology. Private replay needs explicit opt-in and matching artifacts.'],
+  ['Prepare a session', 'Warm start processes earlier events chronologically; full chronology starts at zero. The session library can rename and recreate a demo configuration as a NEW session/generation. Retained summaries are read-only. Server restart expires runtimes; recreation is not resume.'],
   ['Control the clock', 'Start or resume playback, pause, step exactly five minutes while paused, or change speed. Reset creates a new generation. The clock is simulated, not a live sensor.'],
   ['Read the endpoint', 'Each dot is a forecast at origin plus exactly 30 minutes. Click a dot or ledger origin, or press Enter on a focused dot, to open the inspector. Escape closes and restores focus. Choose a history range/cutoff to inspect revealed history; Follow replay returns to the clock. Dots never form a future trajectory.'],
-  ['Wait for scoring', 'Targets remain hidden until maturity. Summary counts distinguish issued, pending, scored and missing targets, separately per variant. Synthetic exports contain configuration, revealed readings, issued forecasts, matured scores or summary at a fixed cutoff. Patient exports are blocked. A point may be available without an interval.'],
+  ['Wait for scoring', 'Targets remain hidden until maturity. Summary counts distinguish issued, pending, scored and missing targets, separately per variant. Demo exports contain configuration, revealed readings, issued forecasts, matured scores or summary at a fixed cutoff. Patient exports are blocked. A point may be available without an interval.'],
   ['Try input loss', 'Create a 15, 30, 60 or 120 minute dropout session. At minute 180 inputs stop, forecasts are suppressed, then all 61 valid minute cells must rebuild before recovery. Reference targets are retained by the evaluator.'],
-  ['Understand the limits', 'Synthetic persistence is not evidence of diabetes accuracy. Local replay uses processed values with assumed arrivals and upstream interpolation. No clinical decisions or guaranteed interval coverage.']
+  ['Understand the limits', 'Demo persistence is not evidence of diabetes accuracy. Local replay uses processed values with assumed arrivals and upstream interpolation. No clinical decisions or guaranteed interval coverage.']
 ];
 
 export function Help() {
@@ -47,7 +47,7 @@ export function Help() {
             className="help-panel"
             ref={panel}
             tabIndex={-1}
-            aria-label="How to use GlucoTwin"
+            aria-label="How to use GlucoTrace"
             onKeyDown={e => {
               if (e.key === 'Escape') close();
               if (e.key === 'ArrowRight') setStep(s => Math.min(6, s + 1));

@@ -28,7 +28,7 @@ try{
   page.on('response',r=>{if(r.url().includes('/api/')&&r.status()>=400)failed.push(r.url()+': '+r.status())});
   await page.goto(url.href,{waitUntil:'networkidle'});
   await page.getByRole('combobox',{name:'Source',exact:true}).selectOption('synthetic-dawn');
-  await page.getByRole('button',{name:/^Create (new )?session$/}).click();
+  await page.getByRole('button',{name:/^Create (demo |new )?session$/}).click();
   await expect(page.locator('.recovery-panel')).toContainText('61 of 61');
   // Five normal viewports plus the separately reproduced CSS zoom condition.
   // Native browser UI zoom is deliberately not represented by either method.
