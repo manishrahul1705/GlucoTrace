@@ -1,182 +1,141 @@
 # GlucoTrace
 
-> **GlucoTrace — Patient-Adaptive Glucose Forecasting Research Platform**
+**Patient-Adaptive Glucose Forecasting Research Platform**
 
-GlucoTrace investigates retrospective 30-minute ahead continuous glucose monitoring (CGM) forecasting and within-patient calibration in adults with Type 2 Diabetes using trailing sensor dynamics and baseline clinical screening characteristics (Age, BMI, HbA1c, Fasting Glucose).
+GlucoTrace is a research prototype for retrospective continuous glucose monitoring (CGM) forecasting in adults with Type 2 Diabetes. It asks whether baseline study attributes add value to short-term sensor dynamics, and whether a fixed within-participant correction improves forecasts on later observations.
 
-This repository contains the independently authored open-source research codebase, data preparation pipelines, feature extraction modules, cross-validation protocols, interactive virtual replay engine, Scenario Lab, and synthetic test suites.
+The public demo uses **generated readings and persistence**. Private retrospective replay uses separately verified, patient-trained Ridge models and restricted artifacts. Neither mode is clinically validated or provides treatment or dosing recommendations.
 
-**Competition Review Documentation:**
-- [Requirements & Evidence Matrix](docs/review/REQUIREMENTS_EVIDENCE_MATRIX.md)
-- [Project Positioning & Naming Reconciliation](docs/review/PROJECT_POSITIONING_AND_NAMING.md)
-- [Submission Gaps, Clarifications & Deliverables Blueprint](docs/review/SUBMISSION_GAPS_AND_CLARIFICATIONS.md)
-- [Stages 1 & 2 Execution Record](docs/review/STAGES_1_2_EXECUTION_RECORD.md)
+## Team and institution
 
----
+**Autom Squad · Sri Eshwar College of Engineering**
 
-## 1. Project Purpose & Scope
+| Member | Role |
+| --- | --- |
+| Manish Raghul SJ | Team Lead and Frontend Developer |
+| Nethra V D | AI Developer |
 
-The core scientific inquiry of GlucoTrace is evaluating whether concatenating static patient screening variables to short-term dynamic sensor features improves 30-minute forward glucose extrapolation in unseen individuals, or whether short-term sensor dynamics dominate the forecast horizon.
+No incubator affiliation is claimed.
 
-- **Current Stage**: Stage 6 local research app implemented and verified with Playwright Chromium. Historical experiments remain frozen.
-- **Current Scope**: Retrospective research on released, processed continuous glucose monitoring data from the PhysioNet CGMacros v1.0.0 cohort.
-- **Evaluation Design**: 14 Leave-One-Participant-Out (LOPO) outer test folds with nested 3-fold grouped inner cross-validation for hyperparameter selection across 39,496 paired 5-minute issue origins.
+## Problem and healthcare research use case
 
----
+Short-horizon glucose forecasts can be sensitive to noise, missing history and differences between individuals. A useful research interface must expose when forecasts are supported, when outcomes are still pending, and whether a correction helps some glucose ranges while harming others.
 
-## Local research dashboard
+GlucoTrace supports retrospective comparison and inspection of these behaviours. It does not connect to a live sensor, predict clinical episodes, or recommend care. Baseline attributes are **age, BMI, HbA1c and fasting glucose**, not longitudinal EHR. Their actual availability before evaluation is an unresolved assumption.
 
-The current interface is GlucoTrace. The repository and internal `glucotwin` package retain their existing names. For the 30-minute recording workflow and the current-checkout launch command, see [the demo checklist](docs/stage6/DEMO_RECORDING.md). The preserved release-rehearsal snapshot is a separate copy and does not receive checkout edits.
+## Implemented features
 
-Select and verify a Python 3.12 environment first (an existing `.venv` may lack dependencies). Start the synthetic-only dashboard (after the setup in [Stage 6 instructions](docs/stage6/README.md)):
+- Seeded demo scenarios, warm starts, playback speed, pause, reset and five-minute steps.
+- History support and suppression/recovery tracking: **61 minute cells span 60 elapsed minutes**.
+- Immutable forecast origin/target records, exact **+30-minute** target scoring, and historical cutoffs that hide later information.
+- Threshold flags for the exact endpoint above 180 or 250 mg/dL; these are endpoint decisions, **not episode/onset predictions or probabilities**.
+- Local session naming, retained summaries and scenario recreation; five demo export formats. Patient exports are disabled.
+- Independent experiment verification and genuine HTTP/Chromium acceptance tools. Private replay requires a complete trusted bundle; source checkout alone does not contain it.
 
-```powershell
-.\.venv\Scripts\python.exe scripts/start_stage6.py
+See [Scenario Lab contracts](docs/stage6/SCENARIO_LAB.md), [new-experiment workflow](docs/stage6/NEW_EXPERIMENT.md) and [fusion/endpoint scope](docs/stage6/FUSION_AND_ENDPOINTS.md).
+
+## Architecture overview
+
+```mermaid
+flowchart LR
+    D[Generated demo readings] --> A[FastAPI replay engine]
+    P[Private verified retrospective bundle] --> G[Compatibility and integrity gates]
+    G --> A
+    A --> H[History support and forecast issuance]
+    H --> T[Exact target maturity and cutoff projection]
+    T --> U[React / TypeScript dashboard]
+    A <--> S[Local SQLite session store]
+    U --> E[Demo-only exports]
 ```
 
-Open http://127.0.0.1:15173/. Add `--local` only for private processed-data replay (requires the complete trusted, matching observations/model/calibration bundle; data files alone are insufficient). See the [Stage 6 instructions and startup guide](docs/stage6/README.md). This is retrospective/synthetic research,
-not a live sensor connection or clinical tool. No deployment is included.
+The source registry keeps demo and private inputs distinct. Replay processes chronological arrivals; outcome scoring waits for exact target maturity. The [technical architecture](docs/stage6/ARCHITECTURE.md) provides implementation detail. This Markdown diagram **does not satisfy the requested PDF/PPT architecture deliverable**; that file remains independently unconfirmed.
 
-## Scenario Lab and session tools
+## Technical stack
 
-The replay workspace supports authored seeded scenarios, a local session library, forecast inspection, revealed-history exploration, and five synthetic-only export formats. See [feature setup/API/export contracts](docs/stage6/SCENARIO_LAB.md). Original research results remain preserved.
+| Layer | Technologies |
+| --- | --- |
+| Research and numerical processing | Python 3.12, NumPy, pandas, SciPy, scikit-learn, joblib |
+| API and persistence | FastAPI, Pydantic, Uvicorn, SQLite |
+| Interface | React, TypeScript, Vite, Lucide icons |
+| Verification | unittest, HTTPX, Vitest, Playwright Chromium; explicit source-package manifest |
+| Dependencies | Versioned Python requirements and npm lockfile |
 
-## 2. Implemented Components
+## Models and evaluation
 
-The project is structured modularly under `src/glucotwin/`:
+| Context | Model and scope |
+| --- | --- |
+| Public demo | Authored generated readings; persistence carries the current accepted value to +30 minutes. No patient adaptation or calibrated intervals. |
+| Private sensor-only replay | Ridge regression using 21 trailing sensor features; trained/scaled on permitted training partitions. |
+| Private baseline-plus-sensor replay | Ridge with the same sensor features plus age, BMI, HbA1c and fasting glucose. Sensor-only remains the default. |
+| Adapted versus unadapted | Adapted forecasts add a fixed participant-specific median residual correction from an earlier offset phase. Unadapted forecasts retain the model output. This is not continuous retraining. |
+| Historical benchmark | Ridge and Histogram Gradient Boosting, with persistence and trailing-linear references; participant-disjoint outer evaluation and grouped inner selection. |
 
-- **Data Contracts & Preprocessing** (`src/glucotwin/contracts.py`, `preprocessing.py`):
-  Enforces monotonic timestamps, physical glucose bounds ([40, 400] mg/dL), 60-minute history availability, and causal boundary isolation.
-- **Feature Engineering** (`src/glucotwin/features.py`, `labels.py`):
-  Extracts 21 trailing sensor features (13 discrete lags at 5-minute intervals from \(t-60\) to \(t\), 6 rolling window statistics, and 2 trailing linear slopes) and 4 baseline features (Age, BMI, HbA1c, Fasting Glucose).
-- **Partitioning & Protocol** (`src/glucotwin/splits.py`, `configs/stage2_protocol.json`, `configs/stage3_run.json`):
-  Enforces strict participant disjointness across 14 outer folds and grouped inner folds.
-- **Execution & Invariant Enforcement** (`src/glucotwin/stage3/integrity.py`):
-  Preflight validation verifying 10 protocol, feature table, and split invariants before model training.
-- **Model Training & Prediction** (`src/glucotwin/stage3/training.py`, `selection.py`):
-  Supports Ridge regression and Histogram Gradient Boosting with training-only feature standardization and deterministic candidate tie-breaking.
-- **Metric Computation & Bootstrap** (`src/glucotwin/stage3/metrics.py`):
-  Full IEEE 754 float64 precision calculation of participant-equal and window-weighted MAE, RMSE, signed error, and 2,000-draw paired participant bootstrap confidence intervals.
-- **Independent Verifier** (`scripts/verify_stage3.py`):
-  Validates all 728 distinct fit ledger identities, origin-to-target joins, candidate optimality, and end-to-end refit reproduction.
+Stage 4 uses its documented 48-hour adaptation phase. Stage 5 separately uses a 24-hour offset phase and a further 24-hour interval-calibration phase, followed by later evaluation and boundary purges. These protocols and results must not be conflated. Nominal 90%/95% intervals express requested levels; **observed coverage is a measured outcome, not a guarantee**.
 
----
+Protocols: [evaluation](docs/stage2/evaluation_protocol.md), [features](docs/stage2/feature_specification.csv), [implemented uncertainty](docs/stage5/IMPLEMENTED_PROTOCOL.md). Historical records and internal `glucotwin` package names remain unchanged.
 
-## 3. Quickstart & Installation (Windows / PowerShell)
+## Verified findings and limitations
 
-### Prerequisites
-- Python 3.12 (verified interpreter: 3.12.10); Node 24.21.0 / npm 11.19.0 for the dashboard
-- Git
+Existing documented findings show a modest overall MAE improvement from adaptation, alongside slice trade-offs: high-glucose errors and underprediction worsened. Baseline fusion did not demonstrate improvement; sensor-only remains the default. Observed interval coverage was below nominal. These are cohort- and protocol-specific retrospective findings, not evidence of clinical benefit. No new private numerical outputs are published here; see the existing [historical project record](PROJECT_STATUS.md).
 
-### 1. Clone the Repository
+Important limitations include processed/interpolated source data, unknown baseline measurement availability, assumed replay arrival timing, a small evaluated cohort and overlapping forecast origins. Live causal equivalence, prospective performance and clinical validation are not established. No treatment, dosing or clinical alert recommendation is provided.
+
+The relevant Stage B checkpoint recorded **207 backend tests** and **33 frontend tests**, plus typecheck/build success. Those are reused revision-specific results, not fresh test runs for this README edit. Later demo checks, recording verification and source-package integrity checks are separate evidence, not updated suite totals. Technical implementation/rehearsal is complete within these documented limitations; competition-use clarification and actual submission remain pending/unconfirmed.
+
+## Installation and launch
+
+Windows / PowerShell, from a fresh checkout:
+
 ```powershell
-git clone https://github.com/manishrahul1705/GlucoTwin.git
-cd GlucoTwin
-```
-
-### 2. Create and Activate Virtual Environment
-```powershell
+git clone https://github.com/manishrahul1705/GlucoTrace.git
+cd GlucoTrace
 py -3.12 -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -r requirements-stage6.txt
+$python = '.\.venv\Scripts\python.exe'
+& $python -m pip install -r requirements-stage6.txt
+npm.cmd ci --prefix frontend
+& $python scripts/start_stage6.py
 ```
 
-### 3. Run Synthetic Verification Tests (No Data Required)
-The unit suite uses synthetic fixtures and repository integrity checks. It does not require downloading external datasets. Install the Stage 6 dependencies above for the API tests:
+Open http://127.0.0.1:15173/. The default is demo-only; no patient data is required. Select **Warm start**, seed **1705**, duration **720 simulated minutes**. Keep **“Demo data — simulated readings”** visible. Simulated dataset duration is independent of video duration.
+
+Use distinct free ports if necessary. The documented `--config-loader runner` workaround is available when the default Vite loader encounters restricted-environment access errors. See [setup and verification](docs/stage6/README.md) for interpreter selection, POSIX equivalents and isolated runtime guidance. Do not overwrite an existing environment or reuse a private library for a public demonstration.
+
 ```powershell
-$env:PYTHONPATH="src"
-.\.venv\Scripts\python.exe -m unittest discover -s tests -p "test_*.py" -v
-```
-At the Phase 3 candidate revision, verification ran **144 Python tests** and **30 frontend tests** (six Vitest files). These are recorded results at this revision, not fixed future test counts. Tests use synthetic fixtures; they do not establish patient execution or clinical validity. See [current commands, environment selection, package modes and the restricted-loader workaround](docs/stage6/README.md). Historical verifier scripts are separate from the complete unit suite.
-
----
-
-## 4. Dataset Reproduction & Benchmark Execution
-
-To reproduce the retrospective benchmark on real clinical data:
-
-### Step 1: Review License Terms
-Read `docs/stage1/licensing_and_permissions.md` and `docs/stage2/licensing_status.md`. Ensure your intended research use complies with the PhysioNet Open Data Commons Attribution License (ODC-BY 1.0) and CC BY-NC-SA 4.0.
-
-### Step 2: Download the PhysioNet Dataset
-Download the 48 raw table files and publisher dictionaries directly from PhysioNet via HTTPS byte-range extraction:
-```powershell
-.\.venv\Scripts\python.exe scripts/download_data.py
-```
-*Note: This downloads source data locally into `data/raw/` (ignored by git).*
-
-### Step 3: Run Stage 2 Data Preparation
-Generate standardized observation grids, paired 5-minute origins, and feature tables:
-```powershell
-.\.venv\Scripts\python.exe scripts/prepare_stage2.py
-.\.venv\Scripts\python.exe scripts/verify_stage2.py --rerun
+$env:PYTHONPATH = 'src'
+& $python -m unittest discover -s tests -p 'test_*.py' -v
+npm.cmd test --prefix frontend
+npm.cmd run typecheck --prefix frontend
+npm.cmd run build --prefix frontend
+& $python scripts/verify_portable_package.py --mode source
 ```
 
-### Step 4: Execute the Stage 3 Benchmark
-Run the frozen benchmark across all 14 LOPO folds (728 fits):
-```powershell
-.\.venv\Scripts\python.exe scripts/run_stage3.py --restart
-```
+Dataset acquisition and research execution are separate from this demo quickstart. Review [data-use restrictions](docs/DATA_USE_ACQUISITION_REVIEW.md) and [licensing status](docs/stage2/licensing_status.md) before obtaining or processing data. Do not generate substitutes to bypass private replay compatibility gates.
 
-### Step 5: Independently Verify Results
-Verify fit ledger integrity, origin joins, candidate selection optimality, and refit reproduction:
-```powershell
-.\.venv\Scripts\python.exe scripts/verify_stage3.py
-```
+## Demo, presentation and submission checklist
 
----
+The silent walkthrough is complete at **18:01**, within the required 15–20 minutes. **Silent video; narration supplied separately.** The timestamped script is prepared; narration is in preparation. The large local video is not stored in Git. The older [recording checklist](docs/stage6/DEMO_RECORDING.md) describes the superseded 30-minute plan; the completed take uses the revised 18-minute scope.
 
-## 5. Historical benchmark findings
+The supplied presentation is named `GlucoTrace_Digital_Twin_Challenge_2026.pdf`, but it was not located in the available project/attachment locations for this update. Its contents and architecture compliance have not been independently reviewed, and its repository addition is pending. No presentation or video URL is invented below.
 
-*These historical benchmark results are preserved. Later new-experiment sensor/fusion and exact-endpoint research are described in [current Stage 6 instructions](docs/stage6/README.md) and [fusion/endpoint scope](docs/stage6/FUSION_AND_ENDPOINTS.md). They do not demonstrate a fusion improvement. Detailed historical analysis remains in [PROJECT_STATUS.md](PROJECT_STATUS.md).*
+| # | Organizer requirement | Current status |
+| --- | --- | --- |
+| 1 | Team details | Autom Squad; two confirmed members and roles listed above. |
+| 2 | College/incubator information | Sri Eshwar College of Engineering; no incubator affiliation claimed. |
+| 3 | Project title | GlucoTrace — Patient-Adaptive Glucose Forecasting Research Platform. |
+| 4 | Problem statement | Described above, including missing-input and evaluation-time boundaries. |
+| 5 | Healthcare use case | Retrospective Type 2 Diabetes forecasting research; no clinical recommendations. |
+| 6 | Technical stack | Listed above; dependencies versioned in requirements/lockfile. |
+| 7 | AI/ML model/framework details | Persistence demo, private Ridge variants, historical benchmark and evaluation distinctions documented above. |
+| 8 | Unlisted YouTube demo, 15–20 minutes | 18:01 silent take completed; script prepared, narration in preparation. **Pending upload**; no YouTube URL supplied. |
+| 9 | Open-source license | Code MIT; separate dataset and third-party terms apply. |
+| 10 | Architecture diagram in PDF/PPT | **In preparation**; file not independently confirmed. Markdown architecture does not complete this requirement. |
+| 11 | Project/outcomes presentation in PDF/PPT | Named PDF supplied by the team; local availability/content review and repository addition pending. Public link not available. |
+| 12 | Public access without additional permissions | Repository: [GlucoTrace](https://github.com/manishrahul1705/GlucoTrace). Anonymous access to repository/video/decks **not verified in this update**; video/deck links remain pending. |
 
-1. **Short-Term Dynamics Outperform Baselines**:
-   - Ridge regression on 21 sensor features achieved a primary equal-person MAE of **13.50 mg/dL**, outperforming simple persistence (15.15 mg/dL) by **+10.93% skill**.
-   - Trailing linear extrapolation failed severely (**20.41 mg/dL MAE**, -34.71% skill vs persistence) due to noise amplification.
-2. **No Demonstrated Static-Fusion Benefit in This Cohort**:
-   - Concatenating static baseline screening variables (Age, BMI, HbA1c, Fasting Glucose) to the sensor trajectory yielded a statistically negligible difference for Ridge (\(\Delta = +0.056\) mg/dL, 95% bootstrap CI `[-0.33, +0.39]`).
-   - For Histogram Gradient Boosting, static fusion degraded performance by \(\Delta = +0.374\) mg/dL (9 of 14 participants worsened).
-   - In this cohort and candidate set, static screening features did not demonstrate additional benefit over trailing sensor dynamics. This does not establish lack of benefit in other cohorts or settings.
+All twelve requirements are addressed as information or explicit gaps, not all completed deliverables. Competition-use clarification is pending, and actual submission is unconfirmed. Public source availability does not clear restricted-data publication or establish submission readiness.
 
----
+## Code, data and third-party licensing
 
-## 6. Strict Scientific, Medical & Regulatory Boundaries
+The tracked [LICENSE](LICENSE) grants MIT terms for independently authored code, tests, scripts and configurations; its historical copyright naming is preserved. The code license **does not relicense patient data, trained models, calibration files or other derived artifacts**. Dependency and other third-party licenses remain separate.
 
-These boundaries reflect technical constraints, not claims of regulatory clearance:
-
-- **Retrospective Processed Signal Only**: The released PhysioNet CGMacros signals contain upstream sensor-level filtering, interpolation, and artifact correction. **Causal live equivalence is NOT ESTABLISHED**.
-- **Sampling vs Packet Arrivals**: The computational 5-minute grid does not reconstruct native Bluetooth packet receipt times, transmitter clock drift, or transmission dropouts.
-- **No Clinical Clearance or Device Exemption**: GlucoTrace is not an approved medical device, diagnostic tool, or clinical decision support system. It has not received FDA clearance, CE marking, CDSCO approval, or prospective clinical trial validation. Labeling software as "research only" does not confer legal exemption for clinical use.
-- **Regulatory Compliance Not Assessed**: Technical exclusion of raw data via `.gitignore` and running offline synthetic demonstrations do not constitute compliance with the Digital Personal Data Protection Act (DPDP Act 2023) or HIPAA. Formal statutory and regulatory compliance has not been assessed.
-- **Single-Point Endpoint & No Alert Mechanisms**: Predictions are restricted to a single continuous scalar value at origin + 30 minutes ($t+30$). The software contains no multi-step future trajectory, no threshold-crossing detection, no adverse event probability calculation, and no clinical warning or alert mechanisms.
-- **No Treatment, Dosing, or Alert Guidance**: Under no circumstances should predictions be used for insulin titration, oral agent adjustments, carbohydrate intake, or acute clinical alerts.
-- **No Population Generalization to Indian Cohorts**: Glycemic variability, pathophysiology, and dietary compositions in Indian or South Asian populations have not been validated.
-- **Public Competition Permissions Unresolved**: Reconciling the PhysioNet ODC-BY / CC BY-NC-SA terms with the Figshare CC BY cross-deposit remains pending with maintainers. Raw data, participant feature tables, per-origin predictions, and model weights are strictly retained in ignored local storage. Competition eligibility and redistribution rights are not cleared.
-
----
-
-## 7. Licensing & Attribution
-
-- **Project Software**: Independently authored source code, test suites, and configurations are licensed under the [MIT License](LICENSE).
-- **Data Licensing**: The code license does not relicense or grant rights to the underlying CGMacros dataset. The dataset remains subject to its governing PhysioNet licenses (ODC-BY 1.0 and CC BY-NC-SA 4.0).
-- **Citation**:
-  - Gutierrez-Osuna, Kerr, Mortazavi & Das, *Continuous Glucose Monitoring and Macronutrient Composition (CGMacros)*, PhysioNet v1.0.0 (2025), DOI: [10.13026/3z8q-x658](https://doi.org/10.13026/3z8q-x658).
-  - Das et al., "CGMacros: A multimodal dataset of continuous glucose monitoring and dietary macronutrients in type 2 diabetes," *Scientific Data* 12:1557 (2025), DOI: [10.1038/s41597-025-05851-7](https://doi.org/10.1038/s41597-025-05851-7).
-
----
-
-## 8. Hackathon Submission & Team Attribution
-
-- **Target Competition**: Happiest Health — CRP Digital Twin Challenge 2026 (Hosted on Unstop)
-- **Challenge Track**: Chronic Disease Management Proof of Concept (Type 2 Diabetes)
-- **Team Name**: `[Your Team Name]`
-- **Institution / College**: `[Your College / University Name]`
-- **Team Members & Roles**:
-  - `[Member 1 Name]` — Machine Learning & Research Architecture
-  - `[Member 2 Name]` — Frontend Engineering & Data Visualization
-  - `[Collaborator 3 Name]` — Clinical Data Pipelines & Verification
-- **Submission Repository**: https://github.com/manishrahul1705/GlucoTwin
-- **Video Walkthrough ($\ge$ 20 min)**: `[Link to unlisted YouTube / Google Drive demonstration]`
-- **Architecture & Presentation Decks**: See `docs/review/SUBMISSION_GAPS_AND_CLARIFICATIONS.md` for preparation blueprints.
-
-### Non-Affiliation & Trademark Notice
-*GlucoTrace (previously branded GlucoTwin) is an independent academic and open-source research prototype developed by Manish Rahul and collaborators for the Happiest Health CRP Digital Twin Challenge 2026. This project is not affiliated with, sponsored by, or endorsed by glucotwin.com, commercial metabolic health platforms, or unrelated academic research publications sharing the name.*
+CGMacros dataset terms and cross-deposit licensing questions are documented in [licensing and permissions](docs/stage1/licensing_and_permissions.md) and the [permissions tracker](docs/licensing_and_permissions_tracker.md). Obtain data from its publisher under applicable terms. Private datasets, fitted models, authorization records and patient screenshots are not submission assets and must remain outside Git and source packages.
