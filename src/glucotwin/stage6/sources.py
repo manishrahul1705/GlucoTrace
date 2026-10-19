@@ -40,6 +40,9 @@ class Source:
     gap: tuple[int,int] | None = None
     artifact_reason: str = 'OK'
     configuration: dict | None = None
+    model_family: str = 'sensor_only'
+    baseline_context: dict | None = None
+    fusion: object | None = None
 
 
 class SourceUnavailable(ValueError):
@@ -68,8 +71,9 @@ def synthetic(scenario='clean', seed=1705, length=721):
 
 
 class Registry:
-    def __init__(self, root: Path, runtime: Path, local_enabled=False):
+    def __init__(self, root: Path, runtime: Path, local_enabled=False, fusion_root=None):
         self.root,self.runtime,self.local_enabled=root,runtime,local_enabled
+        self.fusion_root=Path(fusion_root) if fusion_root else None
         self.mapping={}
         self.local_error=None
         if local_enabled:
@@ -168,6 +172,11 @@ class Registry:
             readings=tuple(Reading(f'local-{i:05d}',i,None if gap and gap[0]<=i<gap[1] else ref[i],
                                    ref[i] is not None and not(gap and gap[0]<=i<gap[1]),
                                    row_present=bool(frame.row_present.iloc[i]) and not(gap and gap[0]<=i<gap[1])) for i in ref)
-            return Source(identifier,'local',readings,ref,anchor,predict,expected,LOCAL_DISCLOSURE,'unknown',gap)
+            source=Source(identifier,'local',readings,ref,anchor,predict,expected,LOCAL_DISCLOSURE,'unknown',gap)
+            if self.fusion_root:
+                from .fusion import attach_fusion
+                source.fusion=attach_fusion(source,pid,self.fusion_root)
+                source.baseline_context=source.fusion.baseline_context
+            return source
         except SourceUnavailable:raise
         except Exception:raise SourceUnavailable('INCOMPATIBLE_ARTIFACTS') from None

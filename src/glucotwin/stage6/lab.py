@@ -5,7 +5,7 @@ from .prediction import timestamp
 def forecast_view(session,f,cutoff):
     score=session.scores.get(f.id)
     if score and score.matured>cutoff:score=None
-    return dict(id=f.id,seq=f.seq,variant=f.variant,phase=f.phase,origin_time=timestamp(f.origin),target_time=timestamp(f.target),
+    return dict(id=f.id,seq=f.seq,variant=f.variant,model_family=f.model_family,phase=f.phase,origin_time=timestamp(f.origin),target_time=timestamp(f.target),
                 value=f.value,point_reason=f.reason,history_start=timestamp(f.origin-60),history_end=timestamp(f.origin),history_count=f.history_count,
                 artifact_identity=f.artifact_identity,intervals=[dict(alpha=a,lower=l,upper=u,reason=r) for a,l,u,r in f.intervals],
                 score=None if not score else dict(observed=score.observed,signed_error=score.signed_error,reason=score.reason,matured_time=timestamp(score.matured),coverage=dict(score.coverage)))

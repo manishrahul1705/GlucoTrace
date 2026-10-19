@@ -1,0 +1,20 @@
+{
+  "revision": "endpoint-v1",
+  "scope": "Private noncommercial exact-endpoint research, not episode/onset prediction",
+  "thresholds_mg_dl": [180, 250],
+  "comparison": "strictly greater than threshold",
+  "horizon_minutes": 30,
+  "issue_cadence_minutes": 5,
+  "evaluation": "Frozen held-out Stage5 after48h scheduled evaluation; primary clean, secondary input loss scenarios",
+  "primary_variant": "sensor_only_unadapted",
+  "secondary_variants": ["sensor_only_offset24h", "baseline_sensor_unadapted", "baseline_sensor_offset24h"],
+  "already_high": "Include; classification is of the future endpoint, not a new onset",
+  "repeated_flags": "Separate five-minute endpoint decisions; no refractory or merging; never interpret origin counts as episode counts",
+  "scoring": "Only exact finite target at maturity; suppressed forecasts excluded from confusion counts; missing target unscorable; pending not false positive",
+  "metrics": ["TP", "FP", "TN", "FN", "precision", "recall", "specificity", "scheduled", "suppressed", "scorable", "missing_target", "participant_positive_counts"],
+  "aggregation": "Per participant, macro over defined metrics with contributing counts, and pooled confusion counts; zero denominators null",
+  "lead_time": "NOT_APPLICABLE",
+  "false_alarms_per_day": "NOT_REPORTED",
+  "probabilities": "NONE",
+  "fits": 0
+}

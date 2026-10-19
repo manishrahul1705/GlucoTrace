@@ -33,12 +33,7 @@ const time = (value: string) =>
 
 const number = (v: number | null | undefined, dp = 1) => (v == null ? '—' : v.toFixed(dp));
 
-const label = (v: string) =>
-  v === 'persistence'
-    ? 'Persistence'
-    : v === 'sensor_only_offset24h'
-    ? 'Ridge · 24h offset'
-    : 'Ridge · unadapted';
+const label = (v: string) => ({persistence:'Persistence',sensor_only_unadapted:'Sensor-only ? unadapted',sensor_only_offset24h:'Sensor-only ? 24h offset',baseline_sensor_unadapted:'Baseline + sensor ? unadapted',baseline_sensor_offset24h:'Baseline + sensor ? 24h offset'}[v] ?? v);
 
 const reason = reasonDetail;
 
@@ -348,7 +343,7 @@ function Chart({
           {/* Forecast endpoints */}
           {endpoints.map(f => {
             if (f.value == null) return null;
-            const isOffset = f.variant === 'sensor_only_offset24h';
+            const isOffset = f.variant.endsWith('_offset24h');
             const fx = x(new Date(f.target_time).getTime());
             const fy = y(f.value);
             const interval = f.intervals.find(a => a.alpha === alpha);
@@ -1402,7 +1397,7 @@ function App() {
                       <span className="cap-label">Variants</span>
                       <span className="cap-val">
                         {snapshot?.mode === 'local'
-                          ? 'sensor_only_unadapted, sensor_only_offset24h'
+                          ? snapshot.availability?.map(v=>label(v.variant)).join(', ') ?? 'Sensor-only'
                           : 'persistence (sensor-only baseline)'}
                       </span>
                     </div>
@@ -1495,7 +1490,7 @@ function App() {
                 <p className="prediction-note">
                   {mode === 'synthetic'
                     ? 'Persistence uses the latest accepted value. No patient-trained weights or patient interval quantiles are loaded.'
-                    : 'Both frozen sensor-only variants are shown. No preferred model or target-dependent switching.'}
+                    : 'Each model/variant is shown independently. Sensor-only remains the default; no target-dependent switching.'}
                 </p>
               </section>
             </div>

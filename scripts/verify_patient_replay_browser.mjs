@@ -25,9 +25,13 @@ async function create(source,start,scenario='clean'){
  await page.getByLabel('Source',{exact:true}).selectOption(source);
  await page.getByLabel('Session start',{exact:true}).selectOption(start);
  await page.getByLabel('Input scenario',{exact:true}).selectOption(scenario);
- const response=page.waitForResponse(r=>r.url().endsWith('/api/replay/sessions')&&r.request().method()==='POST');
+ const started=performance.now();
+ // A warm four-variant replay reconstructs 48 hours before returning. Match the
+ // existing HTTP client request budget; this is not a scientific tolerance/SLO.
+ const response=page.waitForResponse(r=>r.url().endsWith('/api/replay/sessions')&&r.request().method()==='POST',{timeout:120000});
  await page.getByRole('button',{name:/^Create (new )?session$/}).click();
  const r=await response;assert.equal(r.status(),200);const s=await r.json();assert.equal(s.mode,'local');assert.equal(s.source_id,source);
+ s.acceptance_creation_ms=performance.now()-started;
  await expect(page.locator('.capability-card')).toContainText('RETROSPECTIVE REPLAY');
  return s;
 }
@@ -50,7 +54,7 @@ try{
    s=await create(source.source_id,'warm');assert.equal(s.phase,'evaluation');assert(s.artifacts_frozen);assert.equal(s.artifact_reason,'OK');await readiness(s);
    for(const level of ['90%','95%']){const button=page.getByRole('button',{name:level,exact:true});await button.click();await expect(button).toHaveAttribute('aria-pressed','true');}
    await page.screenshot({path:path.join(output,`browser-p${source.participant_id}-warm.png`),fullPage:true});
-   record.status='PASS';record.readiness=s.availability;
+   record.status='PASS';record.readiness=s.availability;record.creation_ms=s.acceptance_creation_ms;
   }catch(e){record.status='FAIL';record.error=String(e.stack||e);report.failures.push(record.error);}
   finally{await close(s);save();}
  }

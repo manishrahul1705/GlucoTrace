@@ -71,6 +71,7 @@ class MaturedScore(BaseModel):
     matured_time:str
     coverage:dict[str,bool|None]
 class ForecastView(BaseModel):
+    model_family:str='sensor_only'
     id:str
     seq:int
     variant:str
@@ -144,6 +145,7 @@ class VariantAvailability(BaseModel):
     latest_point_reason:str
     intervals:list[IntervalReadiness]
 class Snapshot(BaseModel):
+    baseline_context:dict|None=None
     session_id:str
     generation:str
     sequence:int
@@ -221,9 +223,9 @@ class Deleted(BaseModel):
 
 
 class Manager:
-    def __init__(self,root,runtime,local_enabled=False,clock=time.monotonic):
+    def __init__(self,root,runtime,local_enabled=False,clock=time.monotonic,fusion_root=None):
         runtime.mkdir(parents=True,exist_ok=True)
-        self.store=Store(runtime/'replay.sqlite3');self.registry=Registry(root,runtime,local_enabled)
+        self.store=Store(runtime/'replay.sqlite3');self.registry=Registry(root,runtime,local_enabled,fusion_root)
         self.sessions={};self.lock=threading.RLock();self.requests={};self.clock=clock;self.last_wall=clock()
 
     def get(self,id):
@@ -266,11 +268,11 @@ class Manager:
             return result
 
 
-def create_app(root=None,runtime=None,local_enabled=None,run_clock=True):
+def create_app(root=None,runtime=None,local_enabled=None,run_clock=True,fusion_root=None):
     root=Path(root or Path(__file__).resolve().parents[3])
     runtime=Path(runtime or root/'data/runtime/stage6')
     enabled=(os.getenv('GLUCOTWIN_LOCAL_REPLAY','0')=='1') if local_enabled is None else local_enabled
-    manager=Manager(root,runtime,enabled)
+    manager=Manager(root,runtime,enabled,fusion_root=fusion_root)
 
     @asynccontextmanager
     async def lifespan(app):

@@ -51,7 +51,7 @@ class Predictor:
             value=float(row.prediction) if np.isfinite(row.prediction) else None
             reason=row.point_reason
         except StreamError as exc:return Prediction(None,str(exc),())
-        if request.variant=='sensor_only_offset24h':
+        if request.variant.endswith('_offset24h'):
             if request.offset is None:value,reason=None,'INSUFFICIENT_OFFSET_DATA'
             elif value is not None:value+=request.offset
         if value is not None and not math.isfinite(value):value,reason=None,'INVALID_MODEL_OUTPUT'

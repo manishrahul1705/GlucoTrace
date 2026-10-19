@@ -1,0 +1,14 @@
+{
+  "revision": "fusion-v1",
+  "scope": "Private noncommercial retrospective processed-data research; competition pending",
+  "fits": 14,
+  "selection": "Reuse hash-pinned sensor_plus_baseline Ridge selections, no search",
+  "features": "21 existing sensor features followed by age,bmi,hba1c,fasting_glucose",
+  "paired_origins": "Exact existing sensor_only origin IDs and outer folds; no exclusions silently removed",
+  "stage4": "Existing 48h offset, 80% minute coverage and 100/100 origin gates",
+  "stage5": "Existing 24h offset + 24h calibration, 60/30 support purges, 100 origin minima, rational ranks, 90%/95% intervals",
+  "scenarios": ["clean", "input_loss_15m", "input_loss_30m", "input_loss_60m", "input_loss_120m"],
+  "comparison": "Paired participant MAE/RMSE/signed error and above180 underprediction; macro and pooled interval coverage/width; participant bootstrap of paired MAE difference, seed 1705, 10000 resamples",
+  "default": "sensor_only; no outcome-dependent model switching",
+  "baseline_assumption": "Screening attributes assumed available before replay; actual result times unknown; HbA1c operational percent retains dictionary conflict"
+}

@@ -53,7 +53,11 @@ def main():
     p.add_argument('--output', type=Path, required=True, help='Fresh isolated private report/runtime directory')
     p.add_argument('--browser', action='store_true')
     p.add_argument('--browser-only', action='store_true', help='Fresh browser rerun; HTTP/loss cases explicitly not repeated')
+    p.add_argument('--fusion-bundle',type=Path)
+    p.add_argument('--fusion-trusted')
+    p.add_argument('--service-startup-timeout',type=int,default=600,help='Wall-clock budget for independent pre-serve verification; does not skip or relax any verifier')
     a = p.parse_args()
+    if not 600<=a.service_startup_timeout<=3600:p.error('Service startup budget must be 600..3600 seconds')
     bundle, output = a.bundle.resolve(), a.output.resolve()
     separate(output, bundle, ROOT)
     check_hashes(bundle, a.manifest_sha256)
@@ -62,7 +66,7 @@ def main():
                   bundle=str(bundle), artifact_manifest_sha256=a.manifest_sha256,
                   http=[], browser=None, input_loss=[], training_fits=0)
     result['http_scope'] = 'NOT_RUN_BROWSER_ONLY' if a.browser_only else 'ALL_FROZEN_PARTICIPANTS'
-    revision = dict(kind='REPLAY_IMPLEMENTATION_REVISION', revision='row-presence-v1',
+    revision = dict(kind='REPLAY_IMPLEMENTATION_REVISION', revision='fusion-v1' if a.fusion_bundle else 'row-presence-v1',
                     recorded_at_utc=stamp(), artifact_manifest_sha256=a.manifest_sha256,
                     generation_amendment_sha256=load(bundle/'artifact-manifest.json')['amendment_sha256'],
                     scope='Replay metadata correction; no new training execution or calibration artifacts',
@@ -74,13 +78,25 @@ def main():
         api_port, web_port = free_port(), free_port()
         api = f'http://127.0.0.1:{api_port}'
         log = (output / 'server.log').open('w', encoding='utf-8'); logs.append(log)
-        server = subprocess.Popen([sys.executable, '-B', str(ROOT / 'scripts/serve_new_experiment.py'),
+        command=[sys.executable, '-B', str(ROOT / 'scripts/serve_new_experiment.py'),
             '--bundle', str(bundle), '--manifest-sha256', a.manifest_sha256,
-            '--runtime', str(output / 'runtime'), '--port', str(api_port)], stdout=log, stderr=subprocess.STDOUT)
+            '--runtime', str(output / 'runtime'), '--port', str(api_port)]
+        if a.fusion_bundle:
+            if not a.fusion_trusted:raise ValueError('Fusion trusted digest required')
+            command+=['--fusion-bundle',str(a.fusion_bundle),'--fusion-manifest-sha256',a.fusion_trusted]
+        server = subprocess.Popen(command, stdout=log, stderr=subprocess.STDOUT)
         services.append(server)
-        wait_ready(api + '/api/health', server)
+        wait_ready(api + '/api/health', server, seconds=a.service_startup_timeout)
         result['bundle_verification'] = 'PASS: launcher independent verification completed before serving'
         records = Records(bundle)
+        if a.fusion_bundle:
+            import pandas as pd
+            import numpy as np
+            fusion=pd.read_csv(a.fusion_bundle/'evaluation.csv',dtype={'alpha':str},float_precision='round_trip')
+            fusion['target_reason']=np.where(np.isfinite(fusion.target),'OK','TARGET_MISSING')
+            records.evaluation=pd.concat([records.evaluation,fusion],ignore_index=True)
+            records.artifacts+=load(a.fusion_bundle/'calibration.json')
+            records.protocol['models']+=['baseline_sensor_unadapted','baseline_sensor_offset24h']
         mapping = source_mapping(records, output / 'runtime')
         runner = HTTPAcceptance(api, records, output)
         discovered = runner.call('GET', '/replay/sources')['sources']

@@ -26,6 +26,7 @@ class Forecast:
     intervals: tuple
     history_count: int = 0
     artifact_identity: str = 'legacy-unrecorded'
+    model_family: str = 'sensor_only'
 
 
 @dataclass(frozen=True)
@@ -213,7 +214,10 @@ def compute_recovery(session):
 class Session:
 
     def variants(self):
-        return ['persistence'] if self.source.mode=='synthetic' else ['sensor_only_unadapted','sensor_only_offset24h']
+        return self.own_variants()+[v for child in self.children for v in child.variants()]
+
+    def own_variants(self):
+        return ['persistence'] if self.source.mode=='synthetic' else [self.source.model_family+'_unadapted',self.source.model_family+'_offset24h']
 
     def calibration(self,variant,alpha):
         return self.quantiles.get((variant,alpha),Calibration(0,0,None,
@@ -228,10 +232,10 @@ class Session:
         """
         latest={f.variant:f for f in self.forecasts}
         views=[]
-        for variant in self.variants():
+        for variant in self.own_variants():
             f=latest.get(variant)
             blocker=self.artifact_reason
-            if blocker=='OK' and variant=='sensor_only_offset24h' and self.offset is None:
+            if blocker=='OK' and variant.endswith('_offset24h') and self.offset is None:
                 blocker=self.offset_reason
             current=blocker
             if self.status=='ended':current='SESSION_ENDED'
@@ -255,12 +259,14 @@ class Session:
                 latest_origin_time=timestamp(f.origin) if f else None,
                 latest_point_reason=f.reason if f else 'NO_FORECAST_ISSUED',
                 intervals=levels))
-        return views
+        return views+[v for child in self.children for v in child.availability(recovery)]
 
     def __init__(self,source:Source,store=None,id=None,warm=False):
         self.id=id or str(uuid.uuid4());self.generation=str(uuid.uuid4());self.source=source;self.store=store
         self.predictor=Predictor(source.predictor);self.evaluator=Evaluator(source.reference)
         self.history=History();self.minute=-1;self.virtual_seconds=0.;self.seq=0;self.status='paused';self.speed=60
+        self.children=[Session(source.fusion)] if source.fusion is not None else []
+        self.child_cursors=[0 for _ in self.children]
         self.offset=None;self.offset_reason='INSUFFICIENT_OFFSET_DATA';self.offset_pairs=[];self.calibration_pairs=[]
         self.offset_invalid=0;self.calibration_invalid=0
         self.quantiles={};self.frozen=False;self.artifact_reason=source.artifact_reason
@@ -288,7 +294,7 @@ class Session:
             if self.offset_invalid:self.offset,self.offset_reason=None,'INVALID_MODEL_OUTPUT'
             self.phase='calibration'
         if minute==a+2880:
-            for variant in ['sensor_only_unadapted','sensor_only_offset24h']:
+            for variant in self.own_variants():
                 for alpha in ['0.10','0.05']:
                     if variant.endswith('offset24h') and self.offset is None:
                         c=Calibration(len(self.calibration_pairs),0,None,'INSUFFICIENT_OFFSET_DATA')
@@ -307,7 +313,7 @@ class Session:
                         self.artifact_reason='INCOMPATIBLE_ARTIFACTS'
 
     def issue(self,origin):
-        variants=self.variants()
+        variants=self.own_variants()
         for variant in variants:
             intervals=tuple((a,self.calibration(variant,a)) for a in ['0.10','0.05'])
             result=self.predictor.predict(PredictRequest(origin,self.history.request(origin),variant,self.offset,intervals))
@@ -321,7 +327,8 @@ class Session:
             accepted=sum(r.valid and r.value is not None and origin-60<=r.minute<=origin for r in self.history.request(origin))
             artifact=('persistence/'+(self.source.configuration or {}).get('generator_version','scripted-v1') if self.source.mode=='synthetic' else
                       'stage5-pinned/'+hashlib.sha256(json.dumps(self.source.expected,sort_keys=True).encode()).hexdigest()[:12]+('/intervals-frozen' if self.frozen else '/intervals-pending'))
-            f=Forecast(identity,self.seq,origin,origin+30,variant,self.support_phase(origin),value,reason,bounds,accepted,artifact)
+            f=Forecast(identity,self.seq,origin,origin+30,variant,self.support_phase(origin),value,reason,bounds,accepted,artifact,
+                       'persistence' if self.source.mode=='synthetic' else self.source.model_family)
             self.forecasts.append(f);self.pending.setdefault(f.target,[]).append(f)
             if self.store:self.store.event(self,'forecast',f.id,asdict(f))
 
@@ -332,14 +339,24 @@ class Session:
         if minute%5==0:self.issue(minute)
         for f in self.pending.pop(minute,[]):
             score=self.evaluator.mature(f,minute);self.scores[f.id]=score
-            if f.variant=='sensor_only_unadapted' and score.reason=='OK':
+            if f.variant==self.source.model_family+'_unadapted' and score.reason=='OK':
                 if f.phase=='offset':self.offset_pairs.append((score.observed,f.value))
                 elif f.phase=='calibration':self.calibration_pairs.append((score.observed,f.value))
-            elif f.variant=='sensor_only_unadapted' and score.observed is not None and f.reason=='INVALID_MODEL_OUTPUT':
+            elif f.variant==self.source.model_family+'_unadapted' and score.observed is not None and f.reason=='INVALID_MODEL_OUTPUT':
                 if f.phase=='offset':self.offset_invalid+=1
                 elif f.phase=='calibration':self.calibration_invalid+=1
             self.seq+=1
             if self.store:self.store.event(self,'score',f.id,asdict(score))
+        for i,child in enumerate(self.children):
+            child.advance_to(minute)
+            for forecast in child.forecasts[self.child_cursors[i]:]:
+                self.seq+=1;forecast=replace(forecast,seq=self.seq);self.forecasts.append(forecast)
+                if self.store:self.store.event(self,'forecast',forecast.id,asdict(forecast))
+            self.child_cursors[i]=len(child.forecasts)
+            for identifier,score in child.scores.items():
+                if identifier not in self.scores:
+                    self.scores[identifier]=score
+                    if self.store:self.store.event(self,'score',identifier,asdict(score))
         self.seq+=1
 
     def advance_to(self,minute):
@@ -368,7 +385,7 @@ class Session:
         ledger=[]
         for f in selected:
             score=self.scores.get(f.id)
-            ledger.append(dict(id=f.id,seq=f.seq,variant=f.variant,phase=f.phase,
+            ledger.append(dict(id=f.id,seq=f.seq,variant=f.variant,model_family=f.model_family,phase=f.phase,
                 origin_time=timestamp(f.origin),target_time=timestamp(f.target),value=f.value,point_reason=f.reason,
                 history_start=timestamp(f.origin-60),history_end=timestamp(f.origin),history_count=f.history_count,artifact_identity=f.artifact_identity,
                 intervals=[dict(alpha=a,lower=l,upper=u,reason=r) for a,l,u,r in f.intervals],
@@ -393,6 +410,7 @@ class Session:
                     forecasts=ledger,next_after_seq=selected[-1].seq if selected else after_seq,
                     has_more=bool(selected and any(f.seq>selected[-1].seq for f in forecasts)),summaries=summaries,
                     configuration=self.source.configuration,
+                    baseline_context=self.source.baseline_context,
                     disclosure=self.source.disclosure,forecast_count=len(self.forecasts),arrival_reason=self.last_arrival_reason,
                     gap=(None if not getattr(self.source,'gap',None) else dict(start_time=timestamp(self.source.gap[0]),end_time=timestamp(self.source.gap[1]),label=f'{self.source.gap[1]-self.source.gap[0]}-minute simulated input dropout')),
                     recovery=recovery,availability=self.availability(recovery))

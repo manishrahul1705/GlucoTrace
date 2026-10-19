@@ -3,7 +3,7 @@ import type {Forecast, Snapshot} from './types';
 import {reasonText} from './reasons';
 
 export const variantLabel = (variant:string) => ({
-  persistence:'Persistence',sensor_only_unadapted:'Sensor-only unadapted',
+  baseline_sensor_unadapted:'Baseline + sensor unadapted',baseline_sensor_offset24h:'Baseline + sensor with 24h offset',persistence:'Persistence',sensor_only_unadapted:'Sensor-only unadapted',
   sensor_only_offset24h:'Sensor-only with 24h offset'
 }[variant] ?? variant.replaceAll('_',' '));
 
@@ -21,6 +21,7 @@ export function Availability({snapshot:s}:{snapshot:Snapshot|null}) {
   if(!s)return <p>Awaiting session creation.</p>;
   if(!s.availability)return <p>Availability details unavailable; restart the backend to load the current contract.</p>;
   return <div className="variant-availability">
+    {s.baseline_context && <aside aria-label="Baseline study attributes"><strong>Baseline study attributes (population-model inputs)</strong><p>{s.baseline_context.features.map((name,i)=>`${name}: ${s.baseline_context!.values[i]} ${s.baseline_context!.units[name]}`).join(' ? ')}</p><p>{s.baseline_context.availability_assumption}</p><p>Source: {s.baseline_context.source_file}, row {s.baseline_context.source_row}; provenance {s.baseline_context.provenance}. Baseline inputs are separate from the within-patient offset. These are not longitudinal EHR.</p>{s.baseline_context.study_results?.map(r=><p key={r.variant}>Exploratory paired MAE difference (combined minus sensor), {r.variant}: {r.mae_difference.toFixed(3)} mg/dL; participant bootstrap 95% interval [{r.participant_bootstrap_95.map(x=>x.toFixed(3)).join(', ')}]. {r.mae_difference>0 ? 'Fusion was worse on this paired comparison.' : 'Lower observed error does not establish general superiority.'}</p>)}</aside>}
     <p>Calibration period: {s.mode==='synthetic' ? 'not applicable to synthetic persistence' : s.artifacts_frozen ? 'completed / frozen; readiness listed per level below' : 'not yet frozen'}</p>
     {s.availability.map(v=><section key={v.variant} aria-label={`${variantLabel(v.variant)} availability`} data-variant={v.variant}>
       <strong>{variantLabel(v.variant)}</strong>
