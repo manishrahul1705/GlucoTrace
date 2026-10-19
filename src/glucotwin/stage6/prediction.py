@@ -43,7 +43,8 @@ class Predictor:
         if not request.history:return Prediction(None,'INSUFFICIENT_HISTORY',())
         if any(r.unit!='mg/dL' for r in request.history):return Prediction(None,'INVALID_UNIT',())
         frame=pd.DataFrame(dict(glucose_mg_dl=[r.value for r in request.history],
-                                valid=[r.valid for r in request.history],row_present=True,sensor='Dexcom GL'),
+                                valid=[r.valid for r in request.history],
+                                row_present=[r.row_present for r in request.history],sensor='Dexcom GL'),
                            index=pd.DatetimeIndex([INTERNAL+pd.Timedelta(minutes=r.minute) for r in request.history]))
         try:
             row=forecast_stream(frame,[INTERNAL+pd.Timedelta(minutes=request.origin)],self._base).iloc[0]

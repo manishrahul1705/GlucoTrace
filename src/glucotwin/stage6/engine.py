@@ -1,6 +1,6 @@
 """Deterministic minute-event engine, immutable forecast/score ledger and SQLite."""
 from collections import deque
-from dataclasses import dataclass,asdict
+from dataclasses import dataclass,asdict,replace
 from pathlib import Path
 import hashlib
 import json
@@ -83,7 +83,7 @@ class History:
 
     def accept(self,reading):
         raw_value=repr(reading.value) if reading.value is not None and not math.isfinite(reading.value) else reading.value
-        payload=(reading.minute,raw_value,reading.valid,reading.unit)
+        payload=(reading.minute,raw_value,reading.valid,reading.unit,reading.row_present)
         if reading.id in self.ids:
             if self.ids[reading.id]==payload:return 'IDEMPOTENT'
             for minute in {reading.minute,self.ids[reading.id][0]}:
@@ -97,10 +97,12 @@ class History:
             self.by_time[reading.minute]=Reading('conflict',reading.minute,None,False)
             return 'CONFLICTING_DUPLICATE'
         self.payloads[reading.minute]=payload
+        if not reading.row_present:
+            reading=replace(reading,value=None,valid=False)
         if reading.value is not None and (not math.isfinite(reading.value) or not 40<=reading.value<=400):
-            reading=Reading(reading.id,reading.minute,None,False,reading.unit)
+            reading=replace(reading,value=None,valid=False)
         if reading.unit!='mg/dL':
-            reading=Reading(reading.id,reading.minute,reading.value,False,reading.unit)
+            reading=replace(reading,valid=False)
         self.by_time[reading.minute]=reading
         self.recent.append(reading.minute)
         return 'ACCEPTED'

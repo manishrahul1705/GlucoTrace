@@ -23,6 +23,7 @@ class Reading:
     value: float | None
     valid: bool
     unit: str = 'mg/dL'
+    row_present: bool = True
 
 
 @dataclass
@@ -61,7 +62,8 @@ def synthetic(scenario='clean', seed=1705, length=721):
     reference={i:float(v) for i,v in enumerate(glucose)}
     gap=None if scenario=='clean' else (180,180+int(scenario.removeprefix('dropout')))
     readings=tuple(Reading(f'syn-{i:05d}',i,None if gap and gap[0]<=i<gap[1] else float(v),
-                           not (gap and gap[0]<=i<gap[1])) for i,v in enumerate(glucose))
+                           not (gap and gap[0]<=i<gap[1]),
+                           row_present=not (gap and gap[0]<=i<gap[1])) for i,v in enumerate(glucose))
     return Source('synthetic-dawn','synthetic',readings,reference,0,lambda x:x[:,0],gap=gap)
 
 
@@ -164,7 +166,8 @@ class Registry:
                 begin=math.ceil((anchor+72*60)/5)*5
                 gap=(begin,begin+int(scenario.removeprefix('dropout')))
             readings=tuple(Reading(f'local-{i:05d}',i,None if gap and gap[0]<=i<gap[1] else ref[i],
-                                   ref[i] is not None and not(gap and gap[0]<=i<gap[1])) for i in ref)
+                                   ref[i] is not None and not(gap and gap[0]<=i<gap[1]),
+                                   row_present=bool(frame.row_present.iloc[i]) and not(gap and gap[0]<=i<gap[1])) for i in ref)
             return Source(identifier,'local',readings,ref,anchor,predict,expected,LOCAL_DISCLOSURE,'unknown',gap)
         except SourceUnavailable:raise
         except Exception:raise SourceUnavailable('INCOMPATIBLE_ARTIFACTS') from None
