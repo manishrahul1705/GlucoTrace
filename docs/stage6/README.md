@@ -28,7 +28,7 @@ Install frontend dependencies from the lockfile with `npm.cmd ci --prefix fronte
 
 Default UI: http://127.0.0.1:15173/; API: http://127.0.0.1:18060/api/health. Use `--api-port` and `--web-port` for distinct free loopback ports. The launcher discovers Node on PATH; `GLUCOTWIN_NODE` may explicitly name another executable. It uses its current Python interpreter for the backend. Ctrl+C stops only owned children; occupied ports do not trigger termination of another service.
 
-Synthetic-only is the default. `--local` enables private source discovery only when a trusted matching bundle is already available: minute observations, Ridge/scaler weights, Stage 5 calibration/partition/reproduction/hash files, split mapping and protocol freeze. See `src/glucotwin/stage6/sources.py:Registry._check/load` for exact filenames. Actual patient replay remains blocked in this checkout by absent artifacts. Do not deserialize untrusted joblib/pickle files, download data or generate substitutes merely to make this check pass. Patient exports remain forbidden.
+Synthetic-only is the default. `--local` enables private source discovery only when a trusted matching bundle is already available: minute observations, Ridge/scaler weights, Stage 5 calibration/partition/reproduction/hash files, split mapping and protocol freeze. See `src/glucotwin/stage6/sources.py:Registry._check/load` for exact filenames. An ordinary source checkout has no patient artifacts. Separately preserved, independently verified new-experiment bundles can be used through the pinned launcher below. Do not deserialize untrusted joblib/pickle files, download data or generate substitutes merely to make this check pass. Patient exports remain forbidden.
 
 ## Current verification commands
 
@@ -127,3 +127,64 @@ tracker. Do not publish local data, weights, calibration, mappings, SQLite files
 patient-backed screenshots or detailed logs. Candidate code/aggregate records are
 technically reviewable pending applicable permissions, not cleared for publication.
 The historical audit performed no external messages or deployment; a local source checkpoint does not establish publication permissions.
+
+
+## Current committed release rehearsal
+
+The later local checkpoints added private sensor-plus-baseline replay and exact
++30-minute endpoint research flags. The Phase 3 counts above are historical;
+run the current suites for current totals. See [fusion and endpoint scope](FUSION_AND_ENDPOINTS.md)
+and the [new-experiment route](NEW_EXPERIMENT.md). Sensor-only stays the default.
+Fusion did not demonstrate improvement. Historical benchmark findings in the root
+README are distinct from the new experiment. Stage 4 uses a 48-hour offset;
+Stage 5 uses a 24-hour offset and a separate 24-hour interval calibration period.
+
+For a production-build local rehearsal, first run `npm.cmd run build` in
+`frontend/`. If the default loader fails with restricted ancestor access, retain
+that error and run `npm.cmd exec -- vite build --configLoader runner` after
+`npm.cmd run typecheck`. In a separate terminal at the repository root, start a
+synthetic-only backend with an isolated runtime:
+
+```powershell
+$env:GLUCOTWIN_LOCAL_REPLAY='0'
+$env:GLUCOTWIN_REHEARSAL_RUNTIME="$env:TEMP/glucotwin-synthetic-runtime-new"
+$env:GLUCOTWIN_API_PORT='18060'
+$env:PYTHONPATH='src'
+& $python -c "import os; from pathlib import Path; import uvicorn; from glucotwin.stage6.api import create_app; uvicorn.run(create_app(runtime=Path(os.environ['GLUCOTWIN_REHEARSAL_RUNTIME']),local_enabled=False),host='127.0.0.1',port=18060)"
+```
+
+In another terminal, serve the built frontend using Vite's loopback preview and
+API proxy (this is a local rehearsal, not deployment):
+
+```powershell
+$env:GLUCOTWIN_API_PORT='18060'
+Set-Location frontend
+npm.cmd exec -- vite preview --host 127.0.0.1 --port 15173 --strictPort --configLoader runner
+```
+
+For optional private operation, replace the synthetic backend command with the
+following. Set `$sensorBundle`, `$fusionBundle`, `$sensorTrusted`, `$fusionTrusted`
+and `$newPrivateRuntime` from your existing trusted private execution records;
+use a fresh private runtime outside the repository. Do not derive trust from an
+unknown bundle's self-computed digest.
+
+```powershell
+& $python scripts/serve_new_experiment.py --bundle $sensorBundle `
+  --manifest-sha256 $sensorTrusted --fusion-bundle $fusionBundle `
+  --fusion-manifest-sha256 $fusionTrusted --runtime $newPrivateRuntime --port 18060
+```
+
+This launcher completes mandatory independent sensor and fusion verification
+before binding its port; allow several minutes. Warm patient creation processes
+chronology and can take tens of seconds; it is not a cached snapshot. Keep private
+logs, runtime databases and screenshots outside source/evidence packages. Missing
+combined artifacts or invalid baseline metadata leave sensor-only available;
+missing required sensor artifacts prevent private operation. Synthetic operation
+requires neither bundle. Competition permission remains separate.
+
+Endpoint flags use strict >180 and >250 mg/dL at exactly +30 minutes. Already-high
+origins are included. Suppressed forecasts and missing targets are not negative
+outcomes. Pooled metrics and participant-macro metrics have different denominators;
+these are endpoint decisions, not episodes, onset warnings or event probabilities.
+Nominal intervals are distinct from measured empirical coverage. Processed inputs
+include upstream interpolation, and actual baseline result availability is unknown.

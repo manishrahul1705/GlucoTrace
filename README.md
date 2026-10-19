@@ -123,9 +123,9 @@ Verify fit ledger integrity, origin joins, candidate selection optimality, and r
 
 ---
 
-## 5. Summary of Findings
+## 5. Historical benchmark findings
 
-*Detailed experimental analysis and roadmaps are documented in [PROJECT_STATUS.md](PROJECT_STATUS.md).*
+*These historical benchmark results are preserved. Later new-experiment sensor/fusion and exact-endpoint research are described in [current Stage 6 instructions](docs/stage6/README.md) and [fusion/endpoint scope](docs/stage6/FUSION_AND_ENDPOINTS.md). They do not demonstrate a fusion improvement. Detailed historical analysis remains in [PROJECT_STATUS.md](PROJECT_STATUS.md).*
 
 1. **Short-Term Dynamics Outperform Baselines**:
    - Ridge regression on 21 sensor features achieved a primary equal-person MAE of **13.50 mg/dL**, outperforming simple persistence (15.15 mg/dL) by **+10.93% skill**.
