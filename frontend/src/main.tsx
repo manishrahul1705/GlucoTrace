@@ -776,7 +776,7 @@ function App() {
         </div>
         <details className="source-information">
           <summary>Source information</summary>
-          <p>{snapshot?.disclosure ?? selected?.disclosure ?? 'Independent simulated demo readings; not real patient data or validated physiology.'}</p>
+          <p>{mode === 'synthetic' ? 'Demo data — simulated readings. No real patient readings. Not a validated physiological simulator.' : snapshot?.disclosure ?? selected?.disclosure ?? 'Private retrospective replay of processed patient data. Arrival times are assumed.'}</p>
           {mode === 'synthetic' && <p>Demo mode uses persistence: the latest accepted reading is the +30-minute point forecast. It does not use patient-trained Ridge models, patient adaptation or calibrated intervals. Simulation provenance stays in API responses, exports and records.</p>}
         </details>
 
