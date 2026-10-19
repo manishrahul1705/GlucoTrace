@@ -72,6 +72,7 @@ class MaturedScore(BaseModel):
     coverage:dict[str,bool|None]
 class ForecastView(BaseModel):
     model_family:str='sensor_only'
+    endpoint_flags:list[dict]=Field(default_factory=list)
     id:str
     seq:int
     variant:str

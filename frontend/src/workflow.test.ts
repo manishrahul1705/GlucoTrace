@@ -3,6 +3,12 @@ import {scenarioForSource,inspectionAtCutoff,explorationAtCutoff} from './workfl
 import type {Forecast} from './types';
 const f={id:'f',origin_time:'2026-01-01T09:00:00Z',target_time:'2026-01-01T09:30:00Z',value:114,score:{matured_time:'2026-01-01T09:30:00Z',observed:160,signed_error:-46,reason:'OK',coverage:{}}} as Forecast;
 describe('workflow boundaries',()=>{
+ it('hides later endpoint labels without mutating immutable issued flags',()=>{
+  const issued={...f,endpoint_flags:[{kind:'exact_endpoint_threshold',threshold_mg_dl:180,comparison:'>',horizon_minutes:30,flag:true,flag_status:'FLAG',target_status:'MATURED',label:false,confusion:'FP',status:'SCORED'}]} as Forecast;
+  const prior=inspectionAtCutoff(issued,issued.origin_time).forecast;
+  expect(prior.endpoint_flags?.[0].flag).toBe(true);expect(prior.endpoint_flags?.[0].target_status).toBe('PENDING');expect(prior.endpoint_flags?.[0].label).toBeNull();expect(prior.endpoint_flags?.[0].confusion).toBeNull();expect(issued.endpoint_flags?.[0].confusion).toBe('FP');
+  expect(inspectionAtCutoff(issued,issued.target_time).forecast.endpoint_flags?.[0].confusion).toBe('FP');
+ });
  it('normalizes every synthetic-only scenario when selecting a private source',()=>{for(const name of ['steady','meal','activity','noisy'])expect(scenarioForSource('local-opaque',name)).toBe('clean')});
  it('preserves supported dropout selections and all synthetic selections',()=>{for(const name of ['clean','dropout15','dropout30','dropout60','dropout120'])expect(scenarioForSource('local-opaque',name)).toBe(name);expect(scenarioForSource('synthetic-dawn','meal')).toBe('meal')});
  it('projects historical inspection without promoting a later score or mutating its input',()=>{const view=inspectionAtCutoff(f,'2026-01-01T09:00:00Z');expect(view.forecast.score).toBeNull();expect(view.forecast.value).toBe(114);expect(f.score?.observed).toBe(160);expect(view.cutoff).toBe('2026-01-01T09:00:00Z')});

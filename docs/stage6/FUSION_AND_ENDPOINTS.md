@@ -48,3 +48,15 @@ treatment, dosing, safe/unsafe advice or clinical validation are claimed.
 Private data, fitted models, prediction tables, authorization and screenshots must
 remain outside source/evidence packages. Competition use remains pending. Stage A
 and Stage B require separate reviewed local commits after their acceptance passes.
+
+Endpoint flags are fixed when an immutable forecast is issued. Future target
+labels mature only at the exact target minute; historical API and cached browser
+projections hide later labels. Flags do not change point/interval forecasts.
+`run_endpoint_experiment.py` freezes implementation, protocol and input bytes,
+then evaluates existing forecast records without fitting. The two interval-level
+records must share each point/target and are deduplicated using alpha 0.05.
+Per-participant confusion counts and macro/pooled metrics retain null zero
+denominators and contributing participant counts. Missing targets and suppressed
+forecasts stay separate. `run_endpoint_acceptance.py` runs isolated HTTP and
+Chromium checks; detailed logs and screenshots remain private. Synthetic exports
+retain their existing schema; no patient or endpoint export route is added.

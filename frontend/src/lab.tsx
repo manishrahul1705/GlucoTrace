@@ -80,6 +80,8 @@ export function ForecastInspector({
         <dt>Point forecast</dt>
         <dd>{f.value == null ? reasonDetail(f.point_reason) : `${fmt(f.value)} mg/dL`}</dd>
 
+        {f.endpoint_flags?.map(flag=><div key={flag.threshold_mg_dl}><dt>Endpoint &gt;{flag.threshold_mg_dl} mg/dL (+30 minutes)</dt><dd>{flag.flag_status}; target {flag.target_status}; {flag.confusion??'outcome unavailable'}</dd></div>)}
+
         <dt>Required history</dt>
         <dd>
           {f.history_start} → {f.history_end}

@@ -23,6 +23,7 @@ import './style.css';
 import './functional-ui.css';
 import { Help } from './help';
 import { FeaturePanels, ForecastInspector, ScenarioDetails, labApi } from './lab';
+import {EndpointFlags} from './endpoint_flags';
 import { validateSnapshot } from './validation';
 import { scenarioForSource, inspectionAtCutoff, explorationAtCutoff, type Inspection } from './workflow';
 import { reasonDetail, reasonText } from './reasons';
@@ -33,7 +34,7 @@ const time = (value: string) =>
 
 const number = (v: number | null | undefined, dp = 1) => (v == null ? '—' : v.toFixed(dp));
 
-const label = (v: string) => ({persistence:'Persistence',sensor_only_unadapted:'Sensor-only ? unadapted',sensor_only_offset24h:'Sensor-only ? 24h offset',baseline_sensor_unadapted:'Baseline + sensor ? unadapted',baseline_sensor_offset24h:'Baseline + sensor ? 24h offset'}[v] ?? v);
+const label = (v: string) => ({persistence:'Persistence',sensor_only_unadapted:'Sensor-only / unadapted',sensor_only_offset24h:'Sensor-only / 24h offset',baseline_sensor_unadapted:'Baseline + sensor / unadapted',baseline_sensor_offset24h:'Baseline + sensor / 24h offset'}[v] ?? v);
 
 const reason = reasonDetail;
 
@@ -1499,6 +1500,8 @@ function App() {
 
         {/* AVAILABILITY ACCOUNTING TABLE (Shown on Replay Workspace or Results destination) */}
         {(!isScenarioLabView && !isSessionLibraryView) && (
+          <>
+          <EndpointFlags snapshot={snapshot}/>
           <section className="panel accounting" aria-label="Availability accounting">
             <div className="panel-heading">
               <div>
@@ -1546,6 +1549,7 @@ function App() {
               </div>
             )) ?? <p className="setup-note">No session yet. Counts appear after session preparation.</p>}
           </section>
+          </>
         )}
 
         {/* DEDICATED FEATURE PANELS (Session Library & Exports) */}

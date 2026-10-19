@@ -2155,12 +2155,14 @@ footer {
 
 .capability-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px 12px;
   margin-bottom: 10px;
 }
 
 .cap-item {
+  min-width: 0;
+  overflow-wrap: anywhere;
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -2209,6 +2211,6 @@ footer {
 
 @media (max-width: 600px) {
   .capability-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }

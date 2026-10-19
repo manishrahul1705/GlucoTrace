@@ -10,6 +10,7 @@ import uuid
 from datetime import datetime,timezone
 from glucotwin.stage5.core import Calibration,fit_offset,calibrate,interval_bounds
 from .sources import Reading,Source
+from .endpoint_flags import issued_flags,views as endpoint_views
 from .prediction import PredictRequest,Predictor,timestamp
 
 
@@ -27,6 +28,7 @@ class Forecast:
     history_count: int = 0
     artifact_identity: str = 'legacy-unrecorded'
     model_family: str = 'sensor_only'
+    endpoint_flags: tuple = ()
 
 
 @dataclass(frozen=True)
@@ -328,7 +330,7 @@ class Session:
             artifact=('persistence/'+(self.source.configuration or {}).get('generator_version','scripted-v1') if self.source.mode=='synthetic' else
                       'stage5-pinned/'+hashlib.sha256(json.dumps(self.source.expected,sort_keys=True).encode()).hexdigest()[:12]+('/intervals-frozen' if self.frozen else '/intervals-pending'))
             f=Forecast(identity,self.seq,origin,origin+30,variant,self.support_phase(origin),value,reason,bounds,accepted,artifact,
-                       'persistence' if self.source.mode=='synthetic' else self.source.model_family)
+                       'persistence' if self.source.mode=='synthetic' else self.source.model_family,issued_flags(value,reason))
             self.forecasts.append(f);self.pending.setdefault(f.target,[]).append(f)
             if self.store:self.store.event(self,'forecast',f.id,asdict(f))
 
@@ -388,7 +390,7 @@ class Session:
             ledger.append(dict(id=f.id,seq=f.seq,variant=f.variant,model_family=f.model_family,phase=f.phase,
                 origin_time=timestamp(f.origin),target_time=timestamp(f.target),value=f.value,point_reason=f.reason,
                 history_start=timestamp(f.origin-60),history_end=timestamp(f.origin),history_count=f.history_count,artifact_identity=f.artifact_identity,
-                intervals=[dict(alpha=a,lower=l,upper=u,reason=r) for a,l,u,r in f.intervals],
+                intervals=[dict(alpha=a,lower=l,upper=u,reason=r) for a,l,u,r in f.intervals],endpoint_flags=endpoint_views(f,score,self.minute),
                 score=None if score is None else dict(observed=score.observed,signed_error=score.signed_error,
                     reason=score.reason,matured_time=timestamp(score.matured),coverage=dict(score.coverage))))
         displayed=[]
