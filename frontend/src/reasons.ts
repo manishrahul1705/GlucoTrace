@@ -14,6 +14,11 @@ const messages:Record<string,string>={
  LOCAL_MODE_DISABLED:'Private replay is disabled. Start with --local only when matching private artifacts are available.'
 };
 Object.assign(messages,{
+ SESSION_ENDED:'Session ended; no future issue is scheduled.',
+ SESSION_NOT_STARTED:'Replay has not processed its first minute.',
+ NO_FORECAST_ISSUED:'No scheduled forecast has been issued yet.',
+ AWAITING_NEXT_ISSUE:'Not yet assessed; evaluated when the next scheduled issue is processed.',
+ INVALID_INTERVAL_ORDER:'Calibration cannot produce valid ordered interval bounds.',
  MISSING_CURRENT_READING:'missing current reading: the current exact-minute reading is missing; no fresh point is issued.',
  SIMULATED_INPUT_DROPOUT:'Simulated input dropout active: current reading is missing.',
  STALE_READING:'The last accepted reading is over 10 minutes old. Wait for new input and history rebuilding.',

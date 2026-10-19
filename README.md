@@ -26,13 +26,13 @@ The core scientific inquiry of GlucoTwin is evaluating whether concatenating sta
 
 ## Local research dashboard
 
-Start the synthetic-only dashboard (after the setup in [Stage 6 instructions](docs/stage6/README.md)):
+Select and verify a Python 3.12 environment first (an existing `.venv` may lack dependencies). Start the synthetic-only dashboard (after the setup in [Stage 6 instructions](docs/stage6/README.md)):
 
 ```powershell
 .\.venv\Scripts\python.exe scripts/start_stage6.py
 ```
 
-Open http://127.0.0.1:15173/. Add `--local` only for private processed-data replay (requires local CGMacros data files). See the [Stage 6 instructions and startup guide](docs/stage6/README.md). This is retrospective/synthetic research,
+Open http://127.0.0.1:15173/. Add `--local` only for private processed-data replay (requires the complete trusted, matching observations/model/calibration bundle; data files alone are insufficient). See the [Stage 6 instructions and startup guide](docs/stage6/README.md). This is retrospective/synthetic research,
 not a live sensor connection or clinical tool. No deployment is included.
 
 ## Scenario Lab and session tools
@@ -63,7 +63,7 @@ The project is structured modularly under `src/glucotwin/`:
 ## 3. Quickstart & Installation (Windows / PowerShell)
 
 ### Prerequisites
-- Python 3.12 (tested: 3.12.3); Node 24.21.0 / npm 11.11.1 for the dashboard
+- Python 3.12 (verified interpreter: 3.12.10); Node 24.21.0 / npm 11.19.0 for the dashboard
 - Git
 
 ### 1. Clone the Repository
@@ -75,7 +75,6 @@ cd GlucoTwin
 ### 2. Create and Activate Virtual Environment
 ```powershell
 py -3.12 -m venv .venv
-.\.venv\Scripts\python.exe -m pip install --upgrade pip
 .\.venv\Scripts\python.exe -m pip install -r requirements-stage6.txt
 ```
 
@@ -85,7 +84,7 @@ The unit suite uses synthetic fixtures and repository integrity checks. It does 
 $env:PYTHONPATH="src"
 .\.venv\Scripts\python.exe -m unittest discover -s tests -p "test_*.py" -v
 ```
-The repository includes **117 Python contract tests** across 15 test suites in `tests/` (plus 13 verifier tests in `scripts/`), and **22 Vitest frontend tests** across 5 test suites in `frontend/src/`. All tests run against synthetic fixtures without external data dependencies. Source-only synthetic tests do not establish private-data provenance or clinical validity.
+At the Phase 3 candidate revision, verification ran **144 Python tests** and **30 frontend tests** (six Vitest files). These are recorded results at this revision, not fixed future test counts. Tests use synthetic fixtures; they do not establish patient execution or clinical validity. See [current commands, environment selection, package modes and the restricted-loader workaround](docs/stage6/README.md). Historical verifier scripts are separate from the complete unit suite.
 
 ---
 

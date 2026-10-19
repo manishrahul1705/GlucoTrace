@@ -1,15 +1,14 @@
 """Automated launcher and verification runner for Stage 3, 4, 5 browser verification."""
 import os
-import shutil
 import socket
 import subprocess
 import sys
 import time
 from pathlib import Path
+from runtime_tools import find_node
 
 ROOT = Path(__file__).resolve().parents[1]
 PYTHON = sys.executable
-NODE = shutil.which('node') or r'C:\Program Files\nodejs\node.exe'
 VITE = ROOT / 'frontend/node_modules/vite/bin/vite.js'
 API_PORT = 18060
 WEB_PORT = 15173
@@ -26,6 +25,7 @@ def wait_port(port, timeout=15):
 
 
 def main():
+    NODE = find_node()
     print(f"Checking ports {API_PORT} and {WEB_PORT}...")
     for port in (API_PORT, WEB_PORT):
         with socket.socket() as s:

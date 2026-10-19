@@ -26,6 +26,7 @@ import { FeaturePanels, ForecastInspector, ScenarioDetails, labApi } from './lab
 import { validateSnapshot } from './validation';
 import { scenarioForSource, inspectionAtCutoff, explorationAtCutoff, type Inspection } from './workflow';
 import { reasonDetail, reasonText } from './reasons';
+import { Availability, IssuedForecast } from './availability';
 
 const time = (value: string) =>
   new Date(value).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'UTC' });
@@ -619,7 +620,7 @@ function App() {
   const mode = snapshot?.mode ?? sources.find(s => s.id === source)?.mode ?? 'synthetic';
   const latest = new Map<string, Forecast>();
   for (const f of snapshot?.forecasts ?? []) latest.set(f.variant, f);
-  const summary = snapshot?.summaries[0];
+  const summaries = snapshot?.summaries ?? [];
   const last = snapshot?.latest_reading;
   const selected = sources.find(s => s.id === source);
 
@@ -1203,28 +1204,29 @@ function App() {
                     <span className="recovery-label">Required Support:</span>
                     <strong>61 consecutive minute cells spanning 60 elapsed minutes</strong>
                     <span className="recovery-sep">·</span>
-                    <span className="recovery-label">Current Valid Support:</span>
+                    <span className="recovery-label">Current trailing-window support:</span>
                     <strong>
                       {snapshot?.recovery
-                        ? `${snapshot.recovery.consecutive_valid_cells} of 61 consecutive minute cells (${snapshot.recovery.consecutive_valid_minutes} of 60 elapsed min)`
+                        ? `${snapshot.recovery.available_valid_cells} of 61 valid cells in trailing window; continuous support spans ${snapshot.recovery.support_span_minutes} of 60 elapsed min`
                         : 'Awaiting session creation'}
                     </strong>
                   </div>
                 </div>
                 <div className="recovery-badge-group">
                   <span className={`recovery-badge ${snapshot?.recovery?.is_suppressed ? 'suppressed' : 'active'}`}>
-                    {snapshot?.recovery?.is_suppressed ? 'Forecasts Suppressed' : 'Forecasts Active'}
+                    {!snapshot ? 'Awaiting session creation' : snapshot.recovery?.is_suppressed ? 'History incomplete' : 'History requirement satisfied'}
                   </span>
                 </div>
               </div>
 
+              {snapshot?.recovery && <p>Continuous run: {snapshot.recovery.consecutive_valid_cells} valid processed minute cells spanning {snapshot.recovery.consecutive_valid_minutes} elapsed minutes.</p>}
               <div className="recovery-details-grid">
                 <div className="recovery-detail-item">
-                  <span className="recovery-detail-label">Next Issue Eligibility</span>
+                  <span className="recovery-detail-label">Next scheduled issue / history support</span>
                   <span className="recovery-detail-val">
-                    {snapshot?.recovery
-                      ? `Minute ${snapshot.recovery.next_issue_minute} (${time(snapshot.recovery.next_issue_time)}) · ${snapshot.recovery.next_issue_eligible ? 'Eligible on 5-min grid' : 'Suppressed (insufficient history)'}`
-                      : '—'}
+                    {snapshot?.recovery?.next_issue_minute != null
+                      ? `Minute ${snapshot.recovery.next_issue_minute} (${time(snapshot.recovery.next_issue_time!)}) · ${snapshot.recovery.next_issue_eligible ? 'History support conditionally sufficient; predictor not yet assessed' : 'History rebuilding; forecast not promised'}`
+                      : snapshot ? 'No future issue scheduled in this session.' : 'Awaiting session creation'}
                   </span>
                 </div>
 
@@ -1269,41 +1271,8 @@ function App() {
                   <ArrowRight size={14} />
                   Latest scheduled forecast
                 </div>
-                {(() => {
-                  const f = [...latest.values()][0];
-                  if (!f) {
-                    return (
-                      <>
-                        <div className="stat-number">
-                          — <small>Awaiting</small>
-                        </div>
-                        <p>61 valid minute cells spanning 60 min required</p>
-                      </>
-                    );
-                  }
-                  if (f.value == null) {
-                    return (
-                      <>
-                        <div className="stat-number">
-                          — <small>Suppressed</small>
-                        </div>
-                        <p>
-                          Suppressed ({snapshot?.recovery?.consecutive_valid_cells ?? f.history_count}/61 cells) · {reason(f.point_reason)}
-                        </p>
-                      </>
-                    );
-                  }
-                  return (
-                    <>
-                      <div className="stat-number">
-                        {number(f.value)} <small>mg/dL</small>
-                      </div>
-                      <p>
-                        {label(f.variant)} · target {time(f.target_time)} (+30 min)
-                      </p>
-                    </>
-                  );
-                })()}
+                {latest.size ? [...latest.values()].map(f => <IssuedForecast key={f.variant} forecast={f} />)
+                  : <p>No scheduled forecast has been issued yet.</p>}
               </article>
 
               <article className="stat">
@@ -1311,14 +1280,10 @@ function App() {
                   <Clock3 size={14} />
                   Scored-origin accuracy
                 </div>
-                <div className="stat-number">
-                  {number(summary?.mae)} <small>MAE · mg/dL</small>
-                </div>
-                <p>
-                  {summary
-                    ? `${label(summary.variant)} / ${summary.scored} scored / ${summary.matured} matured forecasts`
-                    : 'Scores appear only after target maturity'}
-                </p>
+                {summaries.length ? summaries.map(s => <div key={s.variant}>
+                  <div className="stat-number">{number(s.mae)} <small>MAE · mg/dL</small></div>
+                  <p>{label(s.variant)} / {s.scored} scored / {s.matured} matured forecasts</p>
+                </div>) : <p>Scores appear only after target maturity</p>}
               </article>
 
               <article className="stat">
@@ -1326,13 +1291,10 @@ function App() {
                   <Database size={14} />
                   Forecast availability
                 </div>
-                <div className="stat-number">
-                  {summary && summary.scheduled ? number((summary.issued / summary.scheduled) * 100, 1) : '—'}
-                  <small>%</small>
-                </div>
-                <p>
-                  {summary ? `${summary.issued} issued / ${summary.scheduled} scheduled` : 'Independent of scoring availability'}
-                </p>
+                {summaries.length ? summaries.map(s => <div key={s.variant}>
+                  <div className="stat-number">{s.scheduled ? number(s.issued / s.scheduled * 100, 1) : '—'}<small>%</small></div>
+                  <p>{label(s.variant)}: {s.issued} issued / {s.scheduled} scheduled</p>
+                </div>) : <p>Independent of scoring availability</p>}
               </article>
             </section>
 
@@ -1444,23 +1406,9 @@ function App() {
                           : 'persistence (sensor-only baseline)'}
                       </span>
                     </div>
-                    <div className="cap-item">
-                      <span className="cap-label">Point Availability</span>
-                      <span className="cap-val">
-                        {latest.size > 0 && [...latest.values()][0]?.value != null
-                          ? `Available (${number([...latest.values()][0].value)} mg/dL at +30 min)`
-                          : latest.size > 0
-                          ? `Suppressed · ${reason([...latest.values()][0].point_reason)}`
-                          : 'Pending (awaiting 61 consecutive minute cells)'}
-                      </span>
-                    </div>
-                    <div className="cap-item">
-                      <span className="cap-label">Interval Calibration</span>
-                      <span className="cap-val">
-                        {snapshot?.mode === 'local'
-                          ? (snapshot.artifacts_frozen ? 'Conformal intervals frozen' : 'Calibration pairs accumulating')
-                          : 'Unavailable in synthetic mode (no synthetic interval calibration)'}
-                      </span>
+                    <div className="cap-item full-width">
+                      <span className="cap-label">Point availability and interval readiness by variant</span>
+                      <Availability snapshot={snapshot} />
                     </div>
                     <div className="cap-item full-width">
                       <span className="cap-label">Evaluation Status</span>

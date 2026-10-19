@@ -12,11 +12,11 @@ import hashlib
 import json
 import os
 from pathlib import Path
-import shutil
 import subprocess
 import sys
 import tempfile
 from fastapi.testclient import TestClient
+from runtime_tools import venv_python
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'src'))
@@ -34,11 +34,10 @@ def test_1_fresh_dependency_installation():
         venv_dir = Path(temp_dir) / "test_venv"
         print(f"Creating isolated virtual environment at {venv_dir}...")
         subprocess.run([sys.executable, "-m", "venv", str(venv_dir)], check=True)
-        pip_exe = venv_dir / "Scripts" / "pip.exe"
-        cache_dir = r"c:\users\manish\appdata\local\pip\cache"
+        python_exe = venv_python(venv_dir)
 
-        print("Installing requirements-stage6.txt from local wheel cache...")
-        cmd = [str(pip_exe), "install", "--cache-dir", cache_dir, "-r", str(ROOT / "requirements-stage6.txt")]
+        print("Installing requirements-stage6.txt using pip's configured cache...")
+        cmd = [str(python_exe), "-m", "pip", "install", "-r", str(ROOT / "requirements-stage6.txt")]
         res = subprocess.run(cmd, capture_output=True, text=True)
         if res.returncode != 0:
             print("Pip install stdout:", res.stdout)
@@ -46,13 +45,12 @@ def test_1_fresh_dependency_installation():
             raise AssertionError(f"Fresh dependency installation failed with code {res.returncode}")
 
         print("Running pip check in isolated venv...")
-        check_proc = subprocess.run([str(pip_exe), "check"], capture_output=True, text=True)
+        check_proc = subprocess.run([str(python_exe), "-m", "pip", "check"], capture_output=True, text=True)
         print("Pip check output:", check_proc.stdout.strip())
         if check_proc.returncode != 0:
             raise AssertionError(f"Pip check failed: {check_proc.stderr}")
 
         print("Verifying core module imports in isolated venv...")
-        python_exe = venv_dir / "Scripts" / "python.exe"
         import_proc = subprocess.run([
             str(python_exe), "-c",
             "import fastapi, uvicorn, pydantic, pandas, numpy, sklearn; print('All core dependencies imported cleanly!')"

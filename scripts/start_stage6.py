@@ -2,11 +2,11 @@
 import argparse
 import os
 from pathlib import Path
-import shutil
 import socket
 import subprocess
 import sys
 import time
+from runtime_tools import find_node
 
 
 def main():
@@ -14,10 +14,11 @@ def main():
     parser.add_argument('--local',action='store_true',help='Enable approved local processed-data sources (private)')
     parser.add_argument('--api-port',type=int,default=18060)
     parser.add_argument('--web-port',type=int,default=15173)
+    parser.add_argument('--config-loader',choices=['bundle','runner','native'],help='Explicit Vite config-loader override for restricted environments')
     args=parser.parse_args()
     root=Path(__file__).resolve().parents[1]
     vite=root/'frontend/node_modules/vite/bin/vite.js'
-    node=shutil.which('node')
+    node=find_node()
     if not vite.exists() or not node:raise SystemExit('Install frontend dependencies with npm.cmd ci --prefix frontend first.')
     if any(not 1024<=p<=65535 for p in (args.api_port,args.web_port)) or args.api_port==args.web_port:
         parser.error('Use two distinct unprivileged ports between 1024 and 65535.')
@@ -29,7 +30,9 @@ def main():
     children=[]
     try:
         children.append(subprocess.Popen([sys.executable,str(root/'scripts/serve_stage6.py')],cwd=root,env=env))
-        children.append(subprocess.Popen([node,str(vite),'--host','127.0.0.1'],cwd=root/'frontend',env=env))
+        vite_args=[node,str(vite),'--host','127.0.0.1']
+        if args.config_loader:vite_args+=['--configLoader',args.config_loader]
+        children.append(subprocess.Popen(vite_args,cwd=root/'frontend',env=env))
         print(f'GlucoTwin: http://127.0.0.1:{args.web_port}/ | API: http://127.0.0.1:{args.api_port}/api/health',flush=True)
         print('Mode: '+('local processed replay + independent synthetic' if args.local else 'independent synthetic only')+'; Ctrl+C to stop.',flush=True)
         while all(p.poll() is None for p in children):time.sleep(.3)

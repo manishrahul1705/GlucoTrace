@@ -1,131 +1,134 @@
-"""Verification of portable source package with explicit current working-tree manifest.
+"""Verify an explicit source package, or source plus required historical evidence.
 
-Ensures that the repository tracked source AND required new verification files
-from the current working tree (not committed HEAD) can be packaged or copied to an
-isolated directory, verifies SHA-256 hash agreement for all changed files, runs tests cleanly,
-and does not depend on host-specific absolute paths, private artifacts, or untracked state.
+The versioned configs/source_package.json manifest works without Git metadata.
+Source mode excludes local evidence; evidence mode requires its declared inputs.
+Neither mode selects private artifacts or establishes functional/patient validity.
 """
+import argparse
 import hashlib
 import json
-import os
-from pathlib import Path
+from pathlib import Path, PurePosixPath, PureWindowsPath
 import shutil
-import subprocess
 import sys
 import tempfile
 
 ROOT = Path(__file__).resolve().parents[1]
-PYTHON = sys.executable
 
-REQUIRED_NEW_FILES = [
-    "scripts/verify_portable_package.py",
-    "scripts/verify_specific_stage3_5_gaps.py",
-    "scripts/verify_capability_recovery_browser.mjs",
-    "scripts/run_capability_recovery_verification.py",
-    "reports/capability_recovery/REQUIREMENTS_VERIFICATION_MATRIX.md",
-    "reports/capability_recovery/DEFECT_RECORD_AND_CORRECTIONS.md",
-    "reports/capability_recovery/EXECUTION_RECORD.md",
-    "reports/capability_recovery/SPECIFIC_GAPS_VERIFICATION_REPORT.json",
-]
+MANIFEST = 'configs/source_package.json'
+FORBIDDEN = {"data/raw", "data/processed", "weights", ".venv", ".venv312", "venv", ".git", "node_modules"}
 
 
-def sha256_file(path: Path) -> str:
-    h = hashlib.sha256()
-    h.update(path.read_bytes())
-    return h.hexdigest()
+class IntegrityError(ValueError):
+    pass
 
 
-def main():
-    print("Testing portable source package from current working tree...")
-    with tempfile.TemporaryDirectory(prefix="glucotwin_portable_") as temp_dir:
-        dest = Path(temp_dir) / "GlucoTwin_portable"
-        dest.mkdir()
-
-        # 1. Get list of tracked git files
-        proc = subprocess.run(["git", "ls-files"], cwd=ROOT, capture_output=True, text=True, check=True)
-        tracked_files = [f.strip() for f in proc.stdout.splitlines() if f.strip()]
-
-        # 2. Combine tracked files with required new files from current working tree
-        manifest_files = sorted(set(tracked_files + REQUIRED_NEW_FILES))
-        print(f"Manifest contains {len(manifest_files)} files ({len(tracked_files)} tracked + {len(REQUIRED_NEW_FILES)} required new files).")
-
-        # 3. Determine changed files relative to HEAD
-        diff_proc = subprocess.run(["git", "status", "--porcelain"], cwd=ROOT, capture_output=True, text=True, check=True)
-        modified_in_wt = set()
-        for line in diff_proc.stdout.splitlines():
-            if line.strip():
-                status = line[:2]
-                fname = line[3:].strip().replace('\\', '/')
-                if 'M' in status:
-                    modified_in_wt.add(fname)
-
-        print(f"Detected {len(modified_in_wt)} modified files in working tree relative to HEAD.")
-
-        # 4. Copy each file from current working tree to destination and compute hashes
-        hash_audit = []
-        for rel_path in manifest_files:
-            src_file = ROOT / rel_path
-            dst_file = dest / rel_path
-            dst_file.parent.mkdir(parents=True, exist_ok=True)
-            if src_file.exists():
-                shutil.copy2(src_file, dst_file)
-                # Compute hashes if file is modified or newly required
-                if rel_path in modified_in_wt or rel_path in REQUIRED_NEW_FILES:
-                    src_hash = sha256_file(src_file)
-                    dst_hash = sha256_file(dst_file)
-                    assert src_hash == dst_hash, f"Hash mismatch for {rel_path}: {src_hash} != {dst_hash}"
-                    hash_audit.append({
-                        "file": rel_path,
-                        "status": "modified" if rel_path in modified_in_wt else "new_required",
-                        "source_sha256": src_hash,
-                        "package_sha256": dst_hash,
-                        "matches": True,
-                        "size_bytes": src_file.stat().st_size
-                    })
-
-        print(f"Verified hash parity for {len(hash_audit)} modified/required files.")
-
-        # 5. Write portable manifest to report directory
-        manifest_report = {
-            "portable_package_version": "1.0.0",
-            "working_tree_source": str(ROOT),
-            "isolated_destination": str(dest),
-            "total_files_packaged": len(manifest_files),
-            "tracked_files_count": len(tracked_files),
-            "required_new_files_count": len(REQUIRED_NEW_FILES),
-            "verified_changed_files_count": len(hash_audit),
-            "hash_audit": hash_audit
-        }
-        manifest_out = ROOT / "reports/capability_recovery/PORTABLE_PACKAGE_MANIFEST.json"
-        manifest_out.parent.mkdir(parents=True, exist_ok=True)
-        manifest_out.write_text(json.dumps(manifest_report, indent=2))
-        print(f"Package manifest report written to: {manifest_out}")
-
-        # 6. Verify that no private data or forbidden folders leaked into package
-        for forbidden in ["data/raw", "data/processed", "weights", ".venv", ".venv312", "venv"]:
-            if (dest / forbidden).exists():
-                raise AssertionError(f"Forbidden directory {forbidden} found in portable package!")
-
-        # 7. Run Python test suite inside the isolated directory using packaged source
-        env = os.environ.copy()
-        env["PYTHONPATH"] = str(dest / "src")
-
-        print("Running Python tests in isolated portable copy...")
-        test_proc = subprocess.run(
-            [PYTHON, "-m", "unittest", "discover", "-s", "tests", "-p", "test_*.py"],
-            cwd=dest,
-            env=env,
-            capture_output=True,
-            text=True
-        )
-
-        print(test_proc.stdout)
-        if test_proc.returncode != 0:
-            print(test_proc.stderr, file=sys.stderr)
-            raise AssertionError(f"Tests failed in isolated portable package with code {test_proc.returncode}")
-
-        print("Portable package test passed! All tests executed cleanly in isolated directory.")
+def sha256_file(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
 
-if __name__ == "__main__":
-    main()
+def safe_path(root, relative):
+    if (not isinstance(relative,str) or not relative or "\\" in relative or
+        ":" in relative or "\x00" in relative or
+        PureWindowsPath(relative).is_absolute() or PurePosixPath(relative).is_absolute() or
+        any(part in {"", ".", ".."} or part.endswith((' ','.')) or
+            any(ord(c)<32 or c in '<>"|?*' for c in part) or
+            PureWindowsPath(part).is_reserved() for part in relative.split("/"))):
+        raise IntegrityError(f"Unsafe manifest path: {relative!r}")
+    path = root.joinpath(*relative.split("/"))
+    if not path.resolve().is_relative_to(root.resolve()):
+        raise IntegrityError(f"Manifest path escapes root: {relative}")
+    # A symlink/reparse path is not a selected immutable regular source file.
+    if any(p.is_symlink() or (hasattr(p,'is_junction') and p.is_junction())
+           for p in [path, *path.parents] if p != root.parent):
+        raise IntegrityError(f"Linked manifest path: {relative}")
+    if any(relative.casefold()==f or relative.casefold().startswith(f+'/') for f in FORBIDDEN):
+        raise IntegrityError(f"Forbidden package path: {relative}")
+    return path
+
+
+def verify_package(source, destination, required, optional=()):
+    """Copy a prehashed source snapshot to an empty isolated directory.
+
+    No success result is returned unless every selected byte and required path
+    is verified. The caller owns temporary destination cleanup on failure.
+    """
+    source,destination=Path(source).resolve(),Path(destination).resolve()
+    if destination==source or destination.is_relative_to(source):
+        raise IntegrityError('Package destination must be outside source')
+    if destination.exists() and any(destination.iterdir()):
+        raise IntegrityError('Package destination must be empty')
+    required,optional=list(required),list(optional)
+    seen=set();snapshot=[];missing_optional=[]
+    for is_required, paths in [(True,required),(False,optional)]:
+        for relative in paths:
+            key=relative.casefold() if isinstance(relative,str) else relative
+            if key in seen:raise IntegrityError(f'Duplicate manifest path: {relative}')
+            seen.add(key)
+            src=safe_path(source,relative);safe_path(destination,relative)
+            if not src.is_file():
+                if is_required:raise IntegrityError(f'Missing required file: {relative}')
+                missing_optional.append(relative);continue
+            snapshot.append((relative,is_required,src.stat().st_size,sha256_file(src)))
+    destination.mkdir(parents=True,exist_ok=True)
+    entries=[]
+    for relative,is_required,size,digest in snapshot:
+        src=safe_path(source,relative);dst=safe_path(destination,relative)
+        dst.parent.mkdir(parents=True,exist_ok=True)
+        shutil.copy2(src,dst)
+        copied_digest=sha256_file(dst)
+        if dst.stat().st_size!=size or copied_digest!=digest or sha256_file(src)!=digest:
+            raise IntegrityError(f'Copy/snapshot hash mismatch: {relative}')
+        entries.append(dict(file=relative,required=is_required,size_bytes=size,
+                            source_sha256=digest,package_sha256=copied_digest))
+    actual={p.relative_to(destination).as_posix() for p in destination.rglob('*') if p.is_file()}
+    if actual!={r[0] for r in snapshot} or not set(required).issubset(actual):
+        raise IntegrityError('Incomplete or unexpected package manifest coverage')
+    # Recheck all entries after all copies, catching later-copy corruption.
+    for entry in entries:
+        dst=safe_path(destination,entry['file'])
+        if dst.stat().st_size!=entry['size_bytes'] or sha256_file(dst)!=entry['source_sha256']:
+            raise IntegrityError(f"Final destination hash mismatch: {entry['file']}")
+    return dict(portable_package_version='2.0.0',integrity='PASS',
+                total_files_packaged=len(actual),required_files_count=len(required),
+                optional_missing=missing_optional,hash_audit=entries)
+
+
+def main(argv=None):
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--output',type=Path,help='New JSON report path; existing files are refused')
+    parser.add_argument('--mode',choices=['source','evidence'],default='source')
+    parser.add_argument('--root',type=Path,default=ROOT,help='Source checkout or explicitly assembled candidate snapshot')
+    args=parser.parse_args(argv)
+    try:
+        if args.output and args.output.exists():raise IntegrityError(f'Output already exists: {args.output}')
+        source=args.root.resolve()
+        manifest_path=safe_path(source,MANIFEST)
+        manifest=json.loads(manifest_path.read_text(encoding='utf-8'))
+        if (manifest.get('schema_version')!=1 or any(not isinstance(manifest.get(key),list) or
+            any(not isinstance(p,str) for p in manifest[key]) for key in
+            ['required_source_files','required_evidence_files','optional_evidence_files'])):
+            raise IntegrityError('Invalid source package manifest schema')
+        required=list(manifest['required_source_files'])
+        if MANIFEST not in required:raise IntegrityError('Source manifest must require itself')
+        if any(p.startswith('reports/') for p in required):
+            raise IntegrityError('Source requirements cannot include historical/local reports')
+        optional=[]
+        if args.mode=='evidence':
+            required+=manifest['required_evidence_files']
+            optional=manifest['optional_evidence_files']
+        with tempfile.TemporaryDirectory(prefix='glucotwin_portable_') as temp:
+            result=verify_package(source,Path(temp)/'package',required,optional)
+        result.update(package_mode=args.mode,manifest_sha256=sha256_file(manifest_path),
+                      evidence_selected=args.mode=='evidence')
+        if args.output:
+            args.output.parent.mkdir(parents=True,exist_ok=True)
+            with args.output.open('x',encoding='utf-8') as f:json.dump(result,f,indent=2)
+        print(f"Integrity PASS: {result['total_files_packaged']} actual files copied and hashed. Functional checks are separate.")
+        return 0
+    except (OSError,ValueError) as exc:
+        print(f'Integrity FAIL: {exc}',file=sys.stderr)
+        return 1
+
+
+if __name__=='__main__':
+    raise SystemExit(main())

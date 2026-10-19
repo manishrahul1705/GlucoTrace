@@ -8,7 +8,7 @@ import math
 import sqlite3
 import uuid
 from datetime import datetime,timezone
-from glucotwin.stage5.core import Calibration,fit_offset,calibrate
+from glucotwin.stage5.core import Calibration,fit_offset,calibrate,interval_bounds
 from .sources import Reading,Source
 from .prediction import PredictRequest,Predictor,timestamp
 
@@ -178,9 +178,22 @@ def compute_recovery(session):
         conditional_recovery_label = f'Earliest eligible issue if readings continue without interruption: Minute {rec_min} ({rec_hhmm} UTC). Requires {cells_needed} more consecutive valid minute readings.'
         next_issue_eligible = (next_issue >= rec_min)
 
+    # Scheduling ends at the last arrived minute, inclusive. Do not alter issue().
+    if next_issue > session.end or session.status == 'ended':
+        next_issue = None
+        next_issue_time = None
+        next_issue_eligible = False
+    if session.status == 'ended' or (conditional_recovery_minute is not None and conditional_recovery_minute > session.end):
+        conditional_recovery_minute = conditional_recovery_time = None
+        conditional_recovery_label = ('Session ended; no future issue is scheduled.' if session.status == 'ended'
+                                      else 'History cannot recover on the issue grid within this session.')
+    available = sum(r is not None and r.valid and r.value is not None
+                    for r in (session.history.by_time.get(t) for t in range(max(0,m-60),m+1)))
     return dict(
         required_cells=required_cells,
         required_minutes=required_minutes,
+        available_valid_cells=available,
+        support_span_minutes=max(0,min(consecutive,required_cells)-1),
         consecutive_valid_cells=consecutive,
         consecutive_valid_minutes=valid_minutes,
         is_suppressed=is_suppressed,
@@ -196,6 +209,51 @@ def compute_recovery(session):
 
 
 class Session:
+
+    def variants(self):
+        return ['persistence'] if self.source.mode=='synthetic' else ['sensor_only_unadapted','sensor_only_offset24h']
+
+    def calibration(self,variant,alpha):
+        return self.quantiles.get((variant,alpha),Calibration(0,0,None,
+            'SYNTHETIC_INTERVALS_UNCALIBRATED' if self.source.mode=='synthetic' else 'INSUFFICIENT_CALIBRATION'))
+
+    def availability(self,recovery):
+        """Read-only projection; never run a predictor or create a future forecast.
+
+        Current success is known only at an actual issue cutoff. Between issues,
+        known blockers are reported; otherwise readiness awaits the next issue.
+        Calibration readiness and usable bounds on an issued point are separate.
+        """
+        latest={f.variant:f for f in self.forecasts}
+        views=[]
+        for variant in self.variants():
+            f=latest.get(variant)
+            blocker=self.artifact_reason
+            if blocker=='OK' and variant=='sensor_only_offset24h' and self.offset is None:
+                blocker=self.offset_reason
+            current=blocker
+            if self.status=='ended':current='SESSION_ENDED'
+            elif self.minute<0:current='SESSION_NOT_STARTED'
+            elif current=='OK' and recovery['is_suppressed']:current=recovery['suppression_reason']
+            elif current=='OK':
+                current=f.reason if f and f.origin*60==self.virtual_seconds else 'AWAITING_NEXT_ISSUE'
+            future=('SESSION_ENDED' if recovery['next_issue_minute'] is None else
+                    blocker if blocker!='OK' else 'AWAITING_NEXT_ISSUE')
+            issued_intervals={a:r for a,lo,hi,r in f.intervals} if f else {}
+            levels=[]
+            for alpha in ['0.10','0.05']:
+                cal=self.calibration(variant,alpha)
+                calibration_reason=interval_bounds(0.,cal)[2]
+                levels.append(dict(alpha=alpha,calibration_reason=calibration_reason,
+                    current_reason=current if current!='OK' else issued_intervals.get(alpha,'NO_FORECAST_ISSUED'),
+                    latest_reason=issued_intervals.get(alpha,'NO_FORECAST_ISSUED')))
+            views.append(dict(variant=variant,capability_reason=self.artifact_reason,
+                current_reason=current,next_issue_reason=future,
+                latest_forecast_id=f.id if f else None,
+                latest_origin_time=timestamp(f.origin) if f else None,
+                latest_point_reason=f.reason if f else 'NO_FORECAST_ISSUED',
+                intervals=levels))
+        return views
 
     def __init__(self,source:Source,store=None,id=None,warm=False):
         self.id=id or str(uuid.uuid4());self.generation=str(uuid.uuid4());self.source=source;self.store=store
@@ -247,11 +305,9 @@ class Session:
                         self.artifact_reason='INCOMPATIBLE_ARTIFACTS'
 
     def issue(self,origin):
-        variants=['persistence'] if self.source.mode=='synthetic' else ['sensor_only_unadapted','sensor_only_offset24h']
+        variants=self.variants()
         for variant in variants:
-            intervals=tuple((a,self.quantiles.get((variant,a),Calibration(0,0,None,
-                            'SYNTHETIC_INTERVALS_UNCALIBRATED' if self.source.mode=='synthetic' else 'INSUFFICIENT_CALIBRATION')))
-                            for a in ['0.10','0.05'])
+            intervals=tuple((a,self.calibration(variant,a)) for a in ['0.10','0.05'])
             result=self.predictor.predict(PredictRequest(origin,self.history.request(origin),variant,self.offset,intervals))
             reason=result.reason
             if any(origin-60<=k<=origin for k in self.history.conflicts):reason='CONFLICTING_DUPLICATE'
@@ -324,6 +380,7 @@ class Session:
         last=next((self.history.by_time[k] for k in sorted(self.history.by_time,reverse=True)
                    if self.history.by_time[k].valid and self.history.by_time[k].value is not None),None)
         summaries=self.summaries()
+        recovery=compute_recovery(self)
         return dict(session_id=self.id,generation=self.generation,sequence=self.seq,source_id=self.source.id,mode=self.source.mode,
                     provenance='independent hand-authored generator / seeded persistence' if self.source.mode=='synthetic' else 'local pinned Stage 5 artifacts',
                     source_timezone=self.source.source_timezone,session_epoch=timestamp(0),arrival_assumption='zero simulated delay; artificial UTC epoch',
@@ -336,10 +393,10 @@ class Session:
                     configuration=self.source.configuration,
                     disclosure=self.source.disclosure,forecast_count=len(self.forecasts),arrival_reason=self.last_arrival_reason,
                     gap=(None if not getattr(self.source,'gap',None) else dict(start_time=timestamp(self.source.gap[0]),end_time=timestamp(self.source.gap[1]),label=f'{self.source.gap[1]-self.source.gap[0]}-minute simulated input dropout')),
-                    recovery=compute_recovery(self))
+                    recovery=recovery,availability=self.availability(recovery))
 
     def summaries(self):
-        variants=['persistence'] if self.source.mode=='synthetic' else ['sensor_only_unadapted','sensor_only_offset24h']
+        variants=self.variants()
         summaries=[]
         for variant in variants:
             fs=[f for f in self.forecasts if f.variant==variant and f.phase in ('synthetic','evaluation')]

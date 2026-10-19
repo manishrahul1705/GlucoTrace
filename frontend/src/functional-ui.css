@@ -1,2 +1,29 @@
 /* GlucoTwin Scientific Design System - Functional UI Layer */
 /* Core design tokens and component rules are consolidated in style.css */
+
+/* Wrapping depends on available space, including CSS zoom, not only media queries. */
+.topbar {
+  flex-wrap: wrap;
+  height: auto;
+  min-height: 52px;
+  padding-block: 8px;
+}
+
+.topbar-breadcrumbs,
+.topbar-actions,
+.transport,
+.transport-actions,
+.speed,
+.replay-clock {
+  flex-wrap: wrap;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.topbar-actions { justify-content: flex-end; }
+.transport-actions { flex: 1 1 260px; }
+.replay-clock { gap: 6px; }
+.topbar-breadcrumbs, .local-tag { overflow-wrap: anywhere; }
+
+.feature-nav { flex-wrap: wrap; }
+.feature-nav a { white-space: normal; }
