@@ -113,9 +113,9 @@ Dataset acquisition and research execution are separate from this demo quickstar
 
 ## Demo, presentation and submission checklist
 
-The silent walkthrough is complete at **18:01**, within the required 15–20 minutes. **Silent video; narration supplied separately.** The timestamped script is prepared; narration is in preparation. The large local video is not stored in Git. The older [recording checklist](docs/stage6/DEMO_RECORDING.md) describes the superseded 30-minute plan; the completed take uses the revised 18-minute scope.
+The [uploaded demo video](https://youtu.be/5mwbA8xUERc) is **18:02**, within the required 15–20 minutes, as confirmed by anonymous YouTube metadata on 2026-10-20. The local silent walkthrough was previously recorded as 18:01. **Silent video; narration supplied separately.** The timestamped script is prepared; narration is in preparation. The large local video is not stored in Git. The older [recording checklist](docs/stage6/DEMO_RECORDING.md) describes the superseded 30-minute plan; the completed take uses the revised 18-minute scope.
 
-The supplied presentation is named `GlucoTrace_Digital_Twin_Challenge_2026.pdf`, but it was not located in the available project/attachment locations for this update. Its contents and architecture compliance have not been independently reviewed, and its repository addition is pending. No presentation or video URL is invented below.
+The supplied [project/outcomes presentation](https://drive.google.com/file/d/1AzcyUzdZRmnOqMctWw83UJWSqH3GKpNr/view?usp=sharing) was identified by the team as `GlucoTrace_Digital_Twin_Challenge_2026.pdf`. An anonymous access check on 2026-10-20 returned **HTTP 401 Unauthorized**; permission-free access, file contents and architecture compliance remain **unverified**. Its repository addition remains pending.
 
 | # | Organizer requirement | Current status |
 | --- | --- | --- |
@@ -126,11 +126,11 @@ The supplied presentation is named `GlucoTrace_Digital_Twin_Challenge_2026.pdf`,
 | 5 | Healthcare use case | Retrospective Type 2 Diabetes forecasting research; no clinical recommendations. |
 | 6 | Technical stack | Listed above; dependencies versioned in requirements/lockfile. |
 | 7 | AI/ML model/framework details | Persistence demo, private Ridge variants, historical benchmark and evaluation distinctions documented above. |
-| 8 | Unlisted YouTube demo, 15–20 minutes | 18:01 silent take completed; script prepared, narration in preparation. **Pending upload**; no YouTube URL supplied. |
+| 8 | Unlisted YouTube demo, 15–20 minutes | [Demo video](https://youtu.be/5mwbA8xUERc): anonymous YouTube metadata confirms **18:02** (1,082 seconds) and playable status on 2026-10-20. Unlisted visibility setting not independently verified; script prepared, narration in preparation. |
 | 9 | Open-source license | Code MIT; separate dataset and third-party terms apply. |
 | 10 | Architecture diagram in PDF/PPT | **In preparation**; file not independently confirmed. Markdown architecture does not complete this requirement. |
-| 11 | Project/outcomes presentation in PDF/PPT | Named PDF supplied by the team; local availability/content review and repository addition pending. Public link not available. |
-| 12 | Public access without additional permissions | Repository: [GlucoTrace](https://github.com/manishrahul1705/GlucoTrace). Anonymous access to repository/video/decks **not verified in this update**; video/deck links remain pending. |
+| 11 | Project/outcomes presentation in PDF/PPT | [Presentation link](https://drive.google.com/file/d/1AzcyUzdZRmnOqMctWw83UJWSqH3GKpNr/view?usp=sharing) supplied; anonymous request returned **HTTP 401 Unauthorized**. Access/content review and repository addition pending. |
+| 12 | Public access without additional permissions | Repository: [GlucoTrace](https://github.com/manishrahul1705/GlucoTrace). Video page and playable metadata accessible anonymously on 2026-10-20. Presentation access **not verified** (HTTP 401 Unauthorized); access without a permission request remains unconfirmed. Repository anonymous access not checked in this update. |
 
 All twelve requirements are addressed as information or explicit gaps, not all completed deliverables. Competition-use clarification is pending, and actual submission is unconfirmed. Public source availability does not clear restricted-data publication or establish submission readiness.
 
