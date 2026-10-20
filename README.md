@@ -111,6 +111,14 @@ npm.cmd run build --prefix frontend
 
 Dataset acquisition and research execution are separate from this demo quickstart. Review [data-use restrictions](docs/DATA_USE_ACQUISITION_REVIEW.md) and [licensing status](docs/stage2/licensing_status.md) before obtaining or processing data. Do not generate substitutes to bypass private replay compatibility gates.
 
+## Demo Video
+
+[Watch the GlucoTrace demonstration on YouTube](https://youtu.be/5mwbA8xUERc)
+
+## Presentation
+
+[View the GlucoTrace presentation](https://drive.google.com/file/d/1AzcyUzdZRmnOqMctWw83UJWSqH3GKpNr/view?usp=sharing)
+
 ## Demo, presentation and submission checklist
 
 The [uploaded demo video](https://youtu.be/5mwbA8xUERc) is **18:02**, within the required 15–20 minutes, as confirmed by anonymous YouTube metadata on 2026-10-20. The local silent walkthrough was previously recorded as 18:01. **Silent video; narration supplied separately.** The timestamped script is prepared; narration is in preparation. The large local video is not stored in Git. The older [recording checklist](docs/stage6/DEMO_RECORDING.md) describes the superseded 30-minute plan; the completed take uses the revised 18-minute scope.
